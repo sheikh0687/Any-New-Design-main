@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="collection view cell content view" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="DateCollectionCell" id="5sG-pV-H1s" customClass="DateCollectionCell" customModule="Any" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="vW1-yA-239">
+                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                <subviews>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Close Booking" translatesAutoresizingMaskIntoConstraints="NO" id="gRX-hz-d3a">
+                        <rect key="frame" x="7" y="7" width="36" height="36"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="36" id="RGU-ec-84D"/>
+                            <constraint firstAttribute="width" constant="36" id="X5n-Ru-bse"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="18"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </imageView>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Mh-Di-bal">
+                        <rect key="frame" x="7" y="7" width="36" height="36"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="36" id="hlm-d4-3T4"/>
+                            <constraint firstAttribute="width" constant="36" id="iDr-tA-KZ5"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
+                        <color key="textColor" name="GREEN"/>
+                        <nil key="highlightedColor"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius1">
+                                <real key="value" value="18"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="borderWidth1">
+                                <real key="value" value="1.5"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="borderColor1">
+                                <color key="value" name="GREEN"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="INE-u5-4VS">
+                        <rect key="frame" x="28" y="2" width="14" height="14"/>
+                        <color key="backgroundColor" name="BUTTON_COLOR"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="ZJg-5r-6NG"/>
+                            <constraint firstAttribute="width" constant="14" id="iPc-rz-daS"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="8Mh-Di-bal" firstAttribute="centerX" secondItem="vW1-yA-239" secondAttribute="centerX" id="1XZ-Oj-lak"/>
+                    <constraint firstItem="INE-u5-4VS" firstAttribute="top" secondItem="vW1-yA-239" secondAttribute="top" constant="2" id="8Tu-qr-9Yq"/>
+                    <constraint firstItem="gRX-hz-d3a" firstAttribute="centerY" secondItem="vW1-yA-239" secondAttribute="centerY" id="GKb-nq-RhX"/>
+                    <constraint firstItem="gRX-hz-d3a" firstAttribute="centerX" secondItem="vW1-yA-239" secondAttribute="centerX" id="LyB-vb-BmA"/>
+                    <constraint firstItem="8Mh-Di-bal" firstAttribute="centerY" secondItem="vW1-yA-239" secondAttribute="centerY" id="PKx-IR-BUN"/>
+                    <constraint firstAttribute="trailing" secondItem="INE-u5-4VS" secondAttribute="trailing" constant="8" id="cE9-OE-89b"/>
+                </constraints>
+            </collectionViewCellContentView>
+            <size key="customSize" width="52" height="129"/>
+            <connections>
+                <outlet property="imgCloseBooking" destination="gRX-hz-d3a" id="NFg-C2-5QB"/>
+                <outlet property="lbl_NumberCount" destination="8Mh-Di-bal" id="m29-gH-Sbo"/>
+                <outlet property="lbl_PendingCount" destination="INE-u5-4VS" id="7LK-QY-BPk"/>
+            </connections>
+            <point key="canvasLocation" x="29.007633587786259" y="3.8732394366197185"/>
+        </collectionViewCell>
+    </objects>
+    <resources>
+        <image name="Close Booking" width="36" height="36"/>
+        <namedColor name="BUTTON_COLOR">
+            <color red="0.99607843137254903" green="0.66274509803921566" blue="0.20392156862745098" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="GREEN">
+            <color red="0.13699999451637268" green="0.57700002193450928" blue="0.26899999380111694" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>

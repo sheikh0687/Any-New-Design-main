@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layoutDirection="ltr">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+        <ProgressBar
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerInParent="true"></ProgressBar>
+        <ImageView
+            android:id="@+id/image_but"
+            android:layout_width="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/slide_1"
+            android:layout_height="wrap_content">
+        </ImageView>
+
+        <TextView
+            android:id="@+id/msgtv"
+            android:layout_marginTop="50dp"
+            android:layout_below="@+id/image_but"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+
+            android:text="Book a visit easy\nand fast."
+            android:textColor="@color/black"
+           android:visibility="gone"
+            android:textSize="22dp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/msgtv1"
+            android:layout_margin="20dp"
+            android:layout_below="@+id/msgtv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="Lorem ipsum Lorem ipsum Lorem ipsum"
+            android:textColor="#50000000"
+
+            android:textSize="22dp"
+            android:textStyle="bold" />
+
+
+    </RelativeLayout></LinearLayout>

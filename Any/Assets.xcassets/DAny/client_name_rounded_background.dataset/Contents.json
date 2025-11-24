@@ -1,0 +1,12 @@
+{
+  "data" : [
+    {
+      "filename" : "client_name_rounded_background.xml",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

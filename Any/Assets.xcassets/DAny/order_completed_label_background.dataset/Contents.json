@@ -1,0 +1,12 @@
+{
+  "data" : [
+    {
+      "filename" : "order_completed_label_background.xml",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
