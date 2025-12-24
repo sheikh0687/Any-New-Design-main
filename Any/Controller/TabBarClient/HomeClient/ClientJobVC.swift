@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftyJSON
+import DropDown
 
 class ClientJobVC: UIViewController {
     
@@ -36,6 +37,10 @@ class ClientJobVC: UIViewController {
     @IBOutlet weak var lbl_JobTypeAndDescription: UILabel!
     @IBOutlet weak var upcomingShiftTableVw: UITableView!
     @IBOutlet weak var upcomingTableHeight: NSLayoutConstraint!
+    @IBOutlet weak var lbl_Outlet: UILabel!
+    @IBOutlet weak var outletImage: UIImageView!
+    @IBOutlet weak var outletMainView: UIView!
+    @IBOutlet weak var lbl_SelectOutlet: UILabel!
     
     let calendar = Calendar.current
     var arrWeekStartToEnd:[String] = []
@@ -45,10 +50,16 @@ class ClientJobVC: UIViewController {
     var currentWeek:Int! = 0
     var selectedDate: Date?
     var arrWeekName:[String] = ["MON","TUE","WED","THU","FRI","SAT","SUN"]
+    var strOutletiD = ""
+    var isReceived: Bool = true
+    var strUseriD: String = ""
+    var strOutletName: String = ""
     
     var arrayManPowerReq: [JSON] = []
     var arrayForJobTypes: [JSON] = []
     var arrayForUpcomingShift: [JSON] = []
+    var arrayOfOutlet: [JSON] = []
+    var dropDown = DropDown()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -116,14 +127,19 @@ class ClientJobVC: UIViewController {
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(showSpinningWheel), name: NSNotification.Name(rawValue: "ReloadCount"), object: nil)
+        
+        self.lbl_Outlet.text = USER_DEFAULT.value(forKey: BUSINESS_NAME) as? String ?? ""
+        let outletImg = USER_DEFAULT.value(forKey: BUSINESS_LOGO) as? String ?? ""
+        Utility.setImageWithSDWebImage(outletImg, self.outletImage)
+        
+        dropDownCustomCell()
     }
     
-    func fullDayNameAndDate()
-    {
+    func fullDayNameAndDate() {
         self.lbl_CurrentDay.text = Utility.getCurrentDay()
         self.lbl_CurrentDate.text = Utility.getCurrentDateWithMonth()
     }
-    
+        
     @objc func showSpinningWheel(notification: NSNotification) {
         GetNotificationCount()
     }
@@ -139,10 +155,14 @@ class ClientJobVC: UIViewController {
             dcuureDate = Calendar.current.date(byAdding: .day, value: 1, to: dcuureDate)!
         }
         date_CollectionVw.reloadData()
-        getDataGetList()
-        getJobRequests()
         GetNotificationCount()
-        getUpcomingShifts()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        WebGetOutlet()
+        getWeekyReportList()
+        getManpowerJobRequests()
     }
     
     @objc func goChat() {
@@ -155,14 +175,71 @@ class ClientJobVC: UIViewController {
         self.navigationController?.pushViewController(objVC, animated: true)
     }
     
-    @objc func goProfile()
-    {
+    @objc func goProfile() {
         let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "ProfileSettingVC") as! ProfileSettingVC
         self.navigationController?.pushViewController(objVC, animated: true)
     }
     
-    @IBAction func btn_JobTime(_ sender: UIButton) {
+    func dropDownCustomCell() {
+        dropDown.cellNib = UINib(nibName: "OutletCell", bundle: nil)
+
+        dropDown.direction = .bottom
+        dropDown.width = UIScreen.main.bounds.width - 60   // or outletMainView.bounds.width
+        dropDown.cellHeight = 64
+        dropDown.backgroundColor = .white
+        dropDown.separatorColor = .clear
         
+        dropDown.customCellConfiguration = { [weak self] (index: Int,
+                                                          item: String,
+                                                          cell: DropDownCell) in
+            guard
+                let self = self,
+                let cell = cell as? OutletCell
+            else { return }
+
+            let outlet = self.arrayOfOutlet[index]
+
+            // Name
+            cell.lbl_OutletName.text = outlet["business_name"].stringValue
+            cell.optionLabel = cell.lbl_OutletName   // optional but clear
+            // Image
+            let logoURL = outlet["business_logo"].stringValue
+            Utility.setImageWithSDWebImage(logoURL, cell.outletImg)
+
+            // Pending count
+            let pending = outlet["complete_shift_count"].intValue
+            cell.lbl_OutletCount.text = "\(pending)"
+            cell.lbl_OutletCount.clipsToBounds = true
+            cell.lbl_OutletCount.cornerRadius1 = 12
+            cell.lbl_OutletCount.isHidden = (pending == 0)
+        }
+    }
+    
+    @IBAction func btn_SelectOutlet(_ sender: UIButton) {
+        dropDown.anchorView = outletMainView
+        
+        let outletName = arrayOfOutlet.map { $0["business_name"].stringValue }
+        dropDown.dataSource = outletName
+        
+        if let h = dropDown.anchorView?.plainView.bounds.height {
+            dropDown.bottomOffset = CGPoint(x: 0, y: h)
+        }
+        dropDown.show()
+        
+        dropDown.selectionAction = { [unowned self] (index: Int, item: String) in
+            self.lbl_Outlet.text = item
+//            self.strOutletiD = arrayOfOutlet[index]["id"].stringValue
+            
+            Utility.setImageWithSDWebImage(arrayOfOutlet[index]["business_logo"].stringValue, self.outletImage)
+            USER_DEFAULT.set(arrayOfOutlet[index]["id"].stringValue, forKey: CLIENTID)
+            USER_DEFAULT.set(arrayOfOutlet[index]["business_name"].stringValue, forKey: OUTLET_NAME)
+            USER_DEFAULT.set(arrayOfOutlet[index]["business_logo"].stringValue, forKey: OUTLET_IMAGE)
+            self.getManpowerJobRequests()
+            self.getUpcomingShifts()
+        }
+    }
+    
+    @IBAction func btn_JobTime(_ sender: UIButton) {
         if sender.tag == 0 {
             btn_DailyJobOt.backgroundColor = R.color.button_COLOR()
             btn_DailyJobOt.setTitleColor(.white, for: .normal)
@@ -170,7 +247,7 @@ class ClientJobVC: UIViewController {
             btn_WeeklyJObOt.setTitleColor(.darkGray, for: .normal)
             DAILYJOB.isHidden = false
             WEEKLYJOB.isHidden = true
-            self.getJobRequests()
+            self.getManpowerJobRequests()
         } else {
             btn_WeeklyJObOt.backgroundColor = R.color.button_COLOR()
             btn_WeeklyJObOt.setTitleColor(.white, for: .normal)
@@ -178,7 +255,7 @@ class ClientJobVC: UIViewController {
             btn_DailyJobOt.setTitleColor(.darkGray, for: .normal)
             DAILYJOB.isHidden = true
             WEEKLYJOB.isHidden = false
-            getDataGetList()
+            getWeekyReportList()
         }
     }
     
@@ -195,7 +272,7 @@ class ClientJobVC: UIViewController {
                 dcuureDate = Calendar.current.date(byAdding: .day, value: 1, to: dcuureDate)!
             }
             date_CollectionVw.reloadData()
-            getDataGetList()
+            getWeekyReportList()
         }
     }
     
@@ -208,13 +285,36 @@ class ClientJobVC: UIViewController {
             dcuureDate = Calendar.current.date(byAdding: .day, value: 1, to: dcuureDate)!
         }
         date_CollectionVw.reloadData()
-        getDataGetList()
+        getWeekyReportList()
     }
     
 }
 
 // Api Calling
 extension ClientJobVC {
+    
+//    func getProfile() {
+//        var paramsDict:[String:AnyObject] = [:]
+//        paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
+//        
+//        print(paramsDict)
+//        
+//        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                
+//                let swiftyJsonVar = JSON(responseData)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.strUseriD = swiftyJsonVar["id"].stringValue
+//                    self.strOutletName = swiftyJsonVar["business_name"].stringValue
+//                }
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            print(error)
+//            
+//        })
+//    }
     
     func GetNotificationCount() {
         var paramsDict:[String:AnyObject] = [:]
@@ -228,7 +328,7 @@ extension ClientJobVC {
                 
                 let swiftyJsonVar = JSON(responseData)
                 if(swiftyJsonVar["status"].stringValue == "1") {
-                                        
+                    
                     let notificationData: [String: NSNumber] = [
                         "chatCount": swiftyJsonVar["chat_count"].numberValue,
                         "requestCount": swiftyJsonVar["request"].numberValue
@@ -248,7 +348,7 @@ extension ClientJobVC {
                             print("All Count")
                         }
                     }
-                    getDataGetList()
+                    getWeekyReportList()
                 }
             }
             
@@ -258,11 +358,10 @@ extension ClientJobVC {
         })
     }
     
-    
-    func getDataGetList() {
+    func getWeekyReportList() {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
-        paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
+        paramDict["user_id"]  =   USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         
         let strDat = arrWeekStartToEnd[currentWeek]
         let arr = strDat.components(separatedBy: ",")
@@ -295,11 +394,10 @@ extension ClientJobVC {
         })
     }
     
-    func getJobRequests()
-    {
+    func getManpowerJobRequests() {
         showProgressBar()
         var paramDict: [String : AnyObject] = [:]
-        paramDict["user_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
+        paramDict["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         paramDict["today_date"] = Utility.getCurrentShortDateNew() as AnyObject
         paramDict["today_day_name"] = Utility.getCurrentDay() as AnyObject
         
@@ -337,6 +435,8 @@ extension ClientJobVC {
                     self.manpower_TableVw.reloadData()
                     self.height_ManpowerTable.constant = CGFloat(self.arrayManPowerReq.count * 140)
                 } else {
+                    self.lbl_WeeklyReqCount.isHidden = true
+                    self.lbl_DailyReqCount.isHidden = true
                     self.arrayManPowerReq = []
                     self.manpower_TableVw.isHidden = true
                     self.manpower_TableVw.backgroundView = UIView()
@@ -351,15 +451,14 @@ extension ClientJobVC {
         })
     }
     
-    func getUpcomingShifts()
-    {
+    func getUpcomingShifts() {
         showProgressBar()
         var paramDict: [String : AnyObject] = [:]
-        paramDict["user_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
+        paramDict["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         
         print(paramDict)
         
-        CommunicationManager.callPostApi(apiUrl: Router.get_shift_by_10day_count.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+        CommunicationManager.callPostService(apiUrl: Router.get_shift_by_10day_count.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
             
             DispatchQueue.main.async { [self] in
                 let resSwiftyJson = JSON(responseData)
@@ -370,8 +469,10 @@ extension ClientJobVC {
                     self.upcomingShiftTableVw.reloadData()
                 } else {
                     self.arrayForUpcomingShift = []
+                    self.upcomingTableHeight.constant = calculateTableHeight()
                     self.upcomingShiftTableVw.backgroundView = UIView()
                     self.upcomingShiftTableVw.reloadData()
+                    Utility.noDataFound("No Upcoming Shift At The Moment", tableViewOt: self.upcomingShiftTableVw, parentViewController: self)
                 }
                 self.hideProgressBar()
             }
@@ -382,8 +483,7 @@ extension ClientJobVC {
         })
     }
     
-    func calculateTableHeight() -> CGFloat
-    {
+    func calculateTableHeight() -> CGFloat {
         var tableHeight = 0
         for val in self.arrayForUpcomingShift
         {
@@ -396,6 +496,61 @@ extension ClientJobVC {
             }
         }
         return CGFloat(tableHeight)
+    }
+    
+    func WebGetOutlet() {
+        showProgressBar()
+        
+        var paramsDict:[String:AnyObject] = [:]
+        paramsDict["client_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
+        
+        print(paramsDict)
+        
+        CommunicationManager.callPostService(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+            
+            DispatchQueue.main.async {
+                let swiftyJsonVar = JSON(responseData)
+                if(swiftyJsonVar["status"].stringValue == "1") {
+                    self.arrayOfOutlet = swiftyJsonVar["result"].arrayValue
+                    
+                    // ---- Add default user item at index 0 ----
+                    let defaultOutlet: JSON = [
+                        "id": USER_DEFAULT.value(forKey: USERID) as? String ?? "",
+                        "business_name": USER_DEFAULT.value(forKey: BUSINESS_NAME) as? String ?? "My Business",
+                        "business_logo": USER_DEFAULT.value(forKey: BUSINESS_LOGO) as? String ?? ""
+                    ]
+                    
+                    // Only insert if not already present
+                    if self.arrayOfOutlet.first?["id"].stringValue != defaultOutlet["id"].stringValue {
+                        self.arrayOfOutlet.insert(defaultOutlet, at: 0)
+                    }
+                    // -------------------------------------------------
+                    
+                    if USER_DEFAULT.value(forKey: CLIENTID) as? String ?? "" == "" {
+                        let firstOutlet = self.arrayOfOutlet[0]
+                        USER_DEFAULT.set(firstOutlet["id"].stringValue, forKey: CLIENTID)
+                        self.lbl_Outlet.text = firstOutlet["business_name"].stringValue
+                        Utility.setImageWithSDWebImage(firstOutlet["business_logo"].stringValue, self.outletImage)
+                    } else {
+                        self.strOutletiD = USER_DEFAULT.value(forKey: CLIENTID) as? String ?? ""
+                        self.lbl_Outlet.text = USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? ""
+                        let outletImg = USER_DEFAULT.value(forKey: OUTLET_IMAGE) as? String ?? ""
+                        Utility.setImageWithSDWebImage(outletImg, self.outletImage)
+                    }
+                    
+                    self.lbl_SelectOutlet.text = "Select To Change Outlet"
+                    self.getUpcomingShifts()
+                } else {
+                    self.lbl_SelectOutlet.text = "Add More Outlet(s) In Settings"
+                    self.getUpcomingShifts()
+                }
+                self.hideProgressBar()
+            }
+            
+        },failureBlock: { (error : Error) in
+            self.hideProgressBar()
+            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        })
     }
 }
 
@@ -495,7 +650,7 @@ extension ClientJobVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView == manpower_TableVw {
-            let vC = R.storyboard.main().instantiateViewController(withIdentifier: "RequestVC") as! RequestVC
+            let vC = R.storyboard.main.requestVC()!
             self.navigationController?.pushViewController(vC, animated: true)
         }
     }

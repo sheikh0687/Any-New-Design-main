@@ -38,7 +38,6 @@ class PopUpVC: UIViewController {
             btn_one.setTitle(str_One, for: .normal)
             btn_two.setTitle(str_Two, for: .normal)
         }
-        
     }
     
     @IBAction func back(_ sender: Any) {

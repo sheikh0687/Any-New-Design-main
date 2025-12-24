@@ -42,8 +42,8 @@ class PasswordOtpVC: UIViewController {
     
     @IBAction func btn_Next(_ sender: UIButton) {
         if validateInput() {
-            let vC = R.storyboard.main().instantiateViewController(withIdentifier: "ResetPasswordVC") as! ResetPasswordVC
-            self.navigationController?.pushViewController(vC, animated: true)
+            let vC = R.storyboard.main.resetPasswordVC()
+            self.navigationController?.pushViewController(vC!, animated: true)
         }
     }
 }

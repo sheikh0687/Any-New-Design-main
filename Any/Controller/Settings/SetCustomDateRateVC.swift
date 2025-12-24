@@ -11,6 +11,7 @@ import SwiftyJSON
 class SetCustomDateRateVC: UIViewController {
 
     @IBOutlet weak var lbl_Hour: UILabel!
+    let currencySymbol = USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) as? String ?? ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +25,7 @@ class SetCustomDateRateVC: UIViewController {
         self.navigationController?.navigationBar.isHidden = false
         self.tabBarController?.tabBar.isHidden = true
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Set Custom Date Rate", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
-        self.lbl_Hour.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)12/hour"
+        self.lbl_Hour.text = "\(currencySymbol)12/hour"
     }
     
     @IBAction func btn_SelectDate(_ sender: UIButton) {
@@ -36,15 +37,15 @@ class SetCustomDateRateVC: UIViewController {
     
     @IBAction func btn_Plus(_ sender: UIButton) {
         rate += 1
-        self.lbl_Hour.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(self.rate!)/hour"
+        self.lbl_Hour.text = "\(currencySymbol)\(self.rate!)/hour"
     }
     
     @IBAction func btn_Minus(_ sender: UIButton) {
         if rate > 12 {
             rate -= 1
-            lbl_Hour.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(self.rate!)/hour"
+            lbl_Hour.text = "\(currencySymbol)\(self.rate!)/hour"
         } else {
-            self.alert(alertmessage: "Minimum hourly rate can't be below \(kappDelegate.dic_Profile["currency_symbol"].stringValue)12/hr")
+            self.alert(alertmessage: "Minimum hourly rate can't be below \(currencySymbol)12/hr")
         }
     }
     

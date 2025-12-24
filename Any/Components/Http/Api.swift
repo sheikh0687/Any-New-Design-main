@@ -15,18 +15,18 @@ class Api: NSObject {
     
     private override init(){}
     
-    func add_Card(_ vc: UIViewController, _ params: [String: AnyObject], _ success: @escaping(_ responseData : AnyObject) -> Void) {
-        CommunicationManager.callPostService(apiUrl: Router.save_CardStripe.url(), parameters: params, parentViewController: vc, successBlock: { (response, message) in
+    func add_Card(_ vc: UIViewController, _ params: [String: Any], _ success: @escaping(_ responseData : Any) -> Void) {
+        CommunicationManager.callPostService(apiUrl: Router.save_CardStripe.url(), parameters: params, parentViewController: vc, successBlock: { response, message in
             success(response)
-        }) { (error) in
+        }) { error in
             vc.alert(alertmessage: error.localizedDescription)
         }
     }
     
-    func delete_SavedCard(_ vc: UIViewController, _ params: [String: AnyObject], _ success: @escaping(_ responseData : AnyObject) -> Void) {
-        CommunicationManager.callPostService(apiUrl: Router.delete_SaveCard.url(), parameters: params, parentViewController: vc, successBlock: { (response, message) in
+    func delete_SavedCard(_ vc: UIViewController, _ params: [String: Any], _ success: @escaping(_ responseData : Any) -> Void) {
+        CommunicationManager.callPostService(apiUrl: Router.delete_SaveCard.url(), parameters: params, parentViewController: vc, successBlock: { response, message in
             success(response)
-        }) { (error) in
+        }) { error in
             vc.alert(alertmessage: error.localizedDescription)
         }
     }

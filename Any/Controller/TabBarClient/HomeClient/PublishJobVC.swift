@@ -18,8 +18,10 @@ class PublishJobVC: UIViewController {
     @IBOutlet weak var lbl_SelectDay: UILabel!
     @IBOutlet weak var lbl_Note: UILabel!
     @IBOutlet weak var lbl_DefaultRate: UILabel!
+    @IBOutlet weak var lbl_OutletName: UILabel!
     
     @IBOutlet weak var workerShiftVw: UIView!
+    @IBOutlet weak var outletView: UIView!
     @IBOutlet weak var worker_TableVw: UITableView!
     @IBOutlet weak var worker_TableHeight: NSLayoutConstraint!
     @IBOutlet weak var collectionDate: UICollectionView!
@@ -43,11 +45,14 @@ class PublishJobVC: UIViewController {
     var strDaysName:String = ""
     var strShiftStatus:String = ""
     var strApplyForAllWorker:String = "No"
+    var strOutletName: String = ""
+    var strOutletiD: String = ""
     
     var arrayWorkerTime: [JSON] = []
     var arrayStartTime: [String] = []
     var arrayEndTime: [String] = []
     var fullFetchedShiftArrayFromAPI: [JSON] = []
+//    var arrayOfOutlet: [JSON] = []
     
     var arrayWorkerStartTime: [String] = []
     var arrayWorkerEndTime: [String] = []
@@ -62,6 +67,7 @@ class PublishJobVC: UIViewController {
         self.collectionDate.register(UINib(nibName: "MultiDateCell", bundle: nil), forCellWithReuseIdentifier: "MultiDateCell")
         self.arrayWorkerTime.append(JSON(workerCount))
         print(self.arrayWorkerTime.count)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -81,10 +87,28 @@ class PublishJobVC: UIViewController {
             setNavigationBarItem(LeftTitle: "", LeftImage: "", CenterTitle: "Add A New Job", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
         }
         self.navigationController?.navigationBar.isHidden = false
+        WebGetOutlet()
+        print(USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? "")
+        print(USER_DEFAULT.value(forKey: CLIENTID) as? String ?? "")
+        self.lbl_OutletName.text = USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? ""
+        self.strOutletiD = USER_DEFAULT.value(forKey: CLIENTID) as? String ?? ""
+        self.strOutletName = USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? ""
+    }
+    
+    @IBAction func btn_OutletName(_ sender: UIButton) {
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
+        vC.headline = "Outlet"
+        vC.centerTitle = "Outlet Selection"
+        vC.cloAllJobTypes = { outletName, outletiD in
+            self.lbl_OutletName.text = outletName
+            self.strOutletName = outletName
+            self.strOutletiD = outletiD
+        }
+        self.navigationController?.pushViewController(vC, animated: true)
     }
     
     @IBAction func btn_JobType(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
         vC.headline = "Job Type"
         vC.centerTitle = "Job Selection"
         vC.cloAllJobTypes = { valJobType, jobiD in
@@ -96,7 +120,7 @@ class PublishJobVC: UIViewController {
     }
     
     @IBAction func btn_WorkerNum(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
         vC.headline = "Number of Workers"
         vC.centerTitle = "Manpower"
         vC.cloAllJobTypes = { valWorkerCount, valBlank in
@@ -130,7 +154,7 @@ class PublishJobVC: UIViewController {
     
     @IBAction func btn_Schedule(_ sender: UIButton) {
         if isFrom != "Urgent" {
-            let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+            let vC = R.storyboard.main.selectAllJobTypesVC()!
             strSchedule = "Fill"
             vC.headline = "Schedule"
             vC.centerTitle = "Schedule Selection"
@@ -165,7 +189,7 @@ class PublishJobVC: UIViewController {
     
     @IBAction func btn_SelectWeeklyDay(_ sender: Any) {
         if self.lbl_SelectSchedule.text == "Weekly" {
-            let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+            let vC = R.storyboard.main.selectAllJobTypesVC()!
             vC.headline = "Days"
             vC.centerTitle = "Choose Working Days"
             vC.isFromUpdate = false
@@ -178,7 +202,7 @@ class PublishJobVC: UIViewController {
             self.navigationController?.pushViewController(vC, animated: true)
             
         } else if self.lbl_SelectSchedule.text == "Specific Date" {
-            let vC = R.storyboard.main().instantiateViewController(withIdentifier: "CalenderPickervC") as! CalenderPickervC
+            let vC = R.storyboard.main.calenderPickervC()!
             vC.modalTransitionStyle = .crossDissolve
             vC.modalPresentationStyle = .overFullScreen
             vC.cloOk = { [weak self] selectedDate in
@@ -203,12 +227,15 @@ class PublishJobVC: UIViewController {
     }
     
     @IBAction func btn_Rates(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SetRateVC") as! SetRateVC
+        let vC = R.storyboard.main.setRateVC()!
+        vC.strJobTypeName = self.strJobTypeName
+        vC.strJobId = self.strJobId
+        vC.isComingFrom = "PublishJob"
         self.navigationController?.pushViewController(vC, animated: true)
     }
     
     @IBAction func btn_Break(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
         vC.headline = "Break Type"
         vC.centerTitle = "Breaks"
         vC.cloAllJobTypes = { valBreak, valBlank in
@@ -222,7 +249,7 @@ class PublishJobVC: UIViewController {
     }
     
     @IBAction func btn_Meal(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
         vC.headline = "Meal Provision"
         vC.centerTitle = "Meals"
         vC.cloAllJobTypes = { valMeal, valBlank in
@@ -291,7 +318,7 @@ class PublishJobVC: UIViewController {
     
     @IBAction func btn_PublishJob(_ sender: UIButton) {
         if isValidInput() {
-            let vC = R.storyboard.main().instantiateViewController(withIdentifier: "ConfirmJobPostVC") as! ConfirmJobPostVC
+            let vC = R.storyboard.main.confirmJobPostVC()!
             vC.strJobiD = strJobId
             collectParamJobPost()
             print(paramJobPostDict)
@@ -440,6 +467,31 @@ extension PublishJobVC: UICollectionViewDataSource, UICollectionViewDelegateFlow
 
 extension PublishJobVC {
     
+    func WebGetOutlet() {
+        showProgressBar()
+        var paramsDict:[String:AnyObject] = [:]
+        paramsDict["client_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
+        
+        print(paramsDict)
+        
+        CommunicationManager.callPostService(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+            
+            DispatchQueue.main.async {
+                let swiftyJsonVar = JSON(responseData)
+                if(swiftyJsonVar["status"].stringValue == "1") {
+                    self.outletView.isHidden = false
+                } else {
+                    self.outletView.isHidden = true
+                }
+                self.hideProgressBar()
+            }
+            
+        },failureBlock: { (error : Error) in
+            self.hideProgressBar()
+            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        })
+    }
+    
     func collectParamJobPost()
     {
         paramJobPostDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -461,6 +513,8 @@ extension PublishJobVC {
         paramJobPostDict["multi_work_end_time"] = self.arrayEndTime.joined(separator: ",") as AnyObject
         paramJobPostDict["shift_break_time"] = self.strBreakTime as AnyObject
         paramJobPostDict["shift_break_time_in_min"] = Utility.convertToMinutes(from: strBreakTime) as AnyObject
+        paramJobPostDict["outlet_id"] = strOutletiD as AnyObject
+        paramJobPostDict["business_name"] = strOutletName as AnyObject
         
         print(paramJobPostDict)
     }

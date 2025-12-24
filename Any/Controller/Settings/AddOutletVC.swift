@@ -18,6 +18,8 @@ class AddOutletVC: UIViewController {
     
     var outletName:String = ""
     var outletAddress:String = ""
+    var outletLat:String = ""
+    var outletLon: String = ""
     var outletImage:String = ""
     var strOutletiD:String = ""
     
@@ -36,6 +38,10 @@ class AddOutletVC: UIViewController {
                 }
             }
         }
+        
+        self.txt_OuletAddress.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(addPicker))
+        txt_OuletAddress.addGestureRecognizer(tapGesture)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,6 +50,18 @@ class AddOutletVC: UIViewController {
         self.navigationController?.navigationBar.isHidden = false
         
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Add Outlet", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
+    }
+    
+    @objc func addPicker()
+    {
+        let vC = kStoryboardMain.instantiateViewController(withIdentifier: "AddressPickerVC") as! AddressPickerVC
+        vC.locationPickedBlock = { [weak self] cordinationVal, latVal, lonVal, addressVal in
+            guard let self = self else { return }
+            self.txt_OuletAddress.text = addressVal
+            self.outletLat = String(latVal)
+            self.outletLon = String(lonVal)
+        }
+        self.present(vC, animated: true, completion: nil)
     }
     
     @IBAction func btn_UploadPhoto(_ sender: UIButton) {
@@ -92,6 +110,8 @@ extension AddOutletVC {
         }
         paramsDict["business_name"]     =   txt_OutletName.text as AnyObject
         paramsDict["business_address"]  =   txt_OuletAddress.text as AnyObject
+        paramsDict["lat"] = outletLat as AnyObject
+        paramsDict["lon"] = outletLon as AnyObject
         
         print(paramsDict)
         
@@ -107,22 +127,22 @@ extension AddOutletVC {
             videoParam: [:],
             parentViewController: self,
             successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    Utility.showAlertWithAction(withTitle: APPNAME, message: isComeOutlet ? "Outlet updated successfully!" : "Outlet added successfully!",  delegate: nil, parentViewController: self) { bool in
-                        self.navigationController?.popViewController(animated: true)
+                
+                DispatchQueue.main.async { [self] in
+                    let swiftyJsonVar = JSON(responseData)
+                    print(swiftyJsonVar)
+                    if(swiftyJsonVar["status"].stringValue == "1") {
+                        Utility.showAlertWithAction(withTitle: APPNAME, message: isComeOutlet ? "Outlet updated successfully!" : "Outlet added successfully!",  delegate: nil, parentViewController: self) { bool in
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                    } else {
+                        let message = swiftyJsonVar["message"].stringValue
+                        GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
                     }
-                } else {
-                    let message = swiftyJsonVar["message"].stringValue
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+                    self.hideProgressBar()
                 }
-                self.hideProgressBar()
-            }
-            
-        },failureBlock: { (error : Error) in
+                
+            },failureBlock: { (error : Error) in
             self.hideProgressBar()
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         })

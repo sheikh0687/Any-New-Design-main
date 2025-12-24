@@ -109,7 +109,6 @@ class CurrentShiftVC: UIViewController {
     }
     
     func getDataGetChatListd(strType:String) {
-        
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -137,12 +136,17 @@ class CurrentShiftVC: UIViewController {
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramDict["shift_autoapproval"]  =   strType as AnyObject
 
+        print(paramDict)
+        
         CommunicationManager.callPostService(apiUrl: Router.set_shift_autoapproval_status.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
             DispatchQueue.main.async {
                 let swiftyJsonVar = JSON(responseData)
                 print(swiftyJsonVar)
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     self.GetProfile()
+                } else {
+                    self.GetProfile()
+                    self.alert(alertmessage: swiftyJsonVar["message"].stringValue)
                 }
                 self.hideProgressBar()
             }
@@ -236,12 +240,12 @@ extension CurrentShiftVC: UITableViewDataSource {
         cell.lbl_Break.text = (dic["break_type"].stringValue)
         cell.lbl_Meal.text = (dic["meals"].stringValue)
         cell.lbl_JobType.text = (dic["job_type"].stringValue)
+        cell.lbl_OUtletName.text = (dic["business_name"].stringValue)
         
         cell.btn_ThreeDot.tag = indexPath.row
         cell.btn_ThreeDot.addTarget(self, action: #selector(clcidelete), for: .touchUpInside)
 
         return cell
-        
     }
     
     
@@ -256,8 +260,10 @@ extension CurrentShiftVC: UITableViewDataSource {
         drop.selectionAction = { [unowned self] (index: Int, item: String) in
 
             if index == 0 {
-                let vC = R.storyboard.main().instantiateViewController(withIdentifier: "UpdateJobPublishVC") as! UpdateJobPublishVC
+                let vC = R.storyboard.main.updateJobPublishVC()!
                 vC.shift_iD = dic["id"].stringValue
+                vC.strOutletiD = dic["outlet_id"].stringValue
+                vC.strOutletName = dic["business_name"].stringValue
                 self.navigationController?.pushViewController(vC, animated: true)
             } else {
                 webDeletShift(strSt: dic["id"].stringValue)

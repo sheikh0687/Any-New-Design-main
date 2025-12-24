@@ -32,7 +32,7 @@ class OutletVC: UIViewController {
     }
     
     @IBAction func btn_AddOutlet(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "AddOutletVC") as! AddOutletVC
+        let vC = R.storyboard.main.addOutletVC()!
         isComeOutlet = false
         self.navigationController?.pushViewController(vC, animated: true)
     }
@@ -133,12 +133,14 @@ extension OutletVC: UITableViewDataSource, UITableViewDelegate {
         drop.selectionAction = { [unowned self] (index: Int, item: String) in
 
             if index == 0 {
-                let vC = R.storyboard.main().instantiateViewController(withIdentifier: "AddOutletVC") as! AddOutletVC
+                let vC = R.storyboard.main.addOutletVC()!
                 isComeOutlet = true
                 vC.strOutletiD = dic["id"].stringValue
                 vC.outletName = dic["business_name"].stringValue
                 vC.outletAddress = dic["business_address"].stringValue
                 vC.outletImage = dic["business_logo"].stringValue
+                vC.outletLat = dic["lat"].stringValue
+                vC.outletLon = dic["lon"].stringValue
                 self.navigationController?.pushViewController(vC, animated: true)
             } else {
                 webDeletOutlet(strSt: dic["id"].stringValue)

@@ -56,6 +56,21 @@ class ChatConversationVC: UIViewController {
                 print(swiftyJsonVar)
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     self.arr_List  = swiftyJsonVar["result"].arrayValue
+                    
+//                    let adminChat: JSON = [
+//                        "id": "1",
+//                        "first_name": "Customer Support",
+//                        "last_name": "",
+//                        "last_message": "Welcome to Anytime Work! Please feel free to message here if you need any assistance.",
+//                        "image": "",
+//                        "request_id": "",
+//                        "sender_id": "7"
+//                    ]
+//                    
+//                    if self.arr_List.first?["id"].stringValue != adminChat["id"].stringValue {
+//                        self.arr_List.insert(adminChat, at: 0)
+//                    }
+                    
                     self.table_Chat.backgroundView = UIView()
                     self.table_Chat.reloadData()
                 } else {
@@ -71,8 +86,8 @@ class ChatConversationVC: UIViewController {
             self.hideProgressBar()
         })
     }
-    
 }
+
 extension ChatConversationVC: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -82,6 +97,7 @@ extension ChatConversationVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return arr_List.count
     }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChatConversationCell
         let dic = self.arr_List[indexPath.row]
@@ -102,6 +118,33 @@ extension ChatConversationVC: UITableViewDataSource {
         
         let urlLogo = URL(string: urlwithPercentEscapes!)
         cell.img_User.sd_setImage(with: urlLogo, placeholderImage: UIImage.init(named: "Profile_Pla"), options: SDWebImageOptions(rawValue: 1), completed: nil)
+
+        
+//        if imgLogoUrl.isEmpty {
+//            // For admin / any user without image
+//            cell.img_User.image = R.image.logo()
+//            cell.img_User.cornerRadius = 0
+//            cell.img_User.clipsToBounds = true
+//            cell.img_User.contentMode = .scaleAspectFit
+//        } else {
+//            let urlWithPercentEscapes = imgLogoUrl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+//            if let urlString = urlWithPercentEscapes, let urlLogo = URL(string: urlString) {
+//                cell.img_User.sd_setImage (
+//                    with: urlLogo,
+//                    placeholderImage: UIImage(named: "Profile_Pla"),
+//                    options: SDWebImageOptions(rawValue: 1),
+//                    completed: nil
+//                )
+//            } else {
+//                cell.img_User.image = R.image.logo() // fallback
+//            }
+//        }
+        
+//        let urlwithPercentEscapes = imgLogoUrl.addingPercentEncoding( withAllowedCharacters: .urlQueryAllowed)
+//        
+//        let urlLogo = URL(string: urlwithPercentEscapes!)
+//        cell.img_User.sd_setImage(with: urlLogo, placeholderImage: UIImage.init(named: "Profile_Pla"), options: SDWebImageOptions(rawValue: 1), completed: nil)
+        
         return cell
     }
 }

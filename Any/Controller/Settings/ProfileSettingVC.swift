@@ -56,7 +56,7 @@ class ProfileSettingVC: UIViewController{
     
     @IBAction func btn_History(_ sender: UIButton)
     {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "HistoryVC") as! HistoryVC
+        let vC = R.storyboard.main.historyVC()!
         self.navigationController?.pushViewController(vC, animated: true)
     }
     
@@ -122,7 +122,7 @@ class ProfileSettingVC: UIViewController{
     
     @IBAction func btn_Outlets(_ sender: UIButton)
     {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "OutletVC") as! OutletVC
+        let vC = R.storyboard.main.outletVC()!
         self.navigationController?.pushViewController(vC, animated: true)
     }
     
@@ -163,6 +163,11 @@ class ProfileSettingVC: UIViewController{
             UserDefaults.standard.removeObject(forKey: STATUS)
             UserDefaults.standard.removeObject(forKey: CUSTOMERID)
             UserDefaults.standard.removeObject(forKey: CARDID)
+            UserDefaults.standard.removeObject(forKey: CLIENTID)
+            UserDefaults.standard.removeObject(forKey: BUSINESS_NAME)
+            UserDefaults.standard.removeObject(forKey: BUSINESS_LOGO)
+            UserDefaults.standard.removeObject(forKey: OUTLET_NAME)
+            UserDefaults.standard.removeObject(forKey: OUTLET_IMAGE)
             UserDefaults.standard.synchronize()
             Switcher.updateRootVC()
         }

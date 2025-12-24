@@ -74,7 +74,7 @@ class ChangePAssVC: UIViewController {
                     
                     self.perform(#selector(goBackD), with: self, afterDelay: 1.0)
                     GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Password Changed", on: self)
-
+                    
                 } else {
                     GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: swiftyJsonVar["message"].stringValue, on: self)
                 }

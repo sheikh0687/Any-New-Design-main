@@ -76,7 +76,7 @@ class ForgotPasswordVC: UIViewController {
                 let swiftyJsonVar = JSON(responseData)
                 print(swiftyJsonVar)
                 if(swiftyJsonVar["status"] == "1") {
-                    let vC = R.storyboard.main().instantiateViewController(withIdentifier: "PasswordOtpVC") as! PasswordOtpVC
+                    let vC = R.storyboard.main.passwordOtpVC()!
                     let otpCode = swiftyJsonVar["otp"].numberValue
                     USER_DEFAULT.set(otpCode, forKey: PASSWORD_RESET_CODE)
                     self.navigationController?.pushViewController(vC, animated: true)

@@ -67,6 +67,7 @@ extension OtpVC {
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     USER_DEFAULT.set(swiftyJsonVar["result"]["type"].stringValue, forKey: USER_TYPE)
                     USER_DEFAULT.set(swiftyJsonVar["result"]["id"].stringValue, forKey: USERID)
+                    USER_DEFAULT.set(swiftyJsonVar["result"]["id"].stringValue, forKey: CLIENTID)
                     USER_DEFAULT.set(swiftyJsonVar["status"].stringValue, forKey: STATUS)
                     USER_DEFAULT.set(swiftyJsonVar["result"]["email"].stringValue, forKey: USEREMAIL)
                     USER_DEFAULT.set(swiftyJsonVar["result"]["mobile"].stringValue, forKey: USERMOBILE)
@@ -78,11 +79,12 @@ extension OtpVC {
                     USER_DEFAULT.set(swiftyJsonVar["result"]["country_id"].stringValue, forKey: COUNTRYID)
                     
                     USER_DEFAULT.set(swiftyJsonVar["result"]["currency_symbol"].stringValue, forKey: CURRENCY_SYMBOL)
+                    
                     if strType == "Worker" {
-                        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "WorkerSigningDetailVC") as! WorkerSigningDetailVC
+                        let vC = R.storyboard.main.workerSigningDetailVC()!
                         self.navigationController?.pushViewController(vC, animated: true)
                     } else {
-                        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "ClientSigningDetailVC") as! ClientSigningDetailVC
+                        let vC = R.storyboard.main.clientSigningDetailVC()!
                         vC.strMobileNum = strMobileNumber
                         vC.strCode = strCode
                         self.navigationController?.pushViewController(vC, animated: true)

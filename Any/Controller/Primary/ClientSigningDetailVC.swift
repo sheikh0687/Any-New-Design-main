@@ -22,17 +22,35 @@ class ClientSigningDetailVC: UIViewController {
     var strMobileNum:String = ""
     var imageBuisnesslogo:UIImage? = nil
     var strCode:String = ""
+    var addressLat:String = ""
+    var addressLon:String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.txt_MobileNumber.text = self.strMobileNum
         btn_Cou.setTitle("+\(strCode)", for: .normal)
+        self.txt_BusinessAddress.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(addPicker))
+        txt_BusinessAddress.addGestureRecognizer(tapGesture)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = false
         setNavigationBarItem(LeftTitle: "", LeftImage: "back", CenterTitle: "Create Business Profile", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: WHITE_COLOR, TintColor: BLACK_COLOR, Menu: "")
+    }
+    
+    @objc func addPicker()
+    {
+        let vC = kStoryboardMain.instantiateViewController(withIdentifier: "AddressPickerVC") as! AddressPickerVC
+        vC.locationPickedBlock = { [weak self] cordinationVal, latVal, lonVal, addressVal in
+            guard let self = self else { return }
+            self.txt_BusinessAddress.text = addressVal
+            self.addressLat = String(latVal)
+            self.addressLon = String(lonVal)
+        }
+        self.present(vC, animated: true, completion: nil)
+
     }
     
     @IBAction func btn_UploadPhoto(_ sender: UIButton) {
@@ -75,31 +93,31 @@ class ClientSigningDetailVC: UIViewController {
 
 extension ClientSigningDetailVC {
     
-    func GetClientInstruction() {
-        showProgressBar()
-        var paramsDict:[String:AnyObject] = [:]
-        paramsDict["country_id"]  =   USER_DEFAULT.value(forKey: COUNTRYID) as AnyObject
-        
-        CommunicationManager.callPostApi(apiUrl: Router.get_country_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    let obj = swiftyJsonVar["result"]
-                    self.txt_RegisterNumber.placeholder = obj["client_document"].stringValue
-                } else {
-                    let message = swiftyJsonVar["message"].stringValue
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-                }
-                self.hideProgressBar()
-            }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
-            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
-    }
+//    func GetClientInstruction() {
+//        showProgressBar()
+//        var paramsDict:[String:AnyObject] = [:]
+//        paramsDict["country_id"]  =   USER_DEFAULT.value(forKey: COUNTRYID) as AnyObject
+//        
+//        CommunicationManager.callPostService(apiUrl: Router.get_country_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    let obj = swiftyJsonVar["result"]
+//                    self.txt_RegisterNumber.placeholder = obj["client_document"].stringValue
+//                } else {
+//                    let message = swiftyJsonVar["message"].stringValue
+//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+//    }
         
     func WebUpdateClientProfile() {
         showProgressBar()
@@ -111,8 +129,8 @@ extension ClientSigningDetailVC {
         paramsDict["business_name"]  =   self.txt_BusinessName.text! as AnyObject
         paramsDict["une_register_number"]  =   self.txt_RegisterNumber.text! as AnyObject
         paramsDict["business_address"]  =   self.txt_BusinessAddress.text! as AnyObject
-        paramsDict["lat"]   =        kappDelegate.CURRENT_LAT as AnyObject
-        paramsDict["lon"]  =        kappDelegate.CURRENT_LON as AnyObject
+        paramsDict["lat"]   =        addressLat as AnyObject
+        paramsDict["lon"]  =        addressLon as AnyObject
         paramsDict["register_id"]  =   "" as AnyObject?
         paramsDict["type"]     =   strType as AnyObject
         paramsDict["mobile"]     =   txt_MobileNumber.text! as AnyObject
@@ -132,7 +150,13 @@ extension ClientSigningDetailVC {
                 let swiftyJsonVar = JSON(responseData)
                 print(swiftyJsonVar)
                 if(swiftyJsonVar["status"].stringValue == "1") {
-                    let vC = R.storyboard.main().instantiateViewController(withIdentifier: "RegistrationSuccessVC") as! RegistrationSuccessVC
+                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: BUSINESS_NAME)
+                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_logo"].stringValue, forKey: BUSINESS_LOGO)
+                    
+                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: OUTLET_NAME)
+                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_logo"].stringValue, forKey: OUTLET_IMAGE)
+                    
+                    let vC = R.storyboard.main.registrationSuccessVC()!
                     vC.imageBuisnesslogo = self.imageBuisnesslogo
                     vC.strBusinessName = self.txt_BusinessName.text
                     self.navigationController?.pushViewController(vC, animated: true)

@@ -80,7 +80,7 @@ class PaymentVC: UIViewController {
                     let message = swiftyJsonVar["result"].string
                     print(message ?? "")
                 }
-                 self.hideProgressBar()
+                self.hideProgressBar()
             }
         },failureBlock: { (error : Error) in
             self.hideProgressBar()
@@ -155,7 +155,7 @@ class PaymentVC: UIViewController {
         }
     }
     
-    func parseDataSaveCard(apiResponse : AnyObject) {
+    func parseDataSaveCard(apiResponse : Any) {
         DispatchQueue.main.async {
             let swiftyJsonVar = JSON(apiResponse)
             print(swiftyJsonVar)

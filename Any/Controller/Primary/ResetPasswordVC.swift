@@ -67,7 +67,7 @@ extension ResetPasswordVC {
             DispatchQueue.main.async { [self] in
                 let swiftyJsonVar = JSON(responseData)
                 if(swiftyJsonVar["status"] == "1") {
-                    let vC = R.storyboard.main().instantiateViewController(withIdentifier: "PopPasswordChangedVC") as! PopPasswordChangedVC
+                    let vC = R.storyboard.main.popPasswordChangedVC()!
                     vC.cloSuccess = {
                         Switcher.updateRootVC()
                     }

@@ -104,7 +104,7 @@ extension UrgentBookingVC {
                     ]
                     
                     NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
-
+                    
                     getUrgentBookingList()
                     
                 }
@@ -132,7 +132,7 @@ extension UrgentBookingVC {
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     self.arr_List  = swiftyJsonVar["result"].arrayValue
                     self.table_Chat.backgroundView = UIView()
-
+                    
                     self.table_Chat.reloadData()
                 } else {
                     self.arr_List = []
@@ -217,7 +217,7 @@ extension UrgentBookingVC: UITableViewDataSource {
         drop.selectionAction = { [unowned self] (index: Int, item: String) in
 
             if index == 0 {
-                let vC = R.storyboard.main().instantiateViewController(withIdentifier: "UpdateJobPublishVC") as! UpdateJobPublishVC
+                let vC = R.storyboard.main.updateJobPublishVC()!
                 vC.shift_iD = dic["id"].stringValue
                 self.navigationController?.pushViewController(vC, animated: true)
             } else {

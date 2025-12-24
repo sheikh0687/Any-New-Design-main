@@ -50,18 +50,27 @@ class EditProfileVC: UIViewController  {
     var imgBarista:UIImage? = nil
     var strJobId:String! = "1"
     var strJobTypeName:String! = "F&B"
+    var addressLat:String = ""
+    var addressLon:String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         countryList.delegate = self
         
-        btn_Cou.setTitle("+\(USER_DEFAULT.value(forKey: MobileCode) as? String ?? "65")", for: .normal)
+        if let mobileCode = USER_DEFAULT.value(forKey: MobileCode) as? String {
+            btn_Cou.setTitle("+\(mobileCode)", for: .normal)
+        } else {
+            btn_Cou.setTitle("+65", for: .normal)
+        }
         
         let locale: NSLocale = NSLocale.current as NSLocale
-        let country: String? = locale.countryCode
+        let _: String? = locale.countryCode
         
         if Utility.isUserLogin() {
-            strType = (USER_DEFAULT.value(forKey: USER_TYPE) as! String)
+            
+            if let userType = USER_DEFAULT.value(forKey: USER_TYPE) as? String {
+                strType = userType
+            }
             
             if strType == "Client" {
                 
@@ -71,25 +80,44 @@ class EditProfileVC: UIViewController  {
                 view_Buismesslogo.isHidden = false
                 localBankDetails.isHidden = true
                 
-                text_First.text = kappDelegate.dic_Profile["first_name"].stringValue
-                text_Last.text = kappDelegate.dic_Profile["last_name"].stringValue
-                text_Mobile.text = kappDelegate.dic_Profile["mobile"].stringValue
-                text_Mail.text = kappDelegate.dic_Profile["email"].stringValue
-                text_BusName.text = kappDelegate.dic_Profile["business_name"].stringValue
-                text_Une.text = kappDelegate.dic_Profile["une_register_number"].stringValue
-                textbuinseeAddre.text = kappDelegate.dic_Profile["business_address"].stringValue
+                let profile = kappDelegate.dic_Profile
                 
-                if Router.BASE_IMAGE_URL != kappDelegate.dic_Profile["business_logo"].stringValue {
-                    self.img_Buinsesslogo.sd_setImage(with: URL.init(string: (kappDelegate.dic_Profile["business_logo"].stringValue)), placeholderImage: UIImage.init(named: "placeholder1"), options: SDWebImageOptions(rawValue: 1), completed: nil)
+                text_First?.text        = profile?["first_name"].string ?? ""
+                text_Last?.text         = profile?["last_name"].string ?? ""
+                text_Mobile?.text       = profile?["mobile"].string ?? ""
+                text_Mail?.text         = profile?["email"].string ?? ""
+                text_BusName?.text      = profile?["business_name"].string ?? ""
+                textbuinseeAddre?.text  = profile?["business_address"].string ?? ""
+                text_Une?.text          = profile?["une_register_number"].string ?? ""
+                self.addressLat         = profile?["lat"].string ?? ""
+                self.addressLon         = profile?["lon"].string ?? ""
+                
+                let businessname = profile?["business_name"].string ?? ""
+                USER_DEFAULT.set(businessname, forKey: BUSINESS_NAME)
+                
+                let businessLogoURL = profile?["business_logo"].string ?? ""
+                if businessLogoURL.isEmpty || businessLogoURL == Router.BASE_IMAGE_URL {
+                    img_Buinsesslogo.image = UIImage(named: "placeholder1")
                 } else {
-                    self.img_Buinsesslogo.image = nil
+                    img_Buinsesslogo.sd_setImage(
+                        with: URL(string: businessLogoURL),
+                        placeholderImage: UIImage(named: "placeholder1")
+                    )
                 }
                 
-                if Router.BASE_IMAGE_URL != kappDelegate.dic_Profile["image"].stringValue {
-                    self.img_Profile.sd_setImage(with: URL.init(string: (kappDelegate.dic_Profile["image"].stringValue)), placeholderImage: UIImage.init(named: "placeholder1"), options: SDWebImageOptions(rawValue: 1), completed: nil)
+                let profileImageURL = profile?["image"].string ?? ""
+                if profileImageURL.isEmpty || profileImageURL == Router.BASE_IMAGE_URL {
+                    img_Profile.image = UIImage(named: "placeholder1")
                 } else {
-                    self.img_Profile.image = nil
+                    img_Profile.sd_setImage(
+                        with: URL(string: profileImageURL),
+                        placeholderImage: UIImage(named: "placeholder1")
+                    )
                 }
+                
+                self.textbuinseeAddre.isUserInteractionEnabled = true
+                let tapGesture = UITapGestureRecognizer(target: self, action: #selector(addPicker))
+                textbuinseeAddre.addGestureRecognizer(tapGesture)
                 
             } else {
                 
@@ -99,37 +127,55 @@ class EditProfileVC: UIViewController  {
                 view_Buismesslogo.isHidden = true
                 view_jobType.isHidden = false
                 
-                text_First.text = kappDelegate.dic_Profile["first_name"].stringValue
-                text_Last.text = kappDelegate.dic_Profile["last_name"].stringValue
-                text_Mobile.text = kappDelegate.dic_Profile["mobile"].stringValue
-                txt_PayNowNumber.text = kappDelegate.dic_Profile["pay_now_number"].stringValue
-                txt_BankName.text = kappDelegate.dic_Profile["bank_name"].stringValue
-                txt_BankNumber.text = kappDelegate.dic_Profile["local_bank_number"].stringValue
+                let profile = kappDelegate.dic_Profile
                 
-                text_Mail.text = kappDelegate.dic_Profile["email"].stringValue
-                strJobId = kappDelegate.dic_Profile["job_type_id"].stringValue
-                strJobTypeName = kappDelegate.dic_Profile["job_type_name"].stringValue
-                btn_Jobtype.setTitle(kappDelegate.dic_Profile["job_type_name"].stringValue, for: .normal)
+                // MARK: - Safe Text Assignments
+                text_First?.text        = profile?["first_name"].string ?? ""
+                text_Last?.text         = profile?["last_name"].string ?? ""
+                text_Mobile?.text       = profile?["mobile"].string ?? ""
+                txt_PayNowNumber?.text  = profile?["pay_now_number"].string ?? ""
+                txt_BankName?.text      = profile?["bank_name"].string ?? ""
+                txt_BankNumber?.text    = profile?["local_bank_number"].string ?? ""
+                text_Mail?.text         = profile?["email"].string ?? ""
                 
-                if Router.BASE_IMAGE_URL != kappDelegate.dic_Profile["image"].stringValue {
-                    self.img_Profile.sd_setImage(with: URL.init(string: (kappDelegate.dic_Profile["image"].stringValue)), placeholderImage: UIImage.init(named: "placeholder1"), options: SDWebImageOptions(rawValue: 1), completed: nil)
+                strJobId                = profile?["job_type_id"].string ?? ""
+                strJobTypeName          = profile?["job_type_name"].string ?? ""
+                btn_Jobtype.setTitle(strJobTypeName, for: .normal)
+                
+                
+                // MARK: - Safe Image Loading (NO helper function)
+                
+                // Profile Image
+                let profileImageURL = profile?["image"].string ?? ""
+                if profileImageURL.isEmpty || profileImageURL == Router.BASE_IMAGE_URL {
+                    img_Profile.image = UIImage(named: "placeholder1")
                 } else {
-                    self.img_Profile.image = nil
+                    img_Profile.sd_setImage(
+                        with: URL(string: profileImageURL),
+                        placeholderImage: UIImage(named: "placeholder1")
+                    )
                 }
                 
-                if Router.BASE_IMAGE_URL != kappDelegate.dic_Profile["job_document"].stringValue
-                {
-                    self.img_Berista.sd_setImage(with: URL.init(string: (kappDelegate.dic_Profile["job_document"].stringValue)), placeholderImage: UIImage.init(named: "upload_image"), options: SDWebImageOptions(rawValue: 1), completed: nil)
+                // Job Document Image
+                let jobDocURL = profile?["job_document"].string ?? ""
+                if jobDocURL.isEmpty || jobDocURL == Router.BASE_IMAGE_URL {
+                    img_Berista.image = UIImage(named: "upload_image")
                 } else {
-                    self.img_Berista.image = nil
+                    img_Berista.sd_setImage(
+                        with: URL(string: jobDocURL),
+                        placeholderImage: UIImage(named: "upload_image")
+                    )
                 }
                 
-                if Router.BASE_IMAGE_URL != kappDelegate.dic_Profile["nrc_document"].stringValue {
-                    
-                    self.img_Nrc.sd_setImage(with: URL.init(string: (kappDelegate.dic_Profile["nrc_document"].stringValue)), placeholderImage: UIImage.init(named: "upload_image"), options: SDWebImageOptions(rawValue: 1), completed: nil)
-
+                // NRC Document Image
+                let nrcDocURL = profile?["nrc_document"].string ?? ""
+                if nrcDocURL.isEmpty || nrcDocURL == Router.BASE_IMAGE_URL {
+                    img_Nrc.image = UIImage(named: "upload_image")
                 } else {
-                    self.img_Nrc.image = nil
+                    img_Nrc.sd_setImage(
+                        with: URL(string: nrcDocURL),
+                        placeholderImage: UIImage(named: "upload_image")
+                    )
                 }
             }
         } else {
@@ -158,8 +204,21 @@ class EditProfileVC: UIViewController  {
         }
     }
     
+    @objc func addPicker()
+    {
+        let vC = kStoryboardMain.instantiateViewController(withIdentifier: "AddressPickerVC") as! AddressPickerVC
+        vC.locationPickedBlock = { [weak self] cordinationVal, latVal, lonVal, addressVal in
+            guard let self = self else { return }
+            self.textbuinseeAddre.text = addressVal
+            self.addressLat = String(latVal)
+            self.addressLon = String(lonVal)
+        }
+        self.present(vC, animated: true, completion: nil)
+        
+    }
+    
     override func rightClick() {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "ProfileSettingVC") as! ProfileSettingVC
+        let vC = R.storyboard.main.profileSettingVC()!
         self.navigationController?.pushViewController(vC, animated: true)
     }
     
@@ -328,7 +387,7 @@ extension EditProfileVC {
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["country_id"]  =   USER_DEFAULT.value(forKey: COUNTRYID) as AnyObject
         
-        CommunicationManager.callPostApi(apiUrl: Router.get_country_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+        CommunicationManager.callPostService(apiUrl: Router.get_country_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
             
             DispatchQueue.main.async { [self] in
                 let swiftyJsonVar = JSON(responseData)
@@ -386,8 +445,8 @@ extension EditProfileVC {
         paramsDict["business_name"]  =   self.text_BusName.text! as AnyObject
         paramsDict["une_register_number"]  =   self.text_Une.text! as AnyObject
         paramsDict["business_address"]  =   self.textbuinseeAddre.text! as AnyObject
-        paramsDict["lat"]   =        kappDelegate.CURRENT_LAT as AnyObject
-        paramsDict["lon"]  =        kappDelegate.CURRENT_LON as AnyObject
+        paramsDict["lat"]   =        addressLat as AnyObject
+        paramsDict["lon"]  =        addressLon as AnyObject
         paramsDict["register_id"]  =   "" as AnyObject?
         paramsDict["type"]     =   strType as AnyObject
         paramsDict["mobile"]     =   self.text_Mobile.text! as AnyObject

@@ -33,7 +33,6 @@ class HistoryVC: UIViewController {
         table_List.estimatedRowHeight = 200
         table_List.rowHeight = UITableView.automaticDimension
     }
-    
 }
 
 //MARK: API
@@ -51,15 +50,15 @@ extension HistoryVC {
             DispatchQueue.main.async { [self] in
                 let swiftyJsonVar = JSON(responseData)
                 print(swiftyJsonVar)
-              
+                
                 table_List.isHidden = false
-
+                
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     
                     self.lbl_Earning.text = "\(kCurrency) \(swiftyJsonVar["total_earning"].number ?? 0)"
                     self.lbl_JobsCount.text = "\(swiftyJsonVar["total_job"].number ?? 0)"
                     self.table_List.backgroundView = UIView()
-
+                    
                     self.arr_AllHistory = swiftyJsonVar["result"].arrayValue
                     self.table_List.reloadData()
                 } else {
@@ -78,7 +77,6 @@ extension HistoryVC {
     }
     
 }
-
 
 extension HistoryVC : UITableViewDataSource {
     
@@ -140,7 +138,7 @@ extension HistoryVC : UITableViewDataSource {
     
     @objc func giveRating(but: UIButton) {
         let dic = arr_AllHistory[but.tag]
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "AddRatingReviewVC") as! AddRatingReviewVC
+        let vC = R.storyboard.main.addRatingReviewVC()!
         vC.strToid = dic["user_id"].stringValue
         vC.strRequestiD = dic["id"].stringValue
         self.navigationController?.pushViewController(vC, animated: true)

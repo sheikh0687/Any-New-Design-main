@@ -110,7 +110,7 @@ class PopUpApprovalVC: UIViewController {
                 print(swiftyJsonVar)
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     if let completion = completion {
-                      completion()
+                        completion()
                     }
                     if self.is_Navigate == "Monthly" || self.is_Navigate == "CustomerAndCard" {
                         self.dismiss(animated: false, completion: nil)

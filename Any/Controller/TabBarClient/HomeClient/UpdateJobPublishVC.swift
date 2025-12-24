@@ -25,10 +25,12 @@ class UpdateJobPublishVC: UIViewController {
     @IBOutlet weak var lbl_ProvidedMeal: UILabel!
     @IBOutlet weak var lbl_Note: UILabel!
     @IBOutlet weak var lbl_SetRate: UILabel!
+    @IBOutlet weak var lbl_OutletName: UILabel!
     
     @IBOutlet weak var dateSelectionVw: UIView!
     
     @IBOutlet weak var workerShiftVw: UIView!
+    @IBOutlet weak var outletView: UIView!
     @IBOutlet weak var workerShiftTableVw: UITableView!
     @IBOutlet weak var workerShiftTableHeight: NSLayoutConstraint!
     @IBOutlet weak var txt_NoteToWorker: UITextView!
@@ -52,6 +54,8 @@ class UpdateJobPublishVC: UIViewController {
     var strSingleDate:String = ""
     var shiftType:String = ""
     var strBreakTime:String = ""
+    var strOutletName: String = ""
+    var strOutletiD: String = ""
     
     var strDaysName:String = ""
     var strShiftStatus:String = ""
@@ -75,8 +79,21 @@ class UpdateJobPublishVC: UIViewController {
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Update", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
     }
     
+    @IBAction func btn_OutletName(_ sender: UIButton) {
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
+        vC.headline = "Outlet"
+        vC.centerTitle = "Outlet Selection"
+//        vC.arrayOfOutletName = arrayOfOutlet
+        vC.cloAllJobTypes = { outletName, outletiD in
+            self.lbl_OutletName.text = outletName
+            self.strOutletName = outletName
+            self.strOutletiD = outletiD
+        }
+        self.navigationController?.pushViewController(vC, animated: true)
+    }
+    
     @IBAction func btn_JobType(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
         vC.headline = "Job Type"
         vC.centerTitle = "Job Selection"
         vC.cloAllJobTypes = { valJobType, valJobiD in
@@ -88,7 +105,7 @@ class UpdateJobPublishVC: UIViewController {
     }
     
     @IBAction func btn_WorkerNum(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
         vC.headline = "Number of Workers"
         vC.centerTitle = "Manpower"
         vC.cloAllJobTypes = { [self] valWorkerCount, blnk in
@@ -116,19 +133,6 @@ class UpdateJobPublishVC: UIViewController {
             }
             
             self.workerShiftVw.isHidden = (workerCount <= 1)
-            
-//            if let count = Int(valWorkerCount), count > 0 {
-//                // Create an array with the specified count
-//                let array = Array(repeating: "1", count: count)
-//                self.arrayWorkerShiftTime = JSON(array).arrayValue
-//                if self.arrayWorkerShiftTime.count > 1 {
-//                    self.workerShiftVw.isHidden = false
-//                } else {
-//                    self.workerShiftVw.isHidden = true
-//                }
-//            } else {
-//                print("Invalid string value or count is zero.")
-//            }
             self.workerShiftTableHeight.constant = CGFloat(self.arrayWorkerShiftTime.count * 85)
             self.workerShiftTableVw.reloadData()
         }
@@ -136,7 +140,7 @@ class UpdateJobPublishVC: UIViewController {
     }
     
     @IBAction func btn_Schedule(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
         vC.headline = "Schedule"
         vC.centerTitle = "Schedule Selection"
         vC.cloAllJobTypes = { valJobType, blnk in
@@ -171,7 +175,7 @@ class UpdateJobPublishVC: UIViewController {
     
     @IBAction func btn_SelectWeeklyDay(_ sender: Any) {
         if self.lbl_SelectSchedule.text == "Weekly" {
-            let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+            let vC = R.storyboard.main.selectAllJobTypesVC()!
             vC.headline = "Days"
             vC.centerTitle = "Choose Working Days"
             vC.isFromUpdate = true
@@ -195,12 +199,12 @@ class UpdateJobPublishVC: UIViewController {
     }
     
     @IBAction func btn_Rates(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SetRateVC") as! SetRateVC
+        let vC = R.storyboard.main.setRateVC()!
         self.navigationController?.pushViewController(vC, animated: true)
     }
     
     @IBAction func btn_Break(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
         vC.headline = "Break Type"
         vC.centerTitle = "Breaks"
         vC.cloAllJobTypes = { valBreak, blnk in
@@ -212,7 +216,7 @@ class UpdateJobPublishVC: UIViewController {
     }
     
     @IBAction func btn_Meal(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SelectAllJobTypesVC") as! SelectAllJobTypesVC
+        let vC = R.storyboard.main.selectAllJobTypesVC()!
         vC.headline = "Meal Provision"
         vC.centerTitle = "Meals"
         vC.cloAllJobTypes = { valMeal, blnk in
@@ -352,6 +356,13 @@ extension UpdateJobPublishVC {
                     self.strBreakTime = resVal["break_time"].stringValue
                     
                     self.strApplyForAllWorker = resVal["apply_time_same_for_allworkers"].stringValue
+                    self.lbl_OutletName.text = self.strOutletName
+                    
+                    if strOutletiD != "" {
+                        self.outletView.isHidden = false
+                    } else {
+                        self.outletView.isHidden = true
+                    }
                     
                     if resVal["shift_multi_work_time"].arrayValue.count > 0 {
                         self.arrayStartTime = resVal["shift_multi_work_time"].arrayValue.map { $0["work_start_time"].stringValue
@@ -396,7 +407,7 @@ extension UpdateJobPublishVC {
                     
                     if resVal["apply_time_same_for_allworkers"].stringValue == "Yes" {
                         self.btn_ToAllWorkerOt.setImage(#imageLiteral(resourceName: "Checked"), for: .normal)
-
+                        
                         self.fullFetchedShiftArrayFromAPI = resVal["shift_multi_work_time"].arrayValue
                         if let firstElement = self.fullFetchedShiftArrayFromAPI.first {
                             self.arrayWorkerShiftTime = [firstElement]
@@ -404,7 +415,7 @@ extension UpdateJobPublishVC {
                             self.arrayWorkerShiftTime = []
                         }
                         self.workerShiftVw.isHidden = false
-
+                        
                     } else {
                         self.btn_ToAllWorkerOt.setImage(#imageLiteral(resourceName: "RectangleUncheck"), for: .normal)
                         self.fullFetchedShiftArrayFromAPI = resVal["shift_multi_work_time"].arrayValue
@@ -455,6 +466,8 @@ extension UpdateJobPublishVC {
         paramsDict["multi_work_end_time"] = self.arrayEndTime.joined(separator: ",") as AnyObject
         paramsDict["shift_break_time"] = self.strBreakTime as AnyObject
         paramsDict["shift_break_time_in_min"] = Utility.convertToMinutes(from: self.strBreakTime) as AnyObject
+        paramsDict["outlet_id"] = strOutletiD as AnyObject
+        paramsDict["business_name"] = strOutletName as AnyObject
         
         print(paramsDict)
         

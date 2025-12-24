@@ -13,6 +13,8 @@ class SetRateVC: UIViewController {
     
     @IBOutlet weak var lbl_UrgentRateIs: UILabel!
     @IBOutlet weak var lbl_MinimumRate: UILabel!
+    @IBOutlet weak var lbl_JobType: UILabel!
+    
     @IBOutlet weak var weeklyRateCollectionVw: UICollectionView!
     @IBOutlet weak var weeklyCollectionHeight: NSLayoutConstraint!
     
@@ -26,6 +28,7 @@ class SetRateVC: UIViewController {
     var dicJONS:JSON!
     
     var arr_AllSpecificRate: [JSON] = []
+    var arr_Alljobs: [JSON] = []
     var arr_DateRate: [String] = []
     var arr_AllCustomDate: [String] = []
     
@@ -34,14 +37,24 @@ class SetRateVC: UIViewController {
     var urgentRate:Int! = 0
     var weekDayRate:Int! = 0
     var specificDateRate:Int! = 0
+    var strJobTypeName: String = ""
+    var strJobId: String = ""
+    var isComingFrom: String = ""
     
     var checkValues:Bool = true
+    var drop = DropDown()
+    let currencySymbol = USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) as? String ?? ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.weeklyRateCollectionVw.register(UINib(nibName: "WeeklyRateCell", bundle: nil),forCellWithReuseIdentifier: "WeeklyRateCell")
         self.specificDateCollectionVw.register(UINib(nibName: "WeeklyRateCell", bundle: nil),forCellWithReuseIdentifier: "WeeklyRateCell")
-        WebGetShiftStatus()
+        if isComingFrom == "PublishJob" {
+            self.lbl_JobType.text = strJobTypeName
+            self.WebGetWeeklyRate()
+        } else {
+            WebGetJobCategory()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -53,26 +66,39 @@ class SetRateVC: UIViewController {
     
     @IBAction func plusMinimum(_ sender: Any) {
         minRate += 1
-        self.lbl_MinimumRate.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(self.minRate!)/h"
+        self.lbl_MinimumRate.text = "\(currencySymbol)\(self.minRate!)/h"
+    }
+    
+    @IBAction func btn_DropJobType(_ sender: UIButton) {
+        drop.anchorView = sender
+        let catName = arr_Alljobs.map { $0["name"].stringValue }
+        drop.dataSource =  catName
+        drop.show()
+        drop.bottomOffset = CGPoint(x: 0, y: 45)
+        drop.selectionAction = { [unowned self] (index: Int, item: String) in
+            self.lbl_JobType.text = item
+            self.strJobTypeName = item
+            self.strJobId = arr_Alljobs[index]["id"].stringValue
+            self.WebGetWeeklyRate()
+        }
     }
     
     @IBAction func minusMinimum(_ sender: Any) {
         if minRate > 1 {
             minRate -= 1
-            lbl_MinimumRate.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(self.minRate!)/h"
+            lbl_MinimumRate.text = "\(currencySymbol)\(self.minRate!)/h"
         }
     }
     
     @IBAction func urgentPluss(_ sender: Any) {
         urgentRate += 1
-        self.lbl_UrgentRateIs.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(self.urgentRate!)/h"
-        
+        self.lbl_UrgentRateIs.text = "\(currencySymbol)\(self.urgentRate!)/h"
     }
     
     @IBAction func urgentMinus(_ sender: Any) {
         if urgentRate > 1 {
             urgentRate -= 1
-            lbl_UrgentRateIs.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(self.urgentRate!)/h"
+            lbl_UrgentRateIs.text = "\(currencySymbol)\(self.urgentRate!)/h"
         }
     }
     
@@ -81,7 +107,7 @@ class SetRateVC: UIViewController {
     }
     
     @IBAction func btn_SetSpecificDate(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "SetCustomDateRateVC") as! SetCustomDateRateVC
+        let vC = R.storyboard.main.setCustomDateRateVC()!
         self.navigationController?.pushViewController(vC, animated: true)
     }
 }
@@ -89,10 +115,41 @@ class SetRateVC: UIViewController {
 //MARK: API
 extension SetRateVC {
     
-    func WebGetShiftStatus() {
+    func WebGetJobCategory() {
+        showProgressBar()
+        let paramsDict:[String:AnyObject] = [:]
+        
+        print(paramsDict)
+        CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+            
+            DispatchQueue.main.async {
+                let swiftyJsonVar = JSON(responseData)
+                if(swiftyJsonVar["status"].stringValue == "1") {
+                    self.arr_Alljobs = swiftyJsonVar["result"].arrayValue
+                    let firstJobType = self.arr_Alljobs[0]
+                    self.strJobTypeName = firstJobType["name"].stringValue
+                    self.strJobId = firstJobType["id"].stringValue
+                    self.lbl_JobType.text = firstJobType["name"].stringValue
+                    print(self.arr_Alljobs.count)
+                    self.WebGetWeeklyRate()
+                } else {
+                    let message = swiftyJsonVar["result"].string
+                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
+                }
+                self.hideProgressBar()
+            }
+            
+        },failureBlock: { (error : Error) in
+            self.hideProgressBar()
+            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        })
+    }
+    
+    func WebGetWeeklyRate() {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
+        paramsDict["job_type_id"] =   strJobId as AnyObject
         
         print(paramsDict)
         
@@ -108,20 +165,20 @@ extension SetRateVC {
                     //                    self.dayRate = Int(self.dicJONS["ticked_day_rate"].stringValue)!
                     self.urgentRate = Int(self.dicJONS["urgent_rate"].stringValue)!
                     
-                    self.lbl_MinimumRate.text =  "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(self.minRate!)/h"
-                    self.lbl_UrgentRateIs.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(self.urgentRate!)/h"
+                    self.lbl_MinimumRate.text =  "\(currencySymbol)\(self.minRate!)/h"
+                    
+                    self.lbl_UrgentRateIs.text = "\(currencySymbol)\(self.urgentRate!)/h"
                     
                     self.arr_AllWeekRate = swiftyJsonVar["result"].arrayValue
-                    
-//                    let arr = self.arr_AllWeekRate.filter({$0["check_status"].stringValue == "Yes"})
+
                     self.arr_AllDayRate = self.arr_AllWeekRate.map({$0["rate"].stringValue})
                     self.arr_CheckDayStatus = self.arr_AllWeekRate.map({$0["check_status"].stringValue})
                     
                     self.weeklyCollectionHeight.constant = CGFloat(self.arr_AllWeekRate.count * 40)
+                    print(self.weeklyCollectionHeight.constant)
                     self.weeklyRateCollectionVw.reloadData()
                     
                 } else {
-                    
                     let message = swiftyJsonVar["message"].string
                     GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
                 }
@@ -179,6 +236,7 @@ extension SetRateVC {
         paramsDict["check_status"]     =  arr_CheckDayStatus.joined(separator: ",")  as AnyObject
         paramsDict["urgent_rate"]     = urgentRate  as AnyObject
         paramsDict["rate"]     = arr_AllDayRate.joined(separator: ",")   as AnyObject
+        paramsDict["job_type_id"] = strJobId as AnyObject
         
         print(paramsDict)
         
@@ -264,7 +322,7 @@ extension SetRateVC {
     }
 }
 
-extension SetRateVC: UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
+extension SetRateVC: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == weeklyRateCollectionVw {
@@ -282,14 +340,14 @@ extension SetRateVC: UICollectionViewDataSource,UICollectionViewDelegateFlowLayo
             
             cell.btn_DeleteOt.isHidden = true
             cell.lbl_DayName.text = obj["day_name"].stringValue
-            cell.lbl_Rate.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(obj["rate"].stringValue)/h"
+            cell.lbl_Rate.text = "\(currencySymbol)\(obj["rate"].stringValue)/h"
             
             cell.cloPlus = {
                 var rateVal = Int(self.arr_AllWeekRate[indexPath.row]["rate"].stringValue) ?? 0
                 rateVal += 1
                 self.arr_AllWeekRate[indexPath.row]["rate"] = JSON(rateVal) // Update the model
                 self.arr_AllDayRate[indexPath.row] = String(rateVal)
-                cell.lbl_Rate.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(rateVal)/h"
+                cell.lbl_Rate.text = "\(self.currencySymbol)\(rateVal)/h"
             }
             
             cell.cloMinus = { [self] in
@@ -298,7 +356,7 @@ extension SetRateVC: UICollectionViewDataSource,UICollectionViewDelegateFlowLayo
                     rateVal -= 1
                     self.arr_AllWeekRate[indexPath.row]["rate"] = JSON(rateVal) // Update the model
                     self.arr_AllDayRate[indexPath.row] = String(rateVal)
-                    cell.lbl_Rate.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(rateVal)/h"
+                    cell.lbl_Rate.text = "\(self.currencySymbol)\(rateVal)/h"
                 }
             }
             
@@ -307,7 +365,7 @@ extension SetRateVC: UICollectionViewDataSource,UICollectionViewDelegateFlowLayo
             
             cell.btn_DeleteOt.isHidden = false
             cell.lbl_DayName.text = obj["date"].stringValue
-            cell.lbl_Rate.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(obj["rate"].numberValue)/h"
+            cell.lbl_Rate.text = "\(self.currencySymbol)\(obj["rate"].numberValue)/h"
             
             let dateRate = obj["rate"].numberValue
             self.specificDateRate = Int(truncating: dateRate)
@@ -317,7 +375,7 @@ extension SetRateVC: UICollectionViewDataSource,UICollectionViewDelegateFlowLayo
                 rateVal += 1
                 self.arr_AllSpecificRate[indexPath.row]["rate"] = JSON(rateVal) // Update the model
                 self.arr_DateRate[indexPath.row] = String(rateVal)
-                cell.lbl_Rate.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(rateVal)/h"
+                cell.lbl_Rate.text = "\(self.currencySymbol)\(rateVal)/h"
             }
             
             cell.cloMinus = { [self] in
@@ -326,7 +384,7 @@ extension SetRateVC: UICollectionViewDataSource,UICollectionViewDelegateFlowLayo
                     rateVal -= 1
                     self.arr_AllSpecificRate[indexPath.row]["rate"] = JSON(rateVal) // Update the model
                     self.arr_DateRate[indexPath.row] = String(rateVal)
-                    cell.lbl_Rate.text = "\(kappDelegate.dic_Profile["currency_symbol"].stringValue)\(rateVal)/h"
+                    cell.lbl_Rate.text = "\(self.currencySymbol)\(rateVal)/h"
                 }
             }
             
@@ -337,10 +395,14 @@ extension SetRateVC: UICollectionViewDataSource,UICollectionViewDelegateFlowLayo
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let collectionWidth = collectionView.frame.width
-        let collectionHeight = collectionView.frame.height
-        return CGSize(width: collectionWidth, height: collectionHeight)
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+
+        let width = collectionView.bounds.width
+        let height: CGFloat = 40    // the row height you want
+
+        return CGSize(width: width, height: height)
     }
 }
 

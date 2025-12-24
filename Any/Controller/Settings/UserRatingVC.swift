@@ -55,7 +55,7 @@ class UserRatingVC: UIViewController {
                     self.lbl_TotalRating.text = swiftyJsonVar["average_rating"].stringValue
                     self.lbl_TotalCount.text = "Based on \(swiftyJsonVar["total_rating_count"].stringValue) reviews"
                     self.ratingStar.rating = Double(swiftyJsonVar["average_rating"].stringValue) ?? 0.0
-
+                    
                     print(self.arr_AllReviews.count)
                     self.tableView.backgroundView = UIView()
                     self.tableView.reloadData()

@@ -1,0 +1,6 @@
+framework module Pods_Any {
+  umbrella header "Pods-Any-umbrella.h"
+
+  export *
+  module * { export * }
+}

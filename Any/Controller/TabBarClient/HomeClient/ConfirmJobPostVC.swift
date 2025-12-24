@@ -84,7 +84,7 @@ extension ConfirmJobPostVC {
                 let swiftyJsonVar = JSON(responseData)
                 print(swiftyJsonVar)
                 if(swiftyJsonVar["status"] == "1") {
-                    let vC = R.storyboard.main().instantiateViewController(withIdentifier: "JobConfirmedVC") as! JobConfirmedVC
+                    let vC = R.storyboard.main.jobConfirmedVC()!
                     self.navigationController?.pushViewController(vC, animated: true)
                 } else {
                     let message = swiftyJsonVar["message"].stringValue
@@ -95,7 +95,7 @@ extension ConfirmJobPostVC {
         },failureBlock: { (error : Error) in
             self.hideProgressBar()
             //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-            let vC = R.storyboard.main().instantiateViewController(withIdentifier: "JobConfirmedVC") as! JobConfirmedVC
+            let vC = R.storyboard.main.jobConfirmedVC()!
             self.navigationController?.pushViewController(vC, animated: true)
             
         })

@@ -196,13 +196,13 @@ extension HomeVC {
                 let swiftyJsonVar = JSON(responseData)
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     
-//                    let notificationData: [String: NSNumber] = [
-//                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
-//                        "requestCount": swiftyJsonVar["request"].numberValue
-//                    ]
-//                    
-//                    NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
-
+                    //                    let notificationData: [String: NSNumber] = [
+                    //                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
+                    //                        "requestCount": swiftyJsonVar["request"].numberValue
+                    //                    ]
+                    //                    
+                    //                    NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
+                    
                     let notificationData: [String: Any] = [
                         "chatCount": swiftyJsonVar["chat_count"].numberValue,
                         "requestCount": swiftyJsonVar["request"].numberValue,
@@ -210,7 +210,7 @@ extension HomeVC {
                         "review": swiftyJsonVar["average_rating"].stringValue,
                         "ratingCount": swiftyJsonVar["total_rating_count"].numberValue
                     ]
-
+                    
                     NotificationCenter.default.post(
                         name: NSNotification.Name("badgeCount"),
                         object: "On Ride",
@@ -340,7 +340,6 @@ extension HomeVC {
             DispatchQueue.main.async { [self] in
                 let swiftyJsonVar = JSON(responseData)
                 if(swiftyJsonVar["status"].stringValue == "1") {
-                    
                     let dic = swiftyJsonVar["result"]
                     kappDelegate.dicProdile = dic
                     if dic["login_check"].stringValue == "No" {
@@ -419,7 +418,7 @@ extension HomeVC : UITableViewDataSource {
             cell.btn_ConfirmOt.borderColor = R.color.button_COLOR()
             
             cell.cloDelete = {
-                let vC = R.storyboard.main().instantiateViewController(withIdentifier: "PopUpBeforeBooking") as! PopUpBeforeBooking
+                let vC = R.storyboard.main.popUpBeforeBooking()!
                 let objClient = dic["client_details"].dictionaryValue
                 vC.strBookinName = "\(objClient["business_name"]?.stringValue ?? ""),\n\(objClient["business_address"]?.stringValue ?? "")\n\(dic["day_name"].stringValue) \(dic["start_time"].stringValue) \(dic["end_time"].stringValue)"
                 vC.isFrom = "Withdraw"

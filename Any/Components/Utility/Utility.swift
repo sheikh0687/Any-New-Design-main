@@ -345,6 +345,23 @@ class Utility {
         return total
     }
     
+    // For text view
+    class func autoresizeTextView(_ text: String, font: UIFont, width: CGFloat) -> CGFloat {
+        let textView: UITextView = UITextView(frame: CGRect(x: 0, y: 0, width: width, height: CGFloat.greatestFiniteMagnitude))
+        textView.font = font
+        textView.text = text
+        textView.sizeToFit()
+        if let textNSString: NSString = textView.text as NSString? {
+            let rect = textNSString.boundingRect(with: CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude),
+                                                 options: NSStringDrawingOptions.usesLineFragmentOrigin,
+                                                 attributes: [NSAttributedString.Key.font: textView.font!],
+                                                 context: nil)
+            textView.frame = CGRect(x: textView.frame.origin.x, y: textView.frame.origin.y, width: textView.frame.size.width, height: rect.height)
+        }
+        return textView.frame.height
+    }
+
+    
     class func isUserLogin ()-> Bool {
         if (USER_DEFAULT.value(forKey: STATUS) != nil) {
             return true
@@ -448,28 +465,28 @@ class Utility {
         })
     }
     
-    class func lookUpCurrentLocation(completionHandler: @escaping (CLPlacemark?)
-                                     -> Void ) {
-        // Use the last reported location.
-        if let lastLocation = LocationManager.sharedInstance.lastLocation {
-            let geocoder = CLGeocoder()
-            // Look up the location and pass it to the completion handler
-            geocoder.reverseGeocodeLocation(lastLocation,
-                                            completionHandler: { (placemarks, error) in
-                if error == nil {
-                    let firstLocation = placemarks?[0]
-                    completionHandler(firstLocation)
-                }
-                else {
-                    // An error occurred during geocoding.
-                    completionHandler(nil)
-                }
-            })
-        } else {
-            // No location was available.
-            completionHandler(nil)
-        }
-    }
+//    class func lookUpCurrentLocation(completionHandler: @escaping (CLPlacemark?)
+//                                     -> Void ) {
+//        // Use the last reported location.
+//        if let lastLocation = LocationManager.sharedInstance.lastLocation {
+//            let geocoder = CLGeocoder()
+//            // Look up the location and pass it to the completion handler
+//            geocoder.reverseGeocodeLocation(lastLocation,
+//                                            completionHandler: { (placemarks, error) in
+//                if error == nil {
+//                    let firstLocation = placemarks?[0]
+//                    completionHandler(firstLocation)
+//                }
+//                else {
+//                    // An error occurred during geocoding.
+//                    completionHandler(nil)
+//                }
+//            })
+//        } else {
+//            // No location was available.
+//            completionHandler(nil)
+//        }
+//    }
     
     class func getAssetThumbnail(asset: PHAsset) -> UIImage {
         let manager = PHImageManager.default()
@@ -514,6 +531,83 @@ class Utility {
         }
         return nil // Agar match na mile to nil return karega
     }
+    
+    
+    /******************************************************************************************/
+    //MARK:-  Mapkit
+    /******************************************************************************************/
+    
+    class func initMapViewAnnotation(_ mapView: MKMapView) {
+        mapView.removeOverlays(mapView.overlays)
+        mapView.annotations.forEach {
+            if !($0 is MKUserLocation) {
+                mapView.removeAnnotation($0)
+            }
+        }
+    }
+    
+    class func showCurrentLocation(_ mapView: MKMapView, _ vc: UIViewController) {
+        let region = MKCoordinateRegion(center: kappDelegate.coordinate2.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.002, longitudeDelta: 0.002))
+        mapView.showsUserLocation = true
+        mapView.setRegion(region, animated: true)
+    }
+    
+    class func getLocationByCoordinates (location: CLLocation, successBlock success: @escaping (_ address: String, _ display_address: String) -> Void) {
+        let geoCoder = CLGeocoder()
+        geoCoder.reverseGeocodeLocation(location, completionHandler: { placemarks, error in
+            guard let addressDict = placemarks?[0].addressDictionary else {
+                return
+            }
+            var address_display = ""
+            if let city = addressDict["City"] as? String {
+                if let zip = addressDict["ZIP"] as? String {
+                    address_display = city + " " + zip
+                }
+            }
+            
+            // Print fully formatted address
+            if let formattedAddress = addressDict["FormattedAddressLines"] as? [String] {
+                let address = (formattedAddress.joined(separator: ", "))
+                success(address, address_display)
+            }
+        })
+    }
+    
+    class func getCurrentAddress( successBlock success: @escaping (_ address: String) -> Void) {
+        Utility.lookUpCurrentLocation { (Placemark) in
+            guard let addressDict = Placemark?.addressDictionary else {
+                return
+            }
+            if let formattedAddress = addressDict["FormattedAddressLines"] as? [String] {
+                let address = (formattedAddress.joined(separator: ", "))
+                success(address)
+            }
+        }
+    }
+    
+    class func lookUpCurrentLocation(completionHandler: @escaping (CLPlacemark?)
+                                     -> Void ) {
+        // Use the last reported location.
+        if let lastLocation = LocationManager.sharedInstance.lastLocation {
+            let geocoder = CLGeocoder()
+            // Look up the location and pass it to the completion handler
+            geocoder.reverseGeocodeLocation(lastLocation,
+                                            completionHandler: { (placemarks, error) in
+                if error == nil {
+                    let firstLocation = placemarks?[0]
+                    completionHandler(firstLocation)
+                }
+                else {
+                    // An error occurred during geocoding.
+                    completionHandler(nil)
+                }
+            })
+        } else {
+            // No location was available.
+            completionHandler(nil)
+        }
+    }
+
 }
 
 extension Calendar {

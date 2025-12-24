@@ -33,6 +33,7 @@ class SelectAllJobTypesVC: UIViewController {
     var arrayOfDaysSelection:[String] = []
     
     var arrayOfWeekDays:[JSON] = []
+    var arrayOfOutletName: [JSON] = []
     var drop = DropDown()
     
     var cloAllJobTypes:((_ valType: String,_ valiD:String) -> Void)?
@@ -41,7 +42,9 @@ class SelectAllJobTypesVC: UIViewController {
         super.viewDidLoad()
         self.lbl_Type.text = headline
         self.jobTypes_TableVw.register(UINib(nibName: "AllJobTypeCell", bundle: nil), forCellReuseIdentifier: "AllJobTypeCell")
-        if headline == "Job Type" {
+        if headline == "Outlet" {
+            WebGetOutlet()
+        } else if headline == "Job Type" {
             WebGetCategory()
         } else if headline == "Days" {
             if isFromUpdate {
@@ -98,6 +101,32 @@ class SelectAllJobTypesVC: UIViewController {
 }
 
 extension SelectAllJobTypesVC {
+    
+    func WebGetOutlet() {
+        showProgressBar()
+        var paramsDict:[String:AnyObject] = [:]
+        paramsDict["client_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
+        
+        print(paramsDict)
+        
+        CommunicationManager.callPostService(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+            
+            DispatchQueue.main.async {
+                let swiftyJsonVar = JSON(responseData)
+                if(swiftyJsonVar["status"].stringValue == "1") {
+                    self.arrayOfOutletName = swiftyJsonVar["result"].arrayValue
+                    self.jobTypes_TableVw.reloadData()
+                } else {
+                    print("Something Went Wrong")
+                }
+                self.hideProgressBar()
+            }
+            
+        },failureBlock: { (error : Error) in
+            self.hideProgressBar()
+            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        })
+    }
     
     func WebGetCategory() {
         showProgressBar()
@@ -163,7 +192,9 @@ extension SelectAllJobTypesVC {
 extension SelectAllJobTypesVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if headline == "Job Type" {
+        if headline == "Outlet" {
+            return arrayOfOutletName.count
+        } else if headline == "Job Type" {
             return arrayOfJobType.count
         } else if headline == "Schedule" {
             return arrayOfSchedule.count
@@ -180,7 +211,10 @@ extension SelectAllJobTypesVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "AllJobTypeCell", for: indexPath) as! AllJobTypeCell
-        if headline == "Job Type" {
+        if headline == "Outlet" {
+            let obj = self.arrayOfOutletName[indexPath.row]
+            cell.lbl_Name.text = obj["business_name"].stringValue
+        } else if headline == "Job Type" {
             let obj = self.arrayOfJobType[indexPath.row]
             cell.lbl_Name.text = obj["name"].stringValue
         } else if headline == "Schedule" {
@@ -215,7 +249,11 @@ extension SelectAllJobTypesVC: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if headline == "Job Type" {
+        if headline == "Outlet" {
+            let obj = self.arrayOfOutletName[indexPath.row]
+            self.cloAllJobTypes?(obj["business_name"].stringValue, obj["id"].stringValue)
+            self.navigationController?.popViewController(animated: true)
+        } else if headline == "Job Type" {
             let obj = self.arrayOfJobType[indexPath.row]
             self.cloAllJobTypes?(obj["name"].stringValue, obj["id"].stringValue)
             self.navigationController?.popViewController(animated: true)

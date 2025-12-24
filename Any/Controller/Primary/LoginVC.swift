@@ -28,16 +28,13 @@ class LoginVC: UIViewController {
     @IBOutlet weak var txt_SignupMobile: UITextField!
     @IBOutlet weak var txt_SignupPassword: SloyTextField!
     @IBOutlet weak var txt_SignupConfirmPassword: SloyTextField!
-    //    @IBOutlet weak var txt_Cou: UITextField!
+
     @IBOutlet weak var btn_Cou: UIButton!
     
     @IBOutlet weak var lbl_TermCondition: UILabel!
     @IBOutlet weak var btn_SkipOt: UIButton!
     @IBOutlet weak var btn_CountryListOt: UIButton!
-    
-    //    weak var cpvTextField: CountryPickerView!
-    //    var phoneKey:String! = ""
-    
+
     var strCCode:String! = "65"
     var countryList = CountryList()
     var strType = ""
@@ -52,13 +49,13 @@ class LoginVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         countryList.delegate = self
         
-        //        strCCode = PhoneHelper.getCountryCode()
         print(strCCode ?? "")
-        //        btn_Cou.setTitle("+\(strCCode!)", for: .normal)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(termsAndCondition))
+        
         lbl_TermCondition.isUserInteractionEnabled = true
         lbl_TermCondition.addGestureRecognizer(tapGesture)
         WebGetCountryList()
@@ -114,7 +111,6 @@ class LoginVC: UIViewController {
         }
         iconClick = !iconClick
     }
-    
     
     @IBAction func check_SIGNUP(_ sender: Any) {
         signUp_View.isHidden = false
@@ -190,6 +186,7 @@ extension LoginVC:CountryListDelegate {
 
 // MARK: - Validation
 extension LoginVC {
+    
     func isValidInput() -> Bool {
         var isValid : Bool = true;
         var errorMessage : String = ""
@@ -246,6 +243,7 @@ extension LoginVC {
         }
         return isValid
     }
+    
 }
 
 // MARK: - Network Calling
@@ -279,7 +277,6 @@ extension LoginVC {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         })
     }
-
     
     func CheckEmailStatus() {
         showProgressBar()
@@ -313,6 +310,13 @@ extension LoginVC {
                     USER_DEFAULT.set(swiftyJsonVar["result"]["country_id"].stringValue, forKey: COUNTRYID)
                     
                     USER_DEFAULT.set(swiftyJsonVar["result"]["currency_symbol"].stringValue, forKey: CURRENCY_SYMBOL)
+                    
+                    USER_DEFAULT.set(swiftyJsonVar["result"]["id"].stringValue, forKey: CLIENTID)
+                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: BUSINESS_NAME)
+                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_logo"].stringValue, forKey: BUSINESS_LOGO)
+                    
+                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: OUTLET_NAME)
+                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_logo"].stringValue, forKey: OUTLET_IMAGE)
                     
                     Switcher.updateRootVC()
                 } else {
@@ -348,7 +352,7 @@ extension LoginVC {
                     strOtp = swiftyJsonVar["result"]["code"].stringValue
                     print("+" + strCCode + txt_SignupMobile.text!)
                     collectSignupData()
-                    let vC = R.storyboard.main().instantiateViewController(withIdentifier: "OtpVC") as! OtpVC
+                    let vC = R.storyboard.main.otpVC()!
                     vC.strMobileWithCode = ("+" + strCCode + txt_SignupMobile.text!)
                     vC.strMobileNumber = txt_SignupMobile.text!
                     vC.strType = self.strType

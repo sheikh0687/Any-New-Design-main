@@ -167,7 +167,7 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
     }
     
     @IBAction func btn_Filter(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "PopupjobTypeVC") as! PopupjobTypeVC
+        let vC = R.storyboard.main.popupjobTypeVC()!
         vC.cloJobType = { [weak self] strJobName, strJobiD in
             guard let self else { return }
             getClientList(strJobiD: strJobiD, strJobName: strJobName)
@@ -198,14 +198,9 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
                 let swiftyJsonVar = JSON(responseData)
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     let resultArr = swiftyJsonVar["result"].arrayValue
-
-                    let available = resultArr.filter { $0["booking_status"].stringValue == "Open" }
-                    let closed = resultArr.filter { $0["booking_status"].stringValue != "Open" }
-
-                    let finalArr = available + closed
-
-                    self.arr_List = finalArr
-                    self.arr_FilterList = finalArr
+                    
+                    self.arr_List = resultArr
+                    self.arr_FilterList = resultArr
                     
                     self.clientList_TableVw.backgroundView = UIView()
                     self.clientList_TableVw.reloadData()
@@ -347,6 +342,8 @@ extension NewBookingVC : UITableViewDataSource {
                 cell.clientLogo_Img.image = R.image.placeholder_2()
             }
             
+            print(dic["booking_status"].stringValue)
+            
             if dic["booking_status"].stringValue == "Open" {
                 cell.lbl_AvailbaleStatus.text = "Available"
                 cell.lbl_AvailbaleStatus.textColor = hexStringToUIColor(hex: "#04a431")
@@ -440,7 +437,7 @@ extension NewBookingVC: UISearchBarDelegate {
                 // Extract string safely using .stringValue
                 let businessName = json["business_name"].stringValue.lowercased()
 
-                return businessName.hasPrefix(lowercaseSearchText)
+                return businessName.contains(lowercaseSearchText)
             }
 
             self.arr_List = filteredArr

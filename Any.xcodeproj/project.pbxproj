@@ -137,8 +137,23 @@
 		04DDB98A2A16536200AD4FB5 /* EditProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04DDB9892A16536200AD4FB5 /* EditProfileVC.swift */; };
 		04E000652A3345440010E371 /* SameDayRequestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E000642A3345440010E371 /* SameDayRequestVC.swift */; };
 		04E000672A3353180010E371 /* PopUpSameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E000662A3353180010E371 /* PopUpSameVC.swift */; };
+		4491E7B112F3522013E80653 /* Pods_Any.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83EA18D20CFAB83EEA34A581 /* Pods_Any.framework */; };
 		A8BD6F5D2ED444E80002C27D /* AccurateLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BD6F5C2ED444E80002C27D /* AccurateLocationManager.swift */; };
-		CF0B0CDD2D71887400A8C604 /* CountryPickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF0B0CDC2D71887400A8C604 /* CountryPickerVC.swift */; };
+		B7366BFA2ED998BD0075E352 /* OutletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7366BF82ED998BD0075E352 /* OutletCell.swift */; };
+		B7366BFB2ED998BD0075E352 /* OutletCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7366BF92ED998BD0075E352 /* OutletCell.xib */; };
+		B78D1F442ED49854008F3D2A /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F432ED49854008F3D2A /* Stripe */; };
+		B78D1F462ED49854008F3D2A /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F452ED49854008F3D2A /* StripeApplePay */; };
+		B78D1F482ED49854008F3D2A /* StripeCardScan in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F472ED49854008F3D2A /* StripeCardScan */; };
+		B78D1F4A2ED49854008F3D2A /* StripeConnect in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F492ED49854008F3D2A /* StripeConnect */; };
+		B78D1F4C2ED49854008F3D2A /* StripeFinancialConnections in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F4B2ED49854008F3D2A /* StripeFinancialConnections */; };
+		B78D1F4E2ED49854008F3D2A /* StripeIdentity in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F4D2ED49854008F3D2A /* StripeIdentity */; };
+		B78D1F502ED49854008F3D2A /* StripeIssuing in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F4F2ED49854008F3D2A /* StripeIssuing */; };
+		B78D1F522ED49854008F3D2A /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F512ED49854008F3D2A /* StripePaymentSheet */; };
+		B78D1F542ED49854008F3D2A /* StripePayments in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F532ED49854008F3D2A /* StripePayments */; };
+		B78D1F562ED49854008F3D2A /* StripePaymentsUI in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F552ED49854008F3D2A /* StripePaymentsUI */; };
+		B79722512ED5DB5E00077245 /* AddressPickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79722502ED5DB5E00077245 /* AddressPickerVC.swift */; };
+		B79722532ED5DD1B00077245 /* SearchLocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79722522ED5DD1B00077245 /* SearchLocationCell.swift */; };
+		B7CF347C2ED58A2B00DF720B /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7CF347B2ED58A2B00DF720B /* R.generated.swift */; };
 		CF119EC42CAD83450009F114 /* BookingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF119EC22CAD83450009F114 /* BookingCell.swift */; };
 		CF119EC52CAD83450009F114 /* BookingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF119EC32CAD83450009F114 /* BookingCell.xib */; };
 		CF1FB3D92E9690260096F91B /* UserRatingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1FB3D82E9690260096F91B /* UserRatingVC.swift */; };
@@ -159,7 +174,6 @@
 		CF67D78A2D51F05C00113B13 /* PopPasswordChangedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF67D7892D51F05C00113B13 /* PopPasswordChangedVC.swift */; };
 		CF6F30EF2E82B4FA004DC036 /* CalenderPickervC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6F30EE2E82B4FA004DC036 /* CalenderPickervC.swift */; };
 		CF7C6B132BD2435E000333FF /* Api.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7C6B122BD2435E000333FF /* Api.swift */; };
-		CF7E4C7D2DC240CD00E1E0A1 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7E4C7C2DC240CD00E1E0A1 /* R.generated.swift */; };
 		CF8762A12D35189B00AA921D /* WeeklyRateCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8762A02D35189B00AA921D /* WeeklyRateCell.xib */; };
 		CF8762A22D35189B00AA921D /* WeeklyRateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF87629F2D35189B00AA921D /* WeeklyRateCell.swift */; };
 		CF88BAF32E82A5500067BBB3 /* MultiDateCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF88BAF22E82A5500067BBB3 /* MultiDateCell.xib */; };
@@ -193,14 +207,6 @@
 		CFD247852BD14C5C005270B7 /* SaveCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD247832BD14C5C005270B7 /* SaveCardCell.swift */; };
 		CFD247862BD14C5C005270B7 /* SaveCardCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD247842BD14C5C005270B7 /* SaveCardCell.xib */; };
 		CFD247882BD15187005270B7 /* PaymentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFD247872BD15187005270B7 /* PaymentVC.swift */; };
-		CFD2478B2BD15254005270B7 /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = CFD2478A2BD15254005270B7 /* Stripe */; };
-		CFD2478D2BD15254005270B7 /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = CFD2478C2BD15254005270B7 /* StripeApplePay */; };
-		CFD2478F2BD15254005270B7 /* StripeCardScan in Frameworks */ = {isa = PBXBuildFile; productRef = CFD2478E2BD15254005270B7 /* StripeCardScan */; };
-		CFD247912BD15254005270B7 /* StripeFinancialConnections in Frameworks */ = {isa = PBXBuildFile; productRef = CFD247902BD15254005270B7 /* StripeFinancialConnections */; };
-		CFD247932BD15254005270B7 /* StripeIdentity in Frameworks */ = {isa = PBXBuildFile; productRef = CFD247922BD15254005270B7 /* StripeIdentity */; };
-		CFD247952BD15254005270B7 /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = CFD247942BD15254005270B7 /* StripePaymentSheet */; };
-		CFD247972BD15254005270B7 /* StripePayments in Frameworks */ = {isa = PBXBuildFile; productRef = CFD247962BD15254005270B7 /* StripePayments */; };
-		CFD247992BD15254005270B7 /* StripePaymentsUI in Frameworks */ = {isa = PBXBuildFile; productRef = CFD247982BD15254005270B7 /* StripePaymentsUI */; };
 		CFDB26742D421FD40009966D /* PopUpBeforeBooking.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDB26732D421FD40009966D /* PopUpBeforeBooking.swift */; };
 		CFDBE7A02CBFA8420011D338 /* RegistrationSuccessVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDBE79F2CBFA8420011D338 /* RegistrationSuccessVC.swift */; };
 		CFDDB5262D3FCD8800002BE8 /* JobConfirmedVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDDB5252D3FCD8800002BE8 /* JobConfirmedVC.swift */; };
@@ -217,7 +223,6 @@
 		CFFD0D222CB6B9480035C254 /* ClientJobVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD0D212CB6B9470035C254 /* ClientJobVC.swift */; };
 		CFFD0D262CB6BEA50035C254 /* ManpowerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFFD0D242CB6BEA50035C254 /* ManpowerCell.swift */; };
 		CFFD0D272CB6BEA50035C254 /* ManpowerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFD0D252CB6BEA50035C254 /* ManpowerCell.xib */; };
-		E4652974B443ED23CBA54824 /* Pods_Any.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7CCC04439D148D0F0969394 /* Pods_Any.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -359,10 +364,15 @@
 		04DDB9892A16536200AD4FB5 /* EditProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileVC.swift; sourceTree = "<group>"; };
 		04E000642A3345440010E371 /* SameDayRequestVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SameDayRequestVC.swift; sourceTree = "<group>"; };
 		04E000662A3353180010E371 /* PopUpSameVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpSameVC.swift; sourceTree = "<group>"; };
-		0D35BDC8A71A6CA41F3E1316 /* Pods-Any.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Any.release.xcconfig"; path = "Target Support Files/Pods-Any/Pods-Any.release.xcconfig"; sourceTree = "<group>"; };
-		6F8CE1B7061E1D8C57D964D9 /* Pods-Any.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Any.debug.xcconfig"; path = "Target Support Files/Pods-Any/Pods-Any.debug.xcconfig"; sourceTree = "<group>"; };
+		68F3792A0E4B49323E142CEE /* Pods-Any.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Any.debug.xcconfig"; path = "Target Support Files/Pods-Any/Pods-Any.debug.xcconfig"; sourceTree = "<group>"; };
+		83EA18D20CFAB83EEA34A581 /* Pods_Any.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Any.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8BD6F5C2ED444E80002C27D /* AccurateLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccurateLocationManager.swift; sourceTree = "<group>"; };
-		CF0B0CDC2D71887400A8C604 /* CountryPickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryPickerVC.swift; sourceTree = "<group>"; };
+		B7366BF82ED998BD0075E352 /* OutletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutletCell.swift; sourceTree = "<group>"; };
+		B7366BF92ED998BD0075E352 /* OutletCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OutletCell.xib; sourceTree = "<group>"; };
+		B79722502ED5DB5E00077245 /* AddressPickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressPickerVC.swift; sourceTree = "<group>"; };
+		B79722522ED5DD1B00077245 /* SearchLocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchLocationCell.swift; sourceTree = "<group>"; };
+		B7CF347B2ED58A2B00DF720B /* R.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = "<group>"; };
+		CC365E38B998F7BAA90E83E1 /* Pods-Any.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Any.release.xcconfig"; path = "Target Support Files/Pods-Any/Pods-Any.release.xcconfig"; sourceTree = "<group>"; };
 		CF119EC22CAD83450009F114 /* BookingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingCell.swift; sourceTree = "<group>"; };
 		CF119EC32CAD83450009F114 /* BookingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BookingCell.xib; sourceTree = "<group>"; };
 		CF1FB3D82E9690260096F91B /* UserRatingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRatingVC.swift; sourceTree = "<group>"; };
@@ -383,7 +393,6 @@
 		CF67D7892D51F05C00113B13 /* PopPasswordChangedVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopPasswordChangedVC.swift; sourceTree = "<group>"; };
 		CF6F30EE2E82B4FA004DC036 /* CalenderPickervC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalenderPickervC.swift; sourceTree = "<group>"; };
 		CF7C6B122BD2435E000333FF /* Api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Api.swift; sourceTree = "<group>"; };
-		CF7E4C7C2DC240CD00E1E0A1 /* R.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = SOURCE_ROOT; };
 		CF87629F2D35189B00AA921D /* WeeklyRateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyRateCell.swift; sourceTree = "<group>"; };
 		CF8762A02D35189B00AA921D /* WeeklyRateCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WeeklyRateCell.xib; sourceTree = "<group>"; };
 		CF88BAF12E82A5500067BBB3 /* MultiDateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiDateCell.swift; sourceTree = "<group>"; };
@@ -433,7 +442,6 @@
 		CFFD0D212CB6B9470035C254 /* ClientJobVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientJobVC.swift; sourceTree = "<group>"; };
 		CFFD0D242CB6BEA50035C254 /* ManpowerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManpowerCell.swift; sourceTree = "<group>"; };
 		CFFD0D252CB6BEA50035C254 /* ManpowerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ManpowerCell.xib; sourceTree = "<group>"; };
-		E7CCC04439D148D0F0969394 /* Pods_Any.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Any.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -441,15 +449,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD247912BD15254005270B7 /* StripeFinancialConnections in Frameworks */,
-				CFD2478F2BD15254005270B7 /* StripeCardScan in Frameworks */,
-				CFD2478D2BD15254005270B7 /* StripeApplePay in Frameworks */,
-				CFD247932BD15254005270B7 /* StripeIdentity in Frameworks */,
-				CFD247952BD15254005270B7 /* StripePaymentSheet in Frameworks */,
-				CFD247992BD15254005270B7 /* StripePaymentsUI in Frameworks */,
-				CFD247972BD15254005270B7 /* StripePayments in Frameworks */,
-				CFD2478B2BD15254005270B7 /* Stripe in Frameworks */,
-				E4652974B443ED23CBA54824 /* Pods_Any.framework in Frameworks */,
+				B78D1F542ED49854008F3D2A /* StripePayments in Frameworks */,
+				B78D1F482ED49854008F3D2A /* StripeCardScan in Frameworks */,
+				B78D1F4C2ED49854008F3D2A /* StripeFinancialConnections in Frameworks */,
+				B78D1F562ED49854008F3D2A /* StripePaymentsUI in Frameworks */,
+				B78D1F462ED49854008F3D2A /* StripeApplePay in Frameworks */,
+				B78D1F4E2ED49854008F3D2A /* StripeIdentity in Frameworks */,
+				B78D1F442ED49854008F3D2A /* Stripe in Frameworks */,
+				B78D1F502ED49854008F3D2A /* StripeIssuing in Frameworks */,
+				B78D1F522ED49854008F3D2A /* StripePaymentSheet in Frameworks */,
+				B78D1F4A2ED49854008F3D2A /* StripeConnect in Frameworks */,
+				4491E7B112F3522013E80653 /* Pods_Any.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -525,7 +535,7 @@
 				047B21C82A0BBEFE00AC3DA7 /* Any */,
 				047B21C72A0BBEFE00AC3DA7 /* Products */,
 				613A8A4859FC9FD6C58C6CEE /* Pods */,
-				7441AEB66082F652A1CB74B6 /* Frameworks */,
+				5A7A5EDC8C5A0B476AFEFC0B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -556,7 +566,7 @@
 		047B21DE2A0BC1D500AC3DA7 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				CF7E4C7C2DC240CD00E1E0A1 /* R.generated.swift */,
+				B7CF347B2ED58A2B00DF720B /* R.generated.swift */,
 				CF6185F22DBF965500DC9893 /* Version Manager */,
 				CF7C6B112BD24353000333FF /* Http */,
 				047B21DF2A0BC1D500AC3DA7 /* Extensions */,
@@ -845,26 +855,35 @@
 				CFE1B18B2D48D4E9003A9AC0 /* PasswordOtpVC.swift */,
 				CFE1B18D2D48D5DE003A9AC0 /* ResetPasswordVC.swift */,
 				CF67D7892D51F05C00113B13 /* PopPasswordChangedVC.swift */,
-				CF0B0CDC2D71887400A8C604 /* CountryPickerVC.swift */,
+				B79722502ED5DB5E00077245 /* AddressPickerVC.swift */,
 			);
 			path = Primary;
+			sourceTree = "<group>";
+		};
+		5A7A5EDC8C5A0B476AFEFC0B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				83EA18D20CFAB83EEA34A581 /* Pods_Any.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		613A8A4859FC9FD6C58C6CEE /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6F8CE1B7061E1D8C57D964D9 /* Pods-Any.debug.xcconfig */,
-				0D35BDC8A71A6CA41F3E1316 /* Pods-Any.release.xcconfig */,
+				68F3792A0E4B49323E142CEE /* Pods-Any.debug.xcconfig */,
+				CC365E38B998F7BAA90E83E1 /* Pods-Any.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		7441AEB66082F652A1CB74B6 /* Frameworks */ = {
+		B7366BF52ED998760075E352 /* Outlet */ = {
 			isa = PBXGroup;
 			children = (
-				E7CCC04439D148D0F0969394 /* Pods_Any.framework */,
+				B7366BF82ED998BD0075E352 /* OutletCell.swift */,
+				B7366BF92ED998BD0075E352 /* OutletCell.xib */,
 			);
-			name = Frameworks;
+			path = Outlet;
 			sourceTree = "<group>";
 		};
 		CF119EC12CAD831E0009F114 /* WorkerBooking */ = {
@@ -977,6 +996,8 @@
 		CFA59F252B80B93B00CCCE9F /* Cell */ = {
 			isa = PBXGroup;
 			children = (
+				B79722522ED5DD1B00077245 /* SearchLocationCell.swift */,
+				B7366BF52ED998760075E352 /* Outlet */,
 				CF2D93432ECB530B00FCAF20 /* Add Outlet */,
 				CF1FB3DA2E96916D0096F91B /* User Rating */,
 				CF88BAF02E82A52B0067BBB3 /* Multiple Date */,
@@ -1114,12 +1135,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 047B21DA2A0BBF0100AC3DA7 /* Build configuration list for PBXNativeTarget "Any" */;
 			buildPhases = (
-				E89F40BD4852E402B0740D37 /* [CP] Check Pods Manifest.lock */,
-				CFCABCFF2CAFD6ED008E42D2 /* ShellScript */,
+				305B5BB95BFE2B07BD192517 /* [CP] Check Pods Manifest.lock */,
+				B70098B12ED587A400276A37 /* ShellScript */,
 				047B21C22A0BBEFE00AC3DA7 /* Sources */,
 				047B21C32A0BBEFE00AC3DA7 /* Frameworks */,
 				047B21C42A0BBEFE00AC3DA7 /* Resources */,
-				E992850CB1817CABF6CCFF1C /* [CP] Embed Pods Frameworks */,
+				EC8FE13BFF35164706E92FC1 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1127,14 +1148,16 @@
 			);
 			name = Any;
 			packageProductDependencies = (
-				CFD2478A2BD15254005270B7 /* Stripe */,
-				CFD2478C2BD15254005270B7 /* StripeApplePay */,
-				CFD2478E2BD15254005270B7 /* StripeCardScan */,
-				CFD247902BD15254005270B7 /* StripeFinancialConnections */,
-				CFD247922BD15254005270B7 /* StripeIdentity */,
-				CFD247942BD15254005270B7 /* StripePaymentSheet */,
-				CFD247962BD15254005270B7 /* StripePayments */,
-				CFD247982BD15254005270B7 /* StripePaymentsUI */,
+				B78D1F432ED49854008F3D2A /* Stripe */,
+				B78D1F452ED49854008F3D2A /* StripeApplePay */,
+				B78D1F472ED49854008F3D2A /* StripeCardScan */,
+				B78D1F492ED49854008F3D2A /* StripeConnect */,
+				B78D1F4B2ED49854008F3D2A /* StripeFinancialConnections */,
+				B78D1F4D2ED49854008F3D2A /* StripeIdentity */,
+				B78D1F4F2ED49854008F3D2A /* StripeIssuing */,
+				B78D1F512ED49854008F3D2A /* StripePaymentSheet */,
+				B78D1F532ED49854008F3D2A /* StripePayments */,
+				B78D1F552ED49854008F3D2A /* StripePaymentsUI */,
 			);
 			productName = Any;
 			productReference = 047B21C62A0BBEFE00AC3DA7 /* Any.app */;
@@ -1165,7 +1188,7 @@
 			);
 			mainGroup = 047B21BD2A0BBEFE00AC3DA7;
 			packageReferences = (
-				CFD247892BD15254005270B7 /* XCRemoteSwiftPackageReference "stripe-ios" */,
+				B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */,
 			);
 			productRefGroup = 047B21C72A0BBEFE00AC3DA7 /* Products */;
 			projectDirPath = "";
@@ -1187,6 +1210,7 @@
 				CFE57BB92CB7A0D700C4A67C /* JobRequestCell.xib in Resources */,
 				CFDE19F22CBD4F25009CAC64 /* PreviousWorkerCell.xib in Resources */,
 				CFB340FA2CB1211600C6CBB1 /* ClientListCell.xib in Resources */,
+				B7366BFB2ED998BD0075E352 /* OutletCell.xib in Resources */,
 				CFA59F2B2B80B97A00CCCE9F /* DateWiseCell.xib in Resources */,
 				CFB4A8972CB80DE200D60B51 /* AllJobTypeCell.xib in Resources */,
 				044B534B2A167368002AE1CF /* TopBar.xib in Resources */,
@@ -1211,26 +1235,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		CFCABCFF2CAFD6ED008E42D2 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$TEMP_DIR/rswift-lastrun",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				$SRCROOT/R.generated.swift,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$PODS_ROOT/R.swift/rswift\" generate \"$SRCROOT/R.generated.swift\"\n";
-		};
-		E89F40BD4852E402B0740D37 /* [CP] Check Pods Manifest.lock */ = {
+		305B5BB95BFE2B07BD192517 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1252,7 +1257,26 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E992850CB1817CABF6CCFF1C /* [CP] Embed Pods Frameworks */ = {
+		B70098B12ED587A400276A37 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$TEMP_DIR/rswift-lastrun",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				$SRCROOT/R.generated.swift,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$PODS_ROOT/R.swift/rswift\" generate \"$SRCROOT/R.generated.swift\"\n";
+		};
+		EC8FE13BFF35164706E92FC1 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1292,6 +1316,7 @@
 				CFDE19F32CBD4F25009CAC64 /* PreviousWorkerCell.swift in Sources */,
 				047B228A2A0BC1D600AC3DA7 /* PagingView.swift in Sources */,
 				047B22E52A0BC1D700AC3DA7 /* Utility.swift in Sources */,
+				B79722512ED5DB5E00077245 /* AddressPickerVC.swift in Sources */,
 				047B22CD2A0BC1D700AC3DA7 /* CountryCell.swift in Sources */,
 				CF91CCDD2E84241E00838F9F /* WishlistVC.swift in Sources */,
 				047B22B82A0BC1D700AC3DA7 /* PagingItem.swift in Sources */,
@@ -1300,7 +1325,6 @@
 				041C17DF2A233FFF0020E309 /* UrgentBookingVC.swift in Sources */,
 				047B23032A0BC1D700AC3DA7 /* LoginTypeVC.swift in Sources */,
 				047B22EA2A0BC1D700AC3DA7 /* HomeVC.swift in Sources */,
-				CF0B0CDD2D71887400A8C604 /* CountryPickerVC.swift in Sources */,
 				046AD9092A27902800612523 /* PopUpApprovalVC.swift in Sources */,
 				047B22FA2A0BC1D700AC3DA7 /* TermsAndCondVC.swift in Sources */,
 				CFE57BB82CB7A0D700C4A67C /* JobRequestCell.swift in Sources */,
@@ -1315,6 +1339,7 @@
 				047B22B42A0BC1D700AC3DA7 /* PageView.swift in Sources */,
 				047B22A22A0BC1D600AC3DA7 /* PagingMenuHorizontalAlignment.swift in Sources */,
 				047B228C2A0BC1D600AC3DA7 /* PagingIndicatorLayoutAttributes.swift in Sources */,
+				B7CF347C2ED58A2B00DF720B /* R.generated.swift in Sources */,
 				041C17E52A2342570020E309 /* TabBarClientVC.swift in Sources */,
 				CFA834842CB807E100F1CFFC /* PublishJobVC.swift in Sources */,
 				047B22852A0BC1D600AC3DA7 /* TableViewController.swift in Sources */,
@@ -1336,6 +1361,7 @@
 				CFC4B9842D34F88800452D80 /* SetCustomDateRateVC.swift in Sources */,
 				CFFD0D262CB6BEA50035C254 /* ManpowerCell.swift in Sources */,
 				CF4562452E8166D60024743C /* SubShiftCell.swift in Sources */,
+				B79722532ED5DD1B00077245 /* SearchLocationCell.swift in Sources */,
 				CFDB26742D421FD40009966D /* PopUpBeforeBooking.swift in Sources */,
 				047B22B22A0BC1D700AC3DA7 /* PagingNavigationOrientation.swift in Sources */,
 				CFB4A8962CB80DE200D60B51 /* AllJobTypeCell.swift in Sources */,
@@ -1415,7 +1441,6 @@
 				047B22992A0BC1D600AC3DA7 /* PageViewDirection.swift in Sources */,
 				04E000652A3345440010E371 /* SameDayRequestVC.swift in Sources */,
 				CF5576482D98086C007877FF /* CurrentShiftCell.swift in Sources */,
-				CF7E4C7D2DC240CD00E1E0A1 /* R.generated.swift in Sources */,
 				044332502A266CA30037E3D9 /* CurrentShiftVC.swift in Sources */,
 				047B22AB2A0BC1D700AC3DA7 /* PagingDistance.swift in Sources */,
 				047B22972A0BC1D600AC3DA7 /* PagingBorderLayoutAttributes.swift in Sources */,
@@ -1455,6 +1480,7 @@
 				047B22A52A0BC1D700AC3DA7 /* PagingBorderOptions.swift in Sources */,
 				CFD247852BD14C5C005270B7 /* SaveCardCell.swift in Sources */,
 				047B22AF2A0BC1D700AC3DA7 /* PagingCellViewModel.swift in Sources */,
+				B7366BFA2ED998BD0075E352 /* OutletCell.swift in Sources */,
 				047B22882A0BC1D600AC3DA7 /* PagingTitleCell.swift in Sources */,
 				CF6F30EF2E82B4FA004DC036 /* CalenderPickervC.swift in Sources */,
 				CF67D78A2D51F05C00113B13 /* PopPasswordChangedVC.swift in Sources */,
@@ -1593,7 +1619,7 @@
 		};
 		047B21DB2A0BBF0100AC3DA7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6F8CE1B7061E1D8C57D964D9 /* Pods-Any.debug.xcconfig */;
+			baseConfigurationReference = 68F3792A0E4B49323E142CEE /* Pods-Any.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1624,7 +1650,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.80;
+				MARKETING_VERSION = 2.86;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1633,7 +1659,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/techimmensesoftwaresolutions/Desktop/TechImmense Projects/Any-New-Design-main/Any/Any-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/arbaz/Desktop/Techimmense Project/Any-New-Design-main/Any/Any-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1641,7 +1667,7 @@
 		};
 		047B21DC2A0BBF0100AC3DA7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0D35BDC8A71A6CA41F3E1316 /* Pods-Any.release.xcconfig */;
+			baseConfigurationReference = CC365E38B998F7BAA90E83E1 /* Pods-Any.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1672,7 +1698,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.80;
+				MARKETING_VERSION = 2.86;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1681,7 +1707,7 @@
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "/Users/techimmensesoftwaresolutions/Desktop/TechImmense Projects/Any-New-Design-main/Any/Any-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "/Users/arbaz/Desktop/Techimmense Project/Any-New-Design-main/Any/Any-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1711,55 +1737,65 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		CFD247892BD15254005270B7 /* XCRemoteSwiftPackageReference "stripe-ios" */ = {
+		B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/stripe/stripe-ios.git";
+			repositoryURL = "https://github.com/stripe/stripe-ios-spm.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 23.27.0;
+				minimumVersion = 25.1.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CFD2478A2BD15254005270B7 /* Stripe */ = {
+		B78D1F432ED49854008F3D2A /* Stripe */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CFD247892BD15254005270B7 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			package = B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
 			productName = Stripe;
 		};
-		CFD2478C2BD15254005270B7 /* StripeApplePay */ = {
+		B78D1F452ED49854008F3D2A /* StripeApplePay */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CFD247892BD15254005270B7 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			package = B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
 			productName = StripeApplePay;
 		};
-		CFD2478E2BD15254005270B7 /* StripeCardScan */ = {
+		B78D1F472ED49854008F3D2A /* StripeCardScan */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CFD247892BD15254005270B7 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			package = B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
 			productName = StripeCardScan;
 		};
-		CFD247902BD15254005270B7 /* StripeFinancialConnections */ = {
+		B78D1F492ED49854008F3D2A /* StripeConnect */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CFD247892BD15254005270B7 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			package = B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
+			productName = StripeConnect;
+		};
+		B78D1F4B2ED49854008F3D2A /* StripeFinancialConnections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
 			productName = StripeFinancialConnections;
 		};
-		CFD247922BD15254005270B7 /* StripeIdentity */ = {
+		B78D1F4D2ED49854008F3D2A /* StripeIdentity */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CFD247892BD15254005270B7 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			package = B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
 			productName = StripeIdentity;
 		};
-		CFD247942BD15254005270B7 /* StripePaymentSheet */ = {
+		B78D1F4F2ED49854008F3D2A /* StripeIssuing */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CFD247892BD15254005270B7 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			package = B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
+			productName = StripeIssuing;
+		};
+		B78D1F512ED49854008F3D2A /* StripePaymentSheet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
 			productName = StripePaymentSheet;
 		};
-		CFD247962BD15254005270B7 /* StripePayments */ = {
+		B78D1F532ED49854008F3D2A /* StripePayments */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CFD247892BD15254005270B7 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			package = B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
 			productName = StripePayments;
 		};
-		CFD247982BD15254005270B7 /* StripePaymentsUI */ = {
+		B78D1F552ED49854008F3D2A /* StripePaymentsUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CFD247892BD15254005270B7 /* XCRemoteSwiftPackageReference "stripe-ios" */;
+			package = B78D1F422ED49854008F3D2A /* XCRemoteSwiftPackageReference "stripe-ios-spm" */;
 			productName = StripePaymentsUI;
 		};
 /* End XCSwiftPackageProductDependency section */

@@ -29,7 +29,7 @@ class JobConfirmedVC: UIViewController {
     }
     
     @IBAction func btn_ViewJobPost(_ sender: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "CurrentShiftVC") as! CurrentShiftVC
+        let vC = R.storyboard.main.currentShiftVC()!
         self.navigationController?.pushViewController(vC, animated: true)
     }
 }

@@ -162,8 +162,6 @@ extension AppDelegate:LocationManagerDelegate {
     }
 }
 
-//MARK:Extention
-
 extension AppDelegate: UNUserNotificationCenterDelegate {
     
     
@@ -347,7 +345,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     //            NotificationCenter.default.post(name: NSNotification.Name("ReloadCount"), object: "On Ride", userInfo: nil)
     //        }
     //    }
-    
     
     func goChatVC() {
         let visibleVC = UIApplication.topViewController()!

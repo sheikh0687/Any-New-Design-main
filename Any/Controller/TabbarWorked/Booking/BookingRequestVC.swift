@@ -146,6 +146,7 @@ class BookingRequestVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = false
         self.tabBarController?.tabBar.isHidden = true
+        
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Booking Request", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
         
         var dcuureDate = arrDateStar[currentWeek]
@@ -222,22 +223,19 @@ extension BookingRequestVC {
                 self.hideProgressBar()
             }
             
-            
         },failureBlock: { (error : Error) in
             self.hideProgressBar()
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         })
     }
-
     
-    func webAddToCartSubmit(_ shiftId: String,_ shiftRate: String) {
+    func webAddToCartSubmit(_ shiftId: String,_ shiftRate: String, autoApproved: String, singleDate: String, outletiD: String) {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         
         var arrClinId:[String] = []
         var arrDayName:[String] = []
         var arrDate:[String] = []
-        
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -251,7 +249,7 @@ extension BookingRequestVC {
         arrDate.append(dateAMPM)
         
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
-        paramsDict["client_id"]     =  arrClinId.joined(separator: ",")  as AnyObject
+        paramsDict["client_id"]     =  outletiD  as AnyObject
         paramsDict["shift_id"]     =  shiftId as AnyObject
         paramsDict["day_name"]     =  arrDayName.joined(separator: ",")  as AnyObject
         paramsDict["date"]     =  arrDate.joined(separator: ",")  as AnyObject
@@ -265,7 +263,7 @@ extension BookingRequestVC {
                 let swiftyJsonVar = JSON(responseData)
                 if(swiftyJsonVar["status"] == "1") {
                     let cartId = swiftyJsonVar["cart_id"].int
-                    self.addBookingFinal(cartId ?? 0)
+                    self.addBookingFinal(cartId ?? 0, autoShift: autoApproved, singleDate: singleDate, date: arrDate.joined(separator: ","))
                 } else {
                     let message = swiftyJsonVar["message"].stringValue
                     GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
@@ -356,9 +354,10 @@ extension BookingRequestVC {
         })
     }
     
-    func addBookingFinal(_ cartID: Int) {
+    func addBookingFinal(_ cartID: Int, autoShift: String, singleDate: String, date: String) {
         
         showProgressBar()
+        
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =  USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramDict["cart_id"]  =  cartID as AnyObject
@@ -372,11 +371,30 @@ extension BookingRequestVC {
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
                     objVC.strFrom = "Summery"
-                    objVC.str_Head = "Your Booking Request Has Been Sent"
-                    objVC.str_Desc = "You will receive a notification once the unit manager has approved/declined your shift."
+                    if autoShift == "Yes" {
+                        objVC.str_Head = ""
+                        objVC.str_Desc = "Your shift booking for \(singleDate) has been auto approved. Kindly be on time for your shift."
+                    } else {
+                        objVC.str_Head = "Your Booking Request Has Been Sent"
+                        objVC.str_Desc = "You will receive a notification once the unit manager has approved/declined your shift."
+                    }
                     objVC.completion = {
                         Switcher.updateRootVC()
                     }
+                    
+                    objVC.modalPresentationStyle = .overCurrentContext
+                    objVC.modalTransitionStyle = .crossDissolve
+                    self.present(objVC, animated: false, completion: nil)
+                } else if (swiftyJsonVar["status"].stringValue == "2") {
+                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
+                    objVC.strFrom = "Summery"
+                    objVC.str_Head = "Booking status update"
+                    objVC.str_Desc = "Bookings for \(self.dicClinetDetail["business_name"].stringValue) on \(date) have been switched from Instant Approval to Pending Approval due to the client’s billing issue. Please wait a few hours for the approval notification. No action needed on your side for now."
+                    
+                    objVC.completion = {
+                        Switcher.updateRootVC()
+                    }
+                    
                     objVC.modalPresentationStyle = .overCurrentContext
                     objVC.modalTransitionStyle = .crossDissolve
                     self.present(objVC, animated: false, completion: nil)
@@ -415,8 +433,7 @@ extension BookingRequestVC {
         })
     }
     
-    func webWorkerUpdateDocc(workerDocc: UIImage)
-    {
+    func webWorkerUpdateDocc(workerDocc: UIImage) {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -451,7 +468,7 @@ extension BookingRequestVC {
     }
 }
 
-extension BookingRequestVC: UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,UICollectionViewDelegate {
+extension BookingRequestVC: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return arrShiftCount.count
@@ -584,6 +601,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
 
         if dic["client_details"]["shift_autoapproval"].stringValue == "Yes" {
             cell.lbl_InstantApproval.isHidden = false
+            cell.lbl_InstantApproval.textColor = R.color.button_COLOR()
         } else {
             cell.lbl_InstantApproval.isHidden = true
         }
@@ -616,6 +634,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
                 cell.view_Bg.borderColor1 = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
                 cell.lbl_Status.text = "Booking\nClosed!"
                 cell.lbl_Status.textColor = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
+                cell.lbl_InstantApproval.textColor = R.color.lightgraY()
                 
                 cell.btn_BookOt.isHidden = true
                 cell.btn_WithdrawOt.isHidden = true
@@ -633,7 +652,6 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
                     cell.view_Bg.borderColor1 = .separator
                     cell.lbl_Status.text = "Available"
                     cell.lbl_Status.textColor = R.color.greeN()
-                    
                     cell.btn_BookOt.isHidden = false
                     cell.btn_WithdrawOt.isHidden = true
                     cell.btn_ClosedOt.isHidden = true
@@ -645,7 +663,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
             if nrcDocumentUpdated == "Yes" {
                 if dic["document_requied"].stringValue == "Yes" {
                     if strSessionJobiD == dic["job_type_id"].stringValue {
-                        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "PopUpBeforeBooking") as! PopUpBeforeBooking
+                        let vC = R.storyboard.main.popUpBeforeBooking()!
                         
                         let objClient = dic["client_details"].dictionaryValue
                         vC.strBookinName = "\(objClient["business_name"]?.stringValue ?? ""),\n\(objClient["business_address"]?.stringValue ?? "")\n\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
@@ -659,7 +677,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
                         vC.cloBook = { [self] in
                             let shiftId = dic["id"].stringValue
                             let shiftRate = dic["shift_rate"].stringValue
-                            self.webAddToCartSubmit(shiftId, shiftRate)
+                            self.webAddToCartSubmit(shiftId, shiftRate, autoApproved: dic["shift_autoapproval"].stringValue, singleDate: dic["single_date"].stringValue, outletiD: dic["outlet_id"].stringValue)
                         }
                         
                         vC.modalTransitionStyle = .crossDissolve
@@ -669,7 +687,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
                         Utility.showAlertMessage(withTitle: APPNAME, message: "Please complete your profile to book.\n\n * Go to Profile, select the job type you’re applying for.\n * Some roles (Kitchen Assistant, Chef, Barista) require a one-time upload of NRIC and a valid Food Hygiene Certificate.\n\nOnce approved, you can book shifts for that job type.", delegate: self, parentViewController: self)
                     }
                 } else {
-                    let vC = R.storyboard.main().instantiateViewController(withIdentifier: "PopUpBeforeBooking") as! PopUpBeforeBooking
+                    let vC = R.storyboard.main.popUpBeforeBooking()!
                     
                     let objClient = dic["client_details"].dictionaryValue
                     vC.strBookinName = "\(objClient["business_name"]?.stringValue ?? ""),\n\(objClient["business_address"]?.stringValue ?? "")\n\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
@@ -683,7 +701,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
                     vC.cloBook = { [self] in
                         let shiftId = dic["id"].stringValue
                         let shiftRate = dic["shift_rate"].stringValue
-                        self.webAddToCartSubmit(shiftId, shiftRate)
+                        self.webAddToCartSubmit(shiftId, shiftRate, autoApproved: dic["shift_autoapproval"].stringValue, singleDate: dic["single_date"].stringValue, outletiD: dic["outlet_id"].stringValue)
                     }
                     
                     vC.modalTransitionStyle = .crossDissolve
@@ -691,7 +709,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
                     self.present(vC, animated: true)
                 }
             } else {
-                let vC = R.storyboard.main().instantiateViewController(withIdentifier: "PopNRIC") as! PopNRIC
+                let vC = R.storyboard.main.popNRIC()!
                 vC.cloSubmit = { doccImg in
                     self.webWorkerUpdateDocc(workerDocc: doccImg)
                 }
@@ -702,7 +720,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
         }
         
         cell.cloWithdraw = { [self] in
-            let vC = R.storyboard.main().instantiateViewController(withIdentifier: "PopUpBeforeBooking") as! PopUpBeforeBooking
+            let vC = R.storyboard.main.popUpBeforeBooking()!
             let objClient = dic["client_details"].dictionaryValue
             vC.strBookinName = "\(objClient["business_name"]?.stringValue ?? ""),\n\(objClient["business_address"]?.stringValue ?? "")\n\(dic["day_name"].stringValue) \(dic["start_time"].stringValue) \(dic["end_time"].stringValue)"
             vC.isFrom = "Withdraw"

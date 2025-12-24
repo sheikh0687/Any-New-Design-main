@@ -28,10 +28,6 @@ class RequestVC: UIViewController {
     var strStatus = "Pending"
     var strDate = ""
     var dicCrent:JSON!
-    
-    //    let customer_Id:String! = USER_DEFAULT.value(forKey: CUSTOMERID) as? String
-    //    let card_Id:String! = USER_DEFAULT.value(forKey: CARDID) as? String
-    
     var customer_Id:String?
     var card_Id:String?
     
@@ -48,8 +44,7 @@ class RequestVC: UIViewController {
         self.view.addSubview(customInfoWindow)
         
         NotificationCenter.default.addObserver(self, selector: #selector(showSpinningWheel), name: NSNotification.Name(rawValue: "ReloadCount"), object: nil)
-        
-        
+                
         table_List.estimatedRowHeight = 188
         table_List.rowHeight = UITableView.automaticDimension
         GetProfile()
@@ -114,6 +109,7 @@ extension RequestVC {
         //        showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
+        
         print(paramsDict)
         
         CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
@@ -137,7 +133,6 @@ extension RequestVC {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         })
     }
-    
     
     func GetNotificationCount() {
         var paramsDict:[String:AnyObject] = [:]
@@ -168,7 +163,7 @@ extension RequestVC {
     
     func WebGetApprovedBooking() {
         var paramsDict:[String:AnyObject] = [:]
-        paramsDict["client_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
+        paramsDict["client_id"]  =   USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         paramsDict["status"]  =   strStatus as AnyObject
         paramsDict["date"]  =   strDate as AnyObject
         
@@ -235,6 +230,7 @@ extension RequestVC {
         paramsDict["approver_id"]  =   "" as AnyObject
         paramsDict["approver_name"]  =   "" as AnyObject
         paramsDict["approver_type"]  =   "" as AnyObject
+        
         print(paramsDict)
         
         showProgressBar()
@@ -255,7 +251,6 @@ extension RequestVC {
                     objVC.modalPresentationStyle = .overCurrentContext
                     objVC.modalTransitionStyle = .crossDissolve
                     self.present(objVC, animated: false, completion: nil)
-                    
                     
                 } else {}
                 self.hideProgressBar()
@@ -343,7 +338,6 @@ extension RequestVC : UITableViewDataSource {
             cell.imgCertificate.image = R.image.placeholder()
         }
     
-        
         // Handle status
         if strStatus == "Accept" {
             cell.btn_Chat.isHidden = false
@@ -395,7 +389,7 @@ extension RequestVC : UITableViewDataSource {
     }
     
     @objc func clickReview(but: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "UserRatingVC") as! UserRatingVC
+        let vC = R.storyboard.main.userRatingVC()!
         self.navigationController?.pushViewController(vC, animated: true)
     }
     
@@ -438,7 +432,7 @@ extension RequestVC : UITableViewDataSource {
             objVC.modalTransitionStyle = .crossDissolve
             self.present(objVC, animated: false, completion: nil)
         } else {
-            if customer_Id == "" && card_Id == "" {
+            if card_Id == "" {
                 let vc = kStoryboardMain.instantiateViewController(withIdentifier: "SaveCardVC") as! SaveCardVC
                 vc.cloCardDetail = { (cardId, customerId) in
                     let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpApprovalVC") as! PopUpApprovalVC
@@ -455,7 +449,6 @@ extension RequestVC : UITableViewDataSource {
                     self.present(objVC, animated: false, completion: nil)
                 }
                 self.navigationController?.pushViewController(vc, animated: true)
-                
             } else {
                 let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpApprovalVC") as! PopUpApprovalVC
                 objVC.dicM = dic

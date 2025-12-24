@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '9.0'
+# platform :ios, '15.6'
 
 target 'Any' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -20,7 +20,7 @@ pod 'InputMask'
 #pod 'FSCalendar'
 pod 'OTPFieldView'
 
-pod 'R.swift', '~> 5.4.0'
+pod 'R.swift', '~> 7.0'
 
 pod 'CountryPickerView'
 

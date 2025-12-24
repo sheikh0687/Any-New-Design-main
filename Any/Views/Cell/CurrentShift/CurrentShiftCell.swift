@@ -14,6 +14,7 @@ class CurrentShiftCell: UITableViewCell {
     @IBOutlet weak var lbl_Meal: UILabel!
     @IBOutlet weak var lbl_Break: UILabel!
     @IBOutlet weak var lbl_AvailableDays: UILabel!
+    @IBOutlet weak var lbl_OUtletName: UILabel!
     
     @IBOutlet weak var btn_ThreeDot: UIButton!
     

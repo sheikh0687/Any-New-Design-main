@@ -114,7 +114,7 @@ extension RequestByDateVC {
     
     func WebGetApprovedBooking() {
         var paramsDict:[String:AnyObject] = [:]
-        paramsDict["client_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
+        paramsDict["client_id"]  =   USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         paramsDict["status"]  =   strStatus as AnyObject
         paramsDict["date"]  =   strDate as AnyObject
         
@@ -295,7 +295,7 @@ extension RequestByDateVC : UITableViewDataSource {
     }
     
     @objc func clickReview(but: UIButton) {
-        let vC = R.storyboard.main().instantiateViewController(withIdentifier: "UserRatingVC") as! UserRatingVC
+        let vC = R.storyboard.main.userRatingVC()!
         self.navigationController?.pushViewController(vC, animated: true)
     }
     

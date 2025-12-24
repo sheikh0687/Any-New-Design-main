@@ -34,6 +34,8 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
     var strlat:String! = ""
     var strlon:String! = ""
     
+    var workerLocation: CLLocation?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         WebGetBookingDetail()
@@ -43,6 +45,26 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
         self.navigationController?.navigationBar.isHidden = false
         self.tabBarController?.tabBar.isHidden = true
         setNavigationBarItem(LeftTitle: "", LeftImage: "back", CenterTitle: "Details", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
+        getWorkerCurrentLocation()
+    }
+    
+    func getWorkerCurrentLocation()
+    {
+        AccurateLocationManager.shared.requestAccurateLocation { workerLocation in
+
+            guard let workerLocation = workerLocation else {
+                GlobalConstant.showAlertMessage(
+                    withOkButtonAndTitle: "Location Error",
+                    andMessage: "Unable to fetch your current location. Please enable GPS.",
+                    on: self
+                )
+                return
+            }
+
+            self.workerLocation = workerLocation
+            
+            print("📍 Worker Current Location Updated: \(workerLocation.coordinate)")
+        }
     }
     
     @IBAction func book(_ sender: Any) {
@@ -98,46 +120,42 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
     
     func checkWorkerDistanceFromClient(completion: @escaping (Bool) -> Void) {
         
-        AccurateLocationManager.shared.requestAccurateLocation { workerLocation in
+        guard let workerLocation = self.workerLocation else {
+            GlobalConstant.showAlertMessage(
+                withOkButtonAndTitle: "Location Missing",
+                andMessage: "Still fetching your GPS location. Please wait a moment.",
+                on: self
+            )
+            completion(false)
+            return
+        }
 
-            guard let workerLocation = workerLocation else {
-                GlobalConstant.showAlertMessage(
-                    withOkButtonAndTitle: "Location Error",
-                    andMessage: "Unable to fetch your current location. Please enable GPS.",
-                    on: self
-                )
-                completion(false)
-                return
-            }
+        print("📍 Worker Location:", workerLocation.coordinate)
+        
+        guard let clientLat = Double(self.strlat),
+              let clientLon = Double(self.strlon) else {
+            completion(false)
+            return
+        }
 
-            print("📍 Worker Location:", workerLocation.coordinate)
+        let clientLocation = CLLocation(latitude: clientLat, longitude: clientLon)
+        let distance = workerLocation.distance(from: clientLocation)
 
-            guard let clientLat = Double(self.strlat),
-                  let clientLon = Double(self.strlon) else {
-                completion(true)
-                return
-            }
+        print("🛰 Accurate Distance to client: \(distance) meters")
 
-            let clientLocation = CLLocation(latitude: clientLat, longitude: clientLon)
+        if distance <= 150 {
+            completion(true)
+        } else {
+            let status = self.dicRequestDetail["working_status"].stringValue
+            let action = (status == "Pending") ? "clock-in" : "clock-out"
 
-            let distance = workerLocation.distance(from: clientLocation)
+            GlobalConstant.showAlertMessage(
+                withOkButtonAndTitle: "Too Far",
+                andMessage: "Unable to \(action). You are outside the allowed location radius. Enable location services if they are off, then try again.",
+                on: self
+            )
 
-            print("🛰 Accurate Distance to client: \(distance) meters")
-
-            if distance <= 150 {
-                completion(true)
-            } else {
-                let status = self.dicRequestDetail["working_status"].stringValue
-                let action = (status == "Pending") ? "clock-in" : "clock-out"
-
-                GlobalConstant.showAlertMessage (
-                    withOkButtonAndTitle: "Too Far",
-                    andMessage: "Unable to \(action). You are outside the allowed location radius. Enable location services if they are off, then try again.",
-                    on: self
-                )
-
-                completion(false)
-            }
+            completion(false)
         }
     }
     
@@ -275,6 +293,7 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
         
         collectionViewShift.reloadData()
     }
+    
 }
 
 extension BookingDetailVC: UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,UICollectionViewDelegate {

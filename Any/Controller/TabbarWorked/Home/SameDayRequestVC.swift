@@ -99,12 +99,12 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
             DispatchQueue.main.async { [self] in
                 let swiftyJsonVar = JSON(responseData)
                 print(swiftyJsonVar)
-
+                
                 if(swiftyJsonVar["status"].stringValue == "1") {
-              
+                    
                     if strCard == "Accept" {
                         let sdsd = kappDelegate.dicCrent["start_time"].stringValue
-
+                        
                         let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpBookingConfirmVC") as! PopUpBookingConfirmVC
                         objVC.str_Desc = "Your shift will start at (\(sdsd)) today at this location:"
                         objVC.str_Sub_Desc = "\(kappDelegate.dicCrent["client_details"]["business_name"].stringValue), \(kappDelegate.dicCrent["address"].stringValue)\n\n\(kCurrency)\(kappDelegate.dicCrent["shift_rate"].stringValue)/Hour"
@@ -113,7 +113,7 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                         objVC.modalPresentationStyle = .overCurrentContext
                         objVC.modalTransitionStyle = .crossDissolve
                         self.present(objVC, animated: false, completion: nil)
-
+                        
                     } else  {
                         self.WebGetApprovedBooking()
                     }
@@ -144,9 +144,9 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
             DispatchQueue.main.async { [self] in
                 let swiftyJsonVar = JSON(responseData)
                 print(swiftyJsonVar)
-              
+                
                 table_List.isHidden = false
-
+                
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     
                     self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
@@ -185,14 +185,14 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                     self.WebGetApprovedBooking()
                     
                     let shiftTime = "\(dicCrent["start_time"].stringValue) to \(dicCrent["end_time"].stringValue)"
-
+                    
                     let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpRejectVC") as! PopUpRejectVC
                     objVC.str_Desc = "\(dicCrent["client_details"]["business_name"].stringValue),  \(dicCrent["address"].stringValue)\n\(dicCrent["day_name"].stringValue), \(shiftTime)"
                     objVC.str_Head = "Your shift has been successfully cancelled in:"
                     objVC.modalPresentationStyle = .overCurrentContext
                     objVC.modalTransitionStyle = .crossDissolve
                     self.present(objVC, animated: false, completion: nil)
-
+                    
                 } else {
                     Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
                 }

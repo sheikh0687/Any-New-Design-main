@@ -45,6 +45,7 @@ extension SaveCardVC {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
+        
         print(paramsDict)
         
         CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
@@ -56,7 +57,6 @@ extension SaveCardVC {
                     let obj = swiftyJsonVar["result"]
                     
                     let customerId = obj["customer_id"].stringValue
-//                    let cardId = obj["card_id"].stringValue
                     
                     guard !customerId.isEmpty else {
                         print("Customer ID is empty.")
@@ -64,12 +64,12 @@ extension SaveCardVC {
                         Utility.noDataFound("No Saved Cards At The Moment", tableViewOt: self.saved_CardTableVw, parentViewController: self)
                         return
                     }
-
+                    
                     self.customer_Id = obj["customer_id"].stringValue
-//                    self.card_Id = obj["card_id"].stringValue
+                    //                    self.card_Id = obj["card_id"].stringValue
                     
                     USER_DEFAULT.set(customerId, forKey: CUSTOMERID)
-//                    USER_DEFAULT.set(cardId, forKey: CARDID)
+                    //                    USER_DEFAULT.set(cardId, forKey: CARDID)
                     
                     self.WebGetSavedCard()
                 } else {
@@ -126,10 +126,10 @@ extension SaveCardVC {
     }
     
     func delete_SavedCard(cardId: String) {
-        var dict: [String : AnyObject] = [:]
-        dict["user_id"]                = USER_DEFAULT.value(forKey: USERID) as AnyObject
-        dict["card_id"]                = cardId as AnyObject
-        dict["customer_id"]            = customer_Id as AnyObject
+        var dict: [String : Any] = [:]
+        dict["user_id"]     = USER_DEFAULT.value(forKey: USERID)
+        dict["card_id"]     = cardId
+        dict["customer_id"] = customer_Id
         
         print(dict)
         
@@ -138,7 +138,7 @@ extension SaveCardVC {
         }
     }
     
-    func parseDataSaveCard(apiResponse : AnyObject) {
+    func parseDataSaveCard(apiResponse : Any) {
         DispatchQueue.main.async {
             let swiftyJsonVar = JSON(apiResponse)
             print(swiftyJsonVar)
