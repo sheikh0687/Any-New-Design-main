@@ -11,7 +11,9 @@ class ConversationCell: UITableViewCell {
     @IBOutlet weak var lblMsgRight: UILabel!
     @IBOutlet weak var imgRight: UIImageView!
     @IBOutlet weak var lblDate: UILabel!
-  
+    @IBOutlet weak var lblSupportName: UILabel!
+    @IBOutlet weak var lblSeenStatus: UILabel!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

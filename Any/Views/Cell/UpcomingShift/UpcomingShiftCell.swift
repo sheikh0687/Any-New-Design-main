@@ -18,7 +18,6 @@ class UpcomingShiftCell: UITableViewCell {
     var strDate:String = ""
     var navigationController: UINavigationController?
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -41,11 +40,12 @@ extension UpcomingShiftCell: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SubShiftCell", for: indexPath) as! SubShiftCell
+        
         let obj = arrayShift[indexPath.row]
         
         cell.lbl_JobName.text = obj["job_type"].stringValue
         cell.lbl_Time.text = "\(obj["start_time"].stringValue) : \(obj["end_time"].stringValue)"
-//        cell.lbl_Note.text = "Note : \(obj["note"].stringValue)"
+        cell.lbl_Note.text = "Notes: \(obj["note"].stringValue)"
         
         if obj["break_type"].stringValue != "Not Applicable" {
             cell.lbl_BreakTime.text = "Break Time: \(obj["shift_break_time"].stringValue)"
@@ -55,6 +55,15 @@ extension UpcomingShiftCell: UITableViewDelegate, UITableViewDataSource {
         
         cell.lbl_Break.text = "Break : \(obj["break_type"].stringValue)"
         cell.lbl_Meal.text = "Meals : \(obj["meals"].stringValue)"
+        
+        let workerDetail = obj["worker_details"].arrayValue
+        if workerDetail.count != 0 {
+            cell.workerCollectionView.isHidden = false
+            cell.arrayWorker = obj["worker_details"].arrayValue
+            cell.workerCollectionView.reloadData()
+        } else {
+            cell.workerCollectionView.isHidden = true
+        }
         
         // Progress logic
         let workerCount = Int(obj["worker_count"].stringValue) ?? 0
@@ -69,29 +78,38 @@ extension UpcomingShiftCell: UITableViewDelegate, UITableViewDataSource {
             if workerCount == bookedCount {
                 cell.progressVw.progressTintColor = R.color.greeN() // Fully booked – green
                 cell.lbl_AvailableSlot.text = "\(obj["booked_worker_count"].stringValue)/\(obj["worker_count"].stringValue) Fully Booked"
-
             } else {
                 cell.progressVw.progressTintColor = R.color.button_COLOR() // Partially booked –
 //                yellow
                 cell.lbl_AvailableSlot.text = "\(obj["booked_worker_count"].stringValue)/\(obj["worker_count"].stringValue)  \(obj["remain_worker_count"].stringValue) slot available"
-
             }
         } else {
             cell.progressVw.progress = 0.0
             cell.progressVw.progressTintColor = .yellow
             cell.progressVw.trackTintColor = .separator
         }
-
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 190
+        let obj = arrayShift[indexPath.row]
+        if obj["worker_details"].count > 0 {
+            return 310
+        } else {
+            return 220
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "RequestByDateVC") as! RequestByDateVC
         objVC.strDate = strDate
         navigationController?.pushViewController(objVC, animated: true)
+    }
+}
+
+extension SwiftyJSON.JSON {
+    var safeFirstString: String {
+        (self.arrayObject ?? []).first as? String ?? ""
     }
 }

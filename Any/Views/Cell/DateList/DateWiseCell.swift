@@ -47,7 +47,6 @@ extension DateWiseCell: UICollectionViewDataSource,UICollectionViewDelegateFlowL
         cell.lbl_PendingCount.text = "\(dic["pending_shift_count"].numberValue)"
         cell.lbl_PendingCount.clipsToBounds = true
         cell.lbl_PendingCount.cornerRadius1 = 7
-
         
         if "\(dic["pending_shift_count"].numberValue)" == "0" && "\(dic["accept_shift_count"].numberValue)" == "0" {
             cell.lbl_NumberCount.isHidden = true

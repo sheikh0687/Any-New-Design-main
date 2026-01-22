@@ -326,6 +326,7 @@ extension RequestVC : UITableViewDataSource {
             cell.lbl_EstimatedAmount.text = "Estimated Amount: \(dic["user_details"]["currency_symbol"].stringValue)\(dic["shift_estimate_amount"].intValue) + \(dic["admin_commission"].stringValue)%"
         }
         
+        cell.lbl_Note.text = "Notes: \(dic["set_shift_details"]["note"].stringValue)"
         cell.lbl_AttendanceRate.text = "\(dic["user_details"]["attandance"].stringValue)"
         cell.lbl_CompletedShift.text = "\(dic["user_details"]["completed_shift"].stringValue)"
         cell.lbl_Experience.text = dic["user_details"]["worker_experience"].stringValue

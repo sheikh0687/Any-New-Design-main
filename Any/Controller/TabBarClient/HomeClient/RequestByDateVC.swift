@@ -223,6 +223,7 @@ extension RequestByDateVC : UITableViewDataSource {
             cell.lbl_EstimatedAmount.text = "Estimated Amount: $\(dic["shift_estimate_amount"].intValue) + \(dic["admin_commission"].stringValue)%"
         }
         
+        cell.lbl_Note.text = "Notes: \(dic["set_shift_details"]["note"].stringValue)"
         let imgLogoUrl = dic["user_details"]["image"].stringValue
         let urlwithPercentEscapes = imgLogoUrl.addingPercentEncoding( withAllowedCharacters: .urlQueryAllowed)
         let urlLogo = URL(string: urlwithPercentEscapes!)

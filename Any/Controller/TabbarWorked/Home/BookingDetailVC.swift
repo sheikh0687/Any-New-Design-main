@@ -237,7 +237,9 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
                     dicRequestDetail = swiftyJsonVar["result"]
                     getDataShiftAvailble()
                     
-                } else {}
+                } else {
+                    
+                }
                 
                 self.hideProgressBar()
                 
@@ -258,6 +260,7 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
         lbl_Out.text = dicShift["end_time"].stringValue
         lbl_Break.text = dicShift["break_type"].stringValue
         lbl_Description.text = dicShift["job_type"].stringValue
+        lbl_Note.text = "Notes: \(dicShift["note"].stringValue)"
         
         lbl_InAnswer.text = dicRequestDetail["clock_in_time"].stringValue
         lbl_OutANswer.text = dicRequestDetail["clock_out_time"].stringValue

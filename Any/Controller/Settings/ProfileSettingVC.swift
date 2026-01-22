@@ -15,8 +15,10 @@ class ProfileSettingVC: UIViewController{
     @IBOutlet weak var userProfile_Vw: UIStackView!
     @IBOutlet weak var btn_DeleteAccountOt: UIButton!
     @IBOutlet weak var btn_ReviewOt: UIButton!
+    @IBOutlet weak var paymentView: UIView!
     
     let user_Type = USER_DEFAULT.value(forKey: USER_TYPE) as? String
+    let countryiD = USER_DEFAULT.value(forKey: COUNTRYID) as? String ?? ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +34,13 @@ class ProfileSettingVC: UIViewController{
                 self.userProfile_Vw.isHidden = false
                 self.btn_ReviewOt.isHidden = false
             }
+            
+            if countryiD == "196" {
+                self.paymentView.isHidden = false
+            } else {
+                self.paymentView.isHidden = true
+            }
+            
         } else {
             self.businessProfile_Vw.isHidden = true
             self.userProfile_Vw.isHidden = false

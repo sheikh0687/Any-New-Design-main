@@ -161,8 +161,8 @@ class ClientJobVC: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         WebGetOutlet()
-        getWeekyReportList()
         getManpowerJobRequests()
+        
     }
     
     @objc func goChat() {
@@ -228,7 +228,6 @@ class ClientJobVC: UIViewController {
         
         dropDown.selectionAction = { [unowned self] (index: Int, item: String) in
             self.lbl_Outlet.text = item
-//            self.strOutletiD = arrayOfOutlet[index]["id"].stringValue
             
             Utility.setImageWithSDWebImage(arrayOfOutlet[index]["business_logo"].stringValue, self.outletImage)
             USER_DEFAULT.set(arrayOfOutlet[index]["id"].stringValue, forKey: CLIENTID)
@@ -287,34 +286,10 @@ class ClientJobVC: UIViewController {
         date_CollectionVw.reloadData()
         getWeekyReportList()
     }
-    
 }
 
 // Api Calling
 extension ClientJobVC {
-    
-//    func getProfile() {
-//        var paramsDict:[String:AnyObject] = [:]
-//        paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
-//        
-//        print(paramsDict)
-//        
-//        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.strUseriD = swiftyJsonVar["id"].stringValue
-//                    self.strOutletName = swiftyJsonVar["business_name"].stringValue
-//                }
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            print(error)
-//            
-//        })
-//    }
     
     func GetNotificationCount() {
         var paramsDict:[String:AnyObject] = [:]
@@ -348,7 +323,6 @@ extension ClientJobVC {
                             print("All Count")
                         }
                     }
-                    getWeekyReportList()
                 }
             }
             
@@ -359,7 +333,6 @@ extension ClientJobVC {
     }
     
     func getWeekyReportList() {
-        showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         
@@ -386,16 +359,13 @@ extension ClientJobVC {
                     self.jobsType_TableVw.backgroundView = UIView()
                     self.jobsType_TableVw.reloadData()
                 }
-                self.hideProgressBar()
             }
         }, failureBlock: { (error : Error) in
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
         })
     }
     
     func getManpowerJobRequests() {
-        showProgressBar()
         var paramDict: [String : AnyObject] = [:]
         paramDict["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         paramDict["today_date"] = Utility.getCurrentShortDateNew() as AnyObject
@@ -442,17 +412,14 @@ extension ClientJobVC {
                     self.manpower_TableVw.backgroundView = UIView()
                     self.manpower_TableVw.reloadData()
                 }
-                self.hideProgressBar()
             }
             
         }, failureBlock: { (error: Error) in
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
         })
     }
     
     func getUpcomingShifts() {
-        showProgressBar()
         var paramDict: [String : AnyObject] = [:]
         paramDict["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         
@@ -474,28 +441,11 @@ extension ClientJobVC {
                     self.upcomingShiftTableVw.reloadData()
                     Utility.noDataFound("No Upcoming Shift At The Moment", tableViewOt: self.upcomingShiftTableVw, parentViewController: self)
                 }
-                self.hideProgressBar()
             }
             
         }, failureBlock: { (error: Error) in
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
         })
-    }
-    
-    func calculateTableHeight() -> CGFloat {
-        var tableHeight = 0
-        for val in self.arrayForUpcomingShift
-        {
-            if val["shift_details"].count > 0 {
-                let rowCount = val["shift_details"].count
-                let rowHeight = 60 + (rowCount * 190)
-                tableHeight = tableHeight + rowHeight
-            } else {
-                tableHeight = tableHeight + 60
-            }
-        }
-        return CGFloat(tableHeight)
     }
     
     func WebGetOutlet() {
@@ -551,6 +501,27 @@ extension ClientJobVC {
             self.hideProgressBar()
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         })
+    }
+    
+    func calculateTableHeight() -> CGFloat {
+        var tableHeight = 0
+        for val in self.arrayForUpcomingShift {
+            if val["shift_details"].count > 0 {
+                if val["shift_details"]["worker_details"].count > 0 {
+                    let rowCount = val["shift_details"].count
+                    let rowHeight = 60 + (rowCount * 310)
+                    tableHeight = tableHeight + rowHeight
+                } else {
+                    let rowCount = val["shift_details"].count
+                    let rowHeight = 60 + (rowCount * 220)
+                    tableHeight = tableHeight + rowHeight
+                }
+                
+            } else {
+                tableHeight = tableHeight + 60
+            }
+        }
+        return CGFloat(tableHeight)
     }
 }
 
@@ -623,7 +594,11 @@ extension ClientJobVC: UITableViewDataSource, UITableViewDelegate {
             cell.lbl_Date.cornerRadius1 = 10
             cell.navigationController = self.navigationController
             cell.arrayShift = obj["shift_details"].arrayValue
-            cell.shiftTableHeight.constant = CGFloat(obj["shift_details"].count * 190)
+            if obj["shift_details"]["worker_details"].count > 0 {
+                cell.shiftTableHeight.constant = CGFloat(obj["shift_details"].count * 310)
+            } else {
+                cell.shiftTableHeight.constant = CGFloat(obj["shift_details"].count * 220)
+            }
             cell.ShiftTableVw.reloadData()
             return cell
         }
@@ -638,10 +613,19 @@ extension ClientJobVC: UITableViewDataSource, UITableViewDelegate {
             return 90
         } else {
             if self.arrayForUpcomingShift[indexPath.row]["shift_details"].count > 0 {
-                let rowCount = self.arrayForUpcomingShift[indexPath.row]["shift_details"].count
-                let rowHeight = 60 + (rowCount * 190)
-                print(rowHeight)
-                return CGFloat(rowHeight)
+                if self.arrayForUpcomingShift[indexPath.row]["shift_details"]["worker_details"].count > 0 {
+                    let rowCount = self.arrayForUpcomingShift[indexPath.row]["shift_details"].count
+                    let rowHeight = 60 + (rowCount * 310)
+                    print(rowHeight)
+                    return CGFloat(rowHeight)
+
+                } else {
+                    let rowCount = self.arrayForUpcomingShift[indexPath.row]["shift_details"].count
+                    let rowHeight = 60 + (rowCount * 220)
+                    print(rowHeight)
+                    return CGFloat(rowHeight)
+
+                }
             } else {
                 return 0
             }
@@ -664,6 +648,7 @@ extension ClientJobVC: UICollectionViewDataSource, UICollectionViewDelegate, UIC
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DateCalCell", for: indexPath) as! DateCalCell
+        
         let strdate = arrWeekDAys[indexPath.row]
         let formatter = DateFormatter()
         formatter.dateFormat = "dd"

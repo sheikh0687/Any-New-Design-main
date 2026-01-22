@@ -37,11 +37,13 @@ class SetRateVC: UIViewController {
     var urgentRate:Int! = 0
     var weekDayRate:Int! = 0
     var specificDateRate:Int! = 0
+    
     var strJobTypeName: String = ""
     var strJobId: String = ""
     var isComingFrom: String = ""
     
     var checkValues:Bool = true
+    
     var drop = DropDown()
     let currencySymbol = USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) as? String ?? ""
     
@@ -49,12 +51,18 @@ class SetRateVC: UIViewController {
         super.viewDidLoad()
         self.weeklyRateCollectionVw.register(UINib(nibName: "WeeklyRateCell", bundle: nil),forCellWithReuseIdentifier: "WeeklyRateCell")
         self.specificDateCollectionVw.register(UINib(nibName: "WeeklyRateCell", bundle: nil),forCellWithReuseIdentifier: "WeeklyRateCell")
-        if isComingFrom == "PublishJob" {
-            self.lbl_JobType.text = strJobTypeName
-            self.WebGetWeeklyRate()
-        } else {
-            WebGetJobCategory()
-        }
+//        if isComingFrom == "PublishJob" {
+//            if strJobId != "" {
+//                self.lbl_JobType.text = strJobTypeName
+//                self.WebGetWeeklyRate()
+//            } else {
+//                
+//            }
+//        } else {
+//            WebGetJobCategory()
+//        }
+        
+        WebGetJobCategory()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -120,16 +128,26 @@ extension SetRateVC {
         let paramsDict:[String:AnyObject] = [:]
         
         print(paramsDict)
+        
         CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
             
             DispatchQueue.main.async {
                 let swiftyJsonVar = JSON(responseData)
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     self.arr_Alljobs = swiftyJsonVar["result"].arrayValue
-                    let firstJobType = self.arr_Alljobs[0]
-                    self.strJobTypeName = firstJobType["name"].stringValue
-                    self.strJobId = firstJobType["id"].stringValue
-                    self.lbl_JobType.text = firstJobType["name"].stringValue
+                    if self.isComingFrom == "PublishJob" {
+                        if self.strJobId != "" {
+                            self.lbl_JobType.text = self.strJobTypeName
+                        } else {
+                            let firstJobType = self.arr_Alljobs[0]
+                            self.strJobId = firstJobType["id"].stringValue
+                            self.lbl_JobType.text = firstJobType["name"].stringValue
+                        }
+                    } else {
+                        let firstJobType = self.arr_Alljobs[0]
+                        self.strJobId = firstJobType["id"].stringValue
+                        self.lbl_JobType.text = firstJobType["name"].stringValue
+                    }
                     print(self.arr_Alljobs.count)
                     self.WebGetWeeklyRate()
                 } else {

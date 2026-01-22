@@ -56,21 +56,6 @@ class ChatConversationVC: UIViewController {
                 print(swiftyJsonVar)
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     self.arr_List  = swiftyJsonVar["result"].arrayValue
-                    
-//                    let adminChat: JSON = [
-//                        "id": "1",
-//                        "first_name": "Customer Support",
-//                        "last_name": "",
-//                        "last_message": "Welcome to Anytime Work! Please feel free to message here if you need any assistance.",
-//                        "image": "",
-//                        "request_id": "",
-//                        "sender_id": "7"
-//                    ]
-//                    
-//                    if self.arr_List.first?["id"].stringValue != adminChat["id"].stringValue {
-//                        self.arr_List.insert(adminChat, at: 0)
-//                    }
-                    
                     self.table_Chat.backgroundView = UIView()
                     self.table_Chat.reloadData()
                 } else {
@@ -100,6 +85,7 @@ extension ChatConversationVC: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! ChatConversationCell
+        
         let dic = self.arr_List[indexPath.row]
         
         cell.lbl_UserBName.text = (dic["first_name"].stringValue) + " " + (dic["last_name"].stringValue)
@@ -111,7 +97,8 @@ extension ChatConversationVC: UITableViewDataSource {
             cell.messageNotify.isHidden = false
         }
         
-        cell.lbl_TimeAgo.text = dic["date"].stringValue
+        cell.lbl_TimeAgo.text = dic["date_time"].stringValue
+        print(dic["date_time"].stringValue)
         
         let imgLogoUrl = dic["image"].stringValue
         let urlwithPercentEscapes = imgLogoUrl.addingPercentEncoding( withAllowedCharacters: .urlQueryAllowed)

@@ -40,7 +40,6 @@ class PopUpApprovalVC: UIViewController {
     }
     
     @IBAction func approver(_ sender: UIButton) {
-        
         drop.anchorView = sender
         drop.dataSource =  arr_AllApprove.map({$0["first_name"].stringValue + " " + $0["last_name"].stringValue + " (" + $0["type"].stringValue + ")"})
         drop.show()
@@ -49,14 +48,13 @@ class PopUpApprovalVC: UIViewController {
          
             lbl_Aprover.text = item
             dicApp = arr_AllApprove[index]
-            
         }
-
     }
     
     @IBAction func two(_ sender: Any) {
-        webDeletShift()
+        webAcceptShift()
     }
+    
     func GetProfile() {
 
         var paramsDict:[String:AnyObject] = [:]
@@ -85,7 +83,7 @@ class PopUpApprovalVC: UIViewController {
         })
     }
 
-    func webDeletShift() {
+    func webAcceptShift() {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["cart_id"]  =   dicM["id"].stringValue as AnyObject
@@ -103,6 +101,8 @@ class PopUpApprovalVC: UIViewController {
         paramDict["client_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramDict["card_id"] = card_Id as AnyObject
         paramDict["customer_id"] = customer_Id as AnyObject
+        
+        print(paramDict)
         
         CommunicationManager.callPostService(apiUrl: Router.change_set_shift_status.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
             DispatchQueue.main.async { [self] in

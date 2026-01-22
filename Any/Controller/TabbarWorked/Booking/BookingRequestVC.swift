@@ -591,7 +591,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
         cell.lbl_BreakTime.text = "Break Time: \(dic["shift_break_time"].stringValue)"
         cell.lbl_Meal.text = "Meals: \(dic["meals"].stringValue)"
         cell.lbl_JobType.text = "Job Type: \(dic["job_type"].stringValue)"
-        cell.lbl_Note.text = "Note: \(dic["note"].stringValue)"
+        cell.lbl_Note.text = "Notes: \(dic["note"].stringValue)"
                 
         let shiftCartStatus = dic["set_shift_cart_status_value"].stringValue
         let bookingStatus = dic["booking_status"].stringValue

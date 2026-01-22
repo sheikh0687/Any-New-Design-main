@@ -40,8 +40,7 @@ class ClientSigningDetailVC: UIViewController {
         setNavigationBarItem(LeftTitle: "", LeftImage: "back", CenterTitle: "Create Business Profile", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: WHITE_COLOR, TintColor: BLACK_COLOR, Menu: "")
     }
     
-    @objc func addPicker()
-    {
+    @objc func addPicker() {
         let vC = kStoryboardMain.instantiateViewController(withIdentifier: "AddressPickerVC") as! AddressPickerVC
         vC.locationPickedBlock = { [weak self] cordinationVal, latVal, lonVal, addressVal in
             guard let self = self else { return }
@@ -50,7 +49,6 @@ class ClientSigningDetailVC: UIViewController {
             self.addressLon = String(lonVal)
         }
         self.present(vC, animated: true, completion: nil)
-
     }
     
     @IBAction func btn_UploadPhoto(_ sender: UIButton) {

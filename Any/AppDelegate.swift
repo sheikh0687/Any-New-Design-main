@@ -169,6 +169,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo
+        
         print("Notification received: \(userInfo)")
         
         // Check if sound key is present
@@ -231,121 +232,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 }
                 NotificationCenter.default.post(name: NSNotification.Name("ReloadCount"), object: "On Ride", userInfo: nil)
             }
-
         }
-
-        
     }
-    
-    //    func userNotificationCenter(_ center: UNUserNotificationCenter,
-    //                                didReceive response: UNNotificationResponse,
-    //                                withCompletionHandler completionHandler: @escaping () -> Void) {
-    //        let userInfo = response.notification.request.content.userInfo
-    //
-    //        print("Notification received: \(userInfo)")
-    //
-    //        if let messageInfo = userInfo["message"] as? [String: AnyObject] {
-    //            let notiTitle = messageInfo["noti_title"] as? String ?? ""
-    //            let notiAlert = messageInfo["noti_alert"] as? String ?? ""
-    //            let notiKey = messageInfo["noti_key"] as? String ?? ""
-    //            let notiMessage = messageInfo["noti_message"] as? String ?? ""
-    //            let notiSenderName = messageInfo["noti_sender_name"] as? String ?? ""
-    //            let notiSenderImage = messageInfo["noti_sender_image"] as? String ?? ""
-    //            let notiType = messageInfo["noti_type"] as? String ?? ""
-    //            let notiRequestId = messageInfo["noti_request_id"] as? String ?? ""
-    //
-    //            print("Notification Details: Title: \(notiTitle), Alert: \(notiAlert), Key: \(notiKey), Message: \(notiMessage), Sender Name: \(notiSenderName), Sender Image: \(notiSenderImage), Type: \(notiType), Request ID: \(notiRequestId)")
-    //
-    //            // Call your custom handling method here
-    //            hanleNotification(info: messageInfo, strStatus: notiKey, strFrom: "Back")
-    //        } else {
-    //            print("Message key is missing in notification payload.")
-    //        }
-    //
-    //        completionHandler()
-    //    }
-    //
-    //    func hanleNotification(info:Dictionary<String,AnyObject>,strStatus:String,strFrom:String) {
-    //
-    //        guard let messageInfo = info["message"] as? [String: AnyObject] else {
-    //            print("Message data not found")
-    //            return
-    //        }
-    //
-    //        let notiTitle = messageInfo["noti_title"] as? String ?? "No Title"
-    //        let notiAlert = messageInfo["noti_alert"] as? String ?? "No Alert"
-    //        let notiKey = messageInfo["noti_key"] as? String ?? "No Key"
-    //        let senderId = messageInfo["noti_sender_id"] as? String ?? ""
-    //        let senderName = messageInfo["noti_sender_name"] as? String ?? ""
-    //        let senderImage = messageInfo["noti_sender_image"] as? String ?? ""
-    //        let requestId = messageInfo["noti_request_id"] as? String ?? ""
-    //
-    //        let visibleVC = UIApplication.shared.topmostViewController()
-    //
-    //        if notiKey == "You have a new message" && strFrom == "Back" {
-    //            if visibleVC is UserChat {
-    //                NotificationCenter.default.post(name: NSNotification.Name("NewMessage"), object: "On Ride", userInfo: nil)
-    //            } else {
-    //                let objVC = Mainboard.instantiateViewController(withIdentifier: "UserChat") as! UserChat
-    //                objVC.receiverId = senderId
-    //                objVC.userName = senderName
-    //                objVC.strReasonID = requestId
-    //                visibleVC?.navigationController?.pushViewController(objVC, animated: true)
-    //            }
-    //        } else if notiKey == "You have a new message" && strFrom == "Front" {
-    //            if visibleVC is UserChat {
-    //                NotificationCenter.default.post(name: NSNotification.Name("NewMessage"), object: "On Ride", userInfo: nil)
-    //            }
-    //        } else {
-    //            if strFrom == "Back" {
-    //                Switcher.updateRootVC()
-    //            }
-    //            NotificationCenter.default.post(name: NSNotification.Name("ReloadCount"), object: "On Ride", userInfo: nil)
-    //        }
-    //    }
-    
-    //    func userNotificationCenter(_ center: UNUserNotificationCenter,
-    //                                didReceive response: UNNotificationResponse,
-    //                                withCompletionHandler completionHandler: @escaping () -> Void) {
-    //        let userInfo = response.notification.request.content.userInfo
-    //        print(userInfo)
-    //        if let info = userInfo as? Dictionary<String, AnyObject> {
-    //            let alert1 = info["aps"]!["alert"] as! Dictionary<String, AnyObject>
-    //            let title = userInfo["gcm.notification.ios_status"]  ?? ""
-    //            hanleNotification(info: info, strStatus: title as! String, strFrom: "Back")
-    //        }
-    //        completionHandler()
-    //    }
-    //
-    //    //MARK:GoViewCotroller
-    //
-    //    func hanleNotification(info:Dictionary<String,AnyObject>,strStatus:String,strFrom:String) {
-    //
-    //        let visibleVC = UIApplication.shared.topmostViewController()
-    //
-    //        if strStatus == "You have a new message" && strFrom == "Back" {
-    //
-    //            if visibleVC is UserChat {
-    //                NotificationCenter.default.post(name: NSNotification.Name("NewMessage"), object: "On Ride", userInfo: nil)
-    //            } else {
-    //                let objVC = Mainboard.instantiateViewController(withIdentifier: "UserChat") as! UserChat
-    //                objVC.receiverId = (info["gcm.notification.sender_id"] as? String)!
-    //                objVC.userName = (info["gcm.notification.user_name"] as? String)!
-    //                objVC.strReasonID = (info["gcm.notification.request_id"] as? String)!
-    //                visibleVC?.navigationController?.pushViewController(objVC, animated: true)
-    //            }
-    //        } else if strStatus == "You have a new message" && strFrom == "Front" {
-    //            if visibleVC is UserChat {
-    //                NotificationCenter.default.post(name: NSNotification.Name("NewMessage"), object: "On Ride", userInfo: nil)
-    //            }
-    //        } else {
-    //            if strFrom == "Back" {
-    //                Switcher.updateRootVC()
-    //            }
-    //            NotificationCenter.default.post(name: NSNotification.Name("ReloadCount"), object: "On Ride", userInfo: nil)
-    //        }
-    //    }
-    
+        
     func goChatVC() {
         let visibleVC = UIApplication.topViewController()!
         visibleVC.tabBarController?.selectedIndex = 1

@@ -35,6 +35,7 @@ class BookingCellWorker:UITableViewCell {
     @IBOutlet weak var lbl_Feedback: UILabel!
     
     @IBOutlet weak var imgCertificate: UIImageView!
+    @IBOutlet weak var lbl_Note: UILabel!
 }
 
 class serviceCell: UICollectionViewCell {

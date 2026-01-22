@@ -1306,7 +1306,7 @@ struct _R {
     var googleServiceInfoPlist: RswiftResources.FileResource { .init(name: "GoogleService-Info", pathExtension: "plist", bundle: bundle, locale: LocaleReference.none) }
   }
 
-  /// This `_R.nib` struct is generated, and contains static references to 21 nibs.
+  /// This `_R.nib` struct is generated, and contains static references to 22 nibs.
   struct nib {
     let bundle: Foundation.Bundle
 
@@ -1369,6 +1369,9 @@ struct _R {
 
     /// Nib `WeeklyRateCell`.
     var weeklyRateCell: RswiftResources.NibReference<WeeklyRateCell> { .init(name: "WeeklyRateCell", bundle: bundle) }
+
+    /// Nib `WorkerDtCell`.
+    var workerDtCell: RswiftResources.NibReference<WorkerDtCell> { .init(name: "WorkerDtCell", bundle: bundle) }
 
     /// Nib `WorkerShiftTimeCell`.
     var workerShiftTimeCell: RswiftResources.NibReferenceReuseIdentifier<WorkerShiftTimeCell, WorkerShiftTimeCell> { .init(name: "WorkerShiftTimeCell", bundle: bundle, identifier: "WorkerShiftTimeCell") }
@@ -1437,6 +1440,7 @@ struct _R {
       if UIKit.UIImage(named: "plus circle 1", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'plus circle 1' is used in nib 'WeeklyRateCell', but couldn't be loaded.") }
       if UIKit.UIColor(named: "BLACK", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'BLACK' is used in nib 'WeeklyRateCell', but couldn't be loaded.") }
       if UIKit.UIColor(named: "THEME_COLOR", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'THEME_COLOR' is used in nib 'WeeklyRateCell', but couldn't be loaded.") }
+      if UIKit.UIImage(named: "Profile_Pla", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'Profile_Pla' is used in nib 'WorkerDtCell', but couldn't be loaded.") }
       if UIKit.UIColor(named: "DARK_GREY", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'DARK_GREY' is used in nib 'WorkerShiftTimeCell', but couldn't be loaded.") }
     }
   }
@@ -1685,7 +1689,6 @@ struct _R {
         if UIKit.UIColor(named: "GREEN", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'GREEN' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIColor(named: "Grey", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'Grey' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIColor(named: "LIGHTGRAY", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'LIGHTGRAY' is used in storyboard 'Main', but couldn't be loaded.") }
-        if UIKit.UIColor(named: "StartColor", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'StartColor' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIColor(named: "TEXTCOLOR", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'TEXTCOLOR' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIColor(named: "THEME_COLOR", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'THEME_COLOR' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIColor(named: "WHITE", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'WHITE' is used in storyboard 'Main', but couldn't be loaded.") }

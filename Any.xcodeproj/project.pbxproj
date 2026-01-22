@@ -141,6 +141,7 @@
 		A8BD6F5D2ED444E80002C27D /* AccurateLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BD6F5C2ED444E80002C27D /* AccurateLocationManager.swift */; };
 		B7366BFA2ED998BD0075E352 /* OutletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7366BF82ED998BD0075E352 /* OutletCell.swift */; };
 		B7366BFB2ED998BD0075E352 /* OutletCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7366BF92ED998BD0075E352 /* OutletCell.xib */; };
+		B749941E2F07E9A200E1426D /* ClientJobViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B749941D2F07E9A200E1426D /* ClientJobViewModel.swift */; };
 		B78D1F442ED49854008F3D2A /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F432ED49854008F3D2A /* Stripe */; };
 		B78D1F462ED49854008F3D2A /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F452ED49854008F3D2A /* StripeApplePay */; };
 		B78D1F482ED49854008F3D2A /* StripeCardScan in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F472ED49854008F3D2A /* StripeCardScan */; };
@@ -151,6 +152,8 @@
 		B78D1F522ED49854008F3D2A /* StripePaymentSheet in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F512ED49854008F3D2A /* StripePaymentSheet */; };
 		B78D1F542ED49854008F3D2A /* StripePayments in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F532ED49854008F3D2A /* StripePayments */; };
 		B78D1F562ED49854008F3D2A /* StripePaymentsUI in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F552ED49854008F3D2A /* StripePaymentsUI */; };
+		B7913F162F0E84690019BDB9 /* WorkerDtCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7913F152F0E84690019BDB9 /* WorkerDtCell.xib */; };
+		B7913F172F0E84690019BDB9 /* WorkerDtCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7913F142F0E84690019BDB9 /* WorkerDtCell.swift */; };
 		B79722512ED5DB5E00077245 /* AddressPickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79722502ED5DB5E00077245 /* AddressPickerVC.swift */; };
 		B79722532ED5DD1B00077245 /* SearchLocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79722522ED5DD1B00077245 /* SearchLocationCell.swift */; };
 		B7CF347C2ED58A2B00DF720B /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7CF347B2ED58A2B00DF720B /* R.generated.swift */; };
@@ -369,6 +372,9 @@
 		A8BD6F5C2ED444E80002C27D /* AccurateLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccurateLocationManager.swift; sourceTree = "<group>"; };
 		B7366BF82ED998BD0075E352 /* OutletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutletCell.swift; sourceTree = "<group>"; };
 		B7366BF92ED998BD0075E352 /* OutletCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OutletCell.xib; sourceTree = "<group>"; };
+		B749941D2F07E9A200E1426D /* ClientJobViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientJobViewModel.swift; sourceTree = "<group>"; };
+		B7913F142F0E84690019BDB9 /* WorkerDtCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerDtCell.swift; sourceTree = "<group>"; };
+		B7913F152F0E84690019BDB9 /* WorkerDtCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WorkerDtCell.xib; sourceTree = "<group>"; };
 		B79722502ED5DB5E00077245 /* AddressPickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressPickerVC.swift; sourceTree = "<group>"; };
 		B79722522ED5DD1B00077245 /* SearchLocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchLocationCell.swift; sourceTree = "<group>"; };
 		B7CF347B2ED58A2B00DF720B /* R.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = "<group>"; };
@@ -478,7 +484,7 @@
 			isa = PBXGroup;
 			children = (
 				041C17E42A2342570020E309 /* TabBarClientVC.swift */,
-				CFFD0D212CB6B9470035C254 /* ClientJobVC.swift */,
+				B74994192F07E05200E1426D /* Client Home  */,
 				CFA834832CB807E000F1CFFC /* PublishJobVC.swift */,
 				041C17DE2A233FFF0020E309 /* UrgentBookingVC.swift */,
 				041C17E02A23404C0020E309 /* RequestVC.swift */,
@@ -886,6 +892,48 @@
 			path = Outlet;
 			sourceTree = "<group>";
 		};
+		B74994192F07E05200E1426D /* Client Home  */ = {
+			isa = PBXGroup;
+			children = (
+				B749941C2F07E12100E1426D /* Model */,
+				B749941B2F07E11600E1426D /* View */,
+				B749941A2F07E10F00E1426D /* View Model */,
+			);
+			path = "Client Home ";
+			sourceTree = "<group>";
+		};
+		B749941A2F07E10F00E1426D /* View Model */ = {
+			isa = PBXGroup;
+			children = (
+				B749941D2F07E9A200E1426D /* ClientJobViewModel.swift */,
+			);
+			path = "View Model";
+			sourceTree = "<group>";
+		};
+		B749941B2F07E11600E1426D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				CFFD0D212CB6B9470035C254 /* ClientJobVC.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		B749941C2F07E12100E1426D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		B7913F132F0E843C0019BDB9 /* Worker */ = {
+			isa = PBXGroup;
+			children = (
+				B7913F142F0E84690019BDB9 /* WorkerDtCell.swift */,
+				B7913F152F0E84690019BDB9 /* WorkerDtCell.xib */,
+			);
+			path = Worker;
+			sourceTree = "<group>";
+		};
 		CF119EC12CAD831E0009F114 /* WorkerBooking */ = {
 			isa = PBXGroup;
 			children = (
@@ -928,6 +976,7 @@
 			children = (
 				CF4562422E8166D60024743C /* SubShiftCell.swift */,
 				CF4562432E8166D60024743C /* SubShiftCell.xib */,
+				B7913F132F0E843C0019BDB9 /* Worker */,
 			);
 			path = SubShift;
 			sourceTree = "<group>";
@@ -1221,6 +1270,7 @@
 				CFB54ED22ECB0C860025569B /* Main.storyboard in Resources */,
 				CFE57BBE2CB7A7E400C4A67C /* DateCalCell.xib in Resources */,
 				CFD247862BD14C5C005270B7 /* SaveCardCell.xib in Resources */,
+				B7913F162F0E84690019BDB9 /* WorkerDtCell.xib in Resources */,
 				CF4562442E8166D60024743C /* SubShiftCell.xib in Resources */,
 				CFCABD072CAFE165008E42D2 /* ShiftCell.xib in Resources */,
 				047B21D32A0BBF0100AC3DA7 /* Assets.xcassets in Resources */,
@@ -1339,6 +1389,7 @@
 				047B22B42A0BC1D700AC3DA7 /* PageView.swift in Sources */,
 				047B22A22A0BC1D600AC3DA7 /* PagingMenuHorizontalAlignment.swift in Sources */,
 				047B228C2A0BC1D600AC3DA7 /* PagingIndicatorLayoutAttributes.swift in Sources */,
+				B7913F172F0E84690019BDB9 /* WorkerDtCell.swift in Sources */,
 				B7CF347C2ED58A2B00DF720B /* R.generated.swift in Sources */,
 				041C17E52A2342570020E309 /* TabBarClientVC.swift in Sources */,
 				CFA834842CB807E100F1CFFC /* PublishJobVC.swift in Sources */,
@@ -1424,6 +1475,7 @@
 				047B22C92A0BC1D700AC3DA7 /* TagListView.swift in Sources */,
 				047B22A62A0BC1D700AC3DA7 /* PagingState.swift in Sources */,
 				047B22BC2A0BC1D700AC3DA7 /* PageViewManagerDataSource.swift in Sources */,
+				B749941E2F07E9A200E1426D /* ClientJobViewModel.swift in Sources */,
 				CFA59F2F2B80BA5400CCCE9F /* DateCollectionCell.swift in Sources */,
 				047B22922A0BC1D600AC3DA7 /* PagingCollectionViewLayout.swift in Sources */,
 				CFDDB5262D3FCD8800002BE8 /* JobConfirmedVC.swift in Sources */,
@@ -1632,7 +1684,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Any/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Any;
+				INFOPLIST_KEY_CFBundleDisplayName = "Anytime Work";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_NSCameraUsageDescription = "App want use Camera For Upload Profile Picture.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App would like to use your current location to display client list according to choose location.";
@@ -1650,7 +1702,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.86;
+				MARKETING_VERSION = 2.92;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1680,7 +1732,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Any/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Any;
+				INFOPLIST_KEY_CFBundleDisplayName = "Anytime Work";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_NSCameraUsageDescription = "App want use Camera For Upload Profile Picture.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "App would like to use your current location to display client list according to choose location.";
@@ -1698,7 +1750,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.86;
+				MARKETING_VERSION = 2.92;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

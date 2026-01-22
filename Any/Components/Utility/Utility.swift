@@ -502,7 +502,7 @@ class Utility {
     class func setImageWithSDWebImage(_ url: String, _ imageView: UIImageView) {
         let urlwithPercentEscapes = url.addingPercentEncoding( withAllowedCharacters: .urlQueryAllowed)
         let urlLogo = URL(string: urlwithPercentEscapes!)
-        imageView.sd_setImage(with: urlLogo, placeholderImage: UIImage(named: "placeholder_2"), options: .continueInBackground, completed: nil)
+        imageView.sd_setImage(with: urlLogo, placeholderImage: UIImage(named: "profile_pla"), options: .continueInBackground, completed: nil)
     }
     
     class func downloadImageBySDWebImage(_ url: String, successBlock success : @escaping ( _ image : UIImage?, _  error: Error?) -> Void) {
