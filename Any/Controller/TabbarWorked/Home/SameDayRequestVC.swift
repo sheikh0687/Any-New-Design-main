@@ -25,7 +25,7 @@ class SameDayRequestCell: UITableViewCell {
 }
 
 class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
-  
+    
     @IBOutlet weak var table_List: UITableView!
     
     var arr_AllDriver:[JSON] = []
@@ -39,27 +39,27 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
         table_List.estimatedRowHeight = 188
         table_List.rowHeight = UITableView.automaticDimension
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
-       
+        
         self.navigationController?.navigationBar.isHidden = false
         self.tabBarController?.tabBar.isHidden = true
         setNavigationBarItem(LeftTitle: "", LeftImage: "back", CenterTitle: "Urgent Booking", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
-       
+        
         WebGetApprovedBooking()
-
+        
     }
-
+    
     func myVCDidFinish(text: String) {
         
         if text == "Accept" {
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
                 WebRejectBooking(strCard: "Accept")
-
+                
             }
-
-
+            
+            
         } else if text == "Reject" {
             webDeletShift(strSt: dicCrent["id"].stringValue)
         } else if text == "Message" {
@@ -71,29 +71,29 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                 objVC.userName = (kappDelegate.dicCrent["client_details"]["first_name"].stringValue) + " " + (kappDelegate.dicCrent["client_details"]["last_name"].stringValue)
                 objVC.strReasonID = kappDelegate.dicCrent["client_details"]["id"].stringValue
                 self.navigationController?.pushViewController(objVC, animated: true)
-
+                
             }
         } else if text == "Confirm" {
-       //     WebRejectBooking(strCard: "1")
-
+            //     WebRejectBooking(strCard: "1")
+            
             self.WebGetApprovedBooking()
-
+            
         }
     }
     
     //MARK: API
-   
+    
     func WebRejectBooking(strCard:String) {
-      
+        
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramsDict["client_id"]  =   dicCrent["client_details"]["id"].stringValue as AnyObject
         paramsDict["shift_id"]  =   dicCrent["id"].stringValue as AnyObject
         paramsDict["day_name"]  =   dicCrent["day_name"].stringValue as AnyObject
         paramsDict["date"]  =   dicCrent["date"].stringValue as AnyObject
-
+        
         showProgressBar()
-
+        
         CommunicationManager.callPostService(apiUrl: Router.add_to_set_shift_cart_broadcast.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
             
             DispatchQueue.main.async { [self] in
@@ -128,15 +128,15 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         })
     }
-
+    
     func WebGetApprovedBooking() {
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramsDict["status"]  =   strStatus as AnyObject
         paramsDict["date"]  =   strDate as AnyObject
-
+        
         showProgressBar()
-
+        
         print(paramsDict)
         
         CommunicationManager.callPostService(apiUrl: Router.get_broadcast_shift.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
@@ -148,13 +148,11 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                 table_List.isHidden = false
                 
                 if(swiftyJsonVar["status"].stringValue == "1") {
-                    
                     self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
                     self.table_List.backgroundView = UIView()
                     self.table_List.reloadData()
                     
                 } else {
-                    
                     self.arr_AllDriver = []
                     self.table_List.backgroundView = UIView()
                     self.table_List.reloadData()
@@ -162,7 +160,6 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                 }
                 
                 self.hideProgressBar()
-                
             }
             
         },failureBlock: { (error : Error) in
@@ -176,7 +173,7 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
         var paramDict : [String:AnyObject] = [:]
         paramDict["worker_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramDict["shift_id"]  =   strSt as AnyObject
-
+        
         CommunicationManager.callPostService(apiUrl: Router.shift_rejected_by_worker.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
             DispatchQueue.main.async { [self] in
                 let swiftyJsonVar = JSON(responseData)
@@ -203,16 +200,14 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
             self.hideProgressBar()
         })
     }
-
-
 }
-
 
 extension SameDayRequestVC : UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return arr_AllDriver.count
     }
@@ -231,7 +226,7 @@ extension SameDayRequestVC : UITableViewDataSource {
         cell.lbl_Break.text = "Break : \(dic["break_type"].stringValue)"
         cell.lbl_MEal.text = "Meals : \(dic["meals"].stringValue)"
         cell.lbl_Note.text = "Note : \(dic["note"].stringValue)"
-        cell.lbl_Location.text = "Location : \(dic["address"].stringValue)"
+        cell.lbl_Location.text = "Location : \(dic["client_details"]["business_address"].stringValue)"
         
         cell.btn_Accept.tag = indexPath.row
         cell.btn_Accept.addTarget(self, action: #selector(clciBookApprove), for: .touchUpInside)

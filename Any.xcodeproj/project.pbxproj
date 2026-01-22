@@ -1702,7 +1702,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.92;
+				MARKETING_VERSION = 2.93;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1750,7 +1750,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.92;
+				MARKETING_VERSION = 2.93;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

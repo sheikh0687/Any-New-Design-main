@@ -162,7 +162,6 @@ class ClientJobVC: UIViewController {
         super.viewDidAppear(animated)
         WebGetOutlet()
         getManpowerJobRequests()
-        
     }
     
     @objc func goChat() {
