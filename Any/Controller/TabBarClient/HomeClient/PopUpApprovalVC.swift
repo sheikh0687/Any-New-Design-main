@@ -33,7 +33,9 @@ class PopUpApprovalVC: UIViewController {
 
     }
     override func viewWillAppear(_ animated: Bool) {
-        GetProfile()
+       Task {
+           await GetProfile()
+        }
     }
     @IBAction func back(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
@@ -52,10 +54,12 @@ class PopUpApprovalVC: UIViewController {
     }
     
     @IBAction func two(_ sender: Any) {
-        webAcceptShift()
+       Task {
+           await webAcceptShift()
+        }
     }
     
-    func GetProfile() {
+    func GetProfile() async {
 
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["client_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -63,27 +67,42 @@ class PopUpApprovalVC: UIViewController {
         showProgressBar()
 
         print(paramsDict)
-        CommunicationManager.callPostService(apiUrl: Router.get_OutletAdmin_AuthrisedApprover.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arr_AllApprove = swiftyJsonVar["result"].arrayValue
-                    self.dicApp = self.arr_AllApprove[0]
-                    self.lbl_Aprover.text = "\(dicApp["first_name"].stringValue)  \(dicApp["last_name"].stringValue) (\(dicApp["type"].stringValue))"
-                } else {
-                    self.lbl_Aprover.text = ""
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_OutletAdmin_AuthrisedApprover.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.arr_AllApprove = swiftyJsonVar["result"].arrayValue
+//                    self.dicApp = self.arr_AllApprove[0]
+//                    self.lbl_Aprover.text = "\(dicApp["first_name"].stringValue)  \(dicApp["last_name"].stringValue) (\(dicApp["type"].stringValue))"
+//                } else {
+//                    self.lbl_Aprover.text = ""
+//                }
+//                self.hideProgressBar()
+//            }
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_OutletAdmin_AuthrisedApprover.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arr_AllApprove = swiftyJsonVar["result"].arrayValue
+                self.dicApp = self.arr_AllApprove[0]
+                self.lbl_Aprover.text = "\(dicApp["first_name"].stringValue)  \(dicApp["last_name"].stringValue) (\(dicApp["type"].stringValue))"
+            } else {
+                self.lbl_Aprover.text = ""
             }
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
 
-    func webAcceptShift() {
+    func webAcceptShift() async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["cart_id"]  =   dicM["id"].stringValue as AnyObject
@@ -104,27 +123,47 @@ class PopUpApprovalVC: UIViewController {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.change_set_shift_status.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    if let completion = completion {
-                        completion()
-                    }
-                    if self.is_Navigate == "Monthly" || self.is_Navigate == "CustomerAndCard" {
-                        self.dismiss(animated: false, completion: nil)
-                    } else {
-                        self.dismiss(animated: false, completion: nil)
-                    }
-                } else {
-                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+//        CommunicationManager.callPostService(apiUrl: Router.change_set_shift_status.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    if let completion = completion {
+//                        completion()
+//                    }
+//                    if self.is_Navigate == "Monthly" || self.is_Navigate == "CustomerAndCard" {
+//                        self.dismiss(animated: false, completion: nil)
+//                    } else {
+//                        self.dismiss(animated: false, completion: nil)
+//                    }
+//                } else {
+//                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.change_set_shift_status.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                if let completion = completion {
+                    completion()
                 }
-                self.hideProgressBar()
+                if self.is_Navigate == "Monthly" || self.is_Navigate == "CustomerAndCard" {
+                    self.dismiss(animated: false, completion: nil)
+                } else {
+                    self.dismiss(animated: false, completion: nil)
+                }
+            } else {
+                Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        self.hideProgressBar()
     }
 }

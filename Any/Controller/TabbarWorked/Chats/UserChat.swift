@@ -34,8 +34,6 @@ class UserChat: UIViewController {
         
         userId = kUserDefault.value(forKey: USERID) as! String
         
-        wsGetChatAgain()
-        
         NotificationCenter.default.addObserver(self, selector: #selector(ShowRequest), name: Notification.Name("NewMessage"), object: nil)
         
         view_OldChat.isHidden = true
@@ -44,10 +42,16 @@ class UserChat: UIViewController {
         self.navigationController?.navigationBar.isHidden = false
         
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: userName, CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
+        
+        Task {
+           await wsGetChatAgain()
+        }
     }
     
     @objc func ShowRequest (notification: NSNotification) {
-        wsGetChatAgain()
+       Task {
+           await wsGetChatAgain()
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -58,12 +62,14 @@ class UserChat: UIViewController {
         if tvMsg.text == "Write here..." || tvMsg.text.count == 0 {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Please enter message", on: self)
         } else {
-            wsSendMessage()
+           Task {
+               await wsSendMessage()
+            }
         }
     }
     
     //MARK: WS_SEND_MESSAGE
-    func wsSendMessage()  {
+    func wsSendMessage() async {
         showProgressBar()
         var localTimeZoneIdentifier: String { return TimeZone.current.identifier }
         
@@ -80,25 +86,40 @@ class UserChat: UIViewController {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.insert_chat.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.tvMsg.text = ""
-                    self.view.endEditing(true)
-                    self.wsGetChatAgain()
+        //        CommunicationManager.callPostService(apiUrl: Router.insert_chat.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async {
+        //                let swiftyJsonVar = JSON(responseData)
+        //                print(swiftyJsonVar)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    self.tvMsg.text = ""
+        //                    self.view.endEditing(true)
+        //                    self.wsGetChatAgain()
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //        }, failureBlock: { (error : Error) in
+        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+        //            self.hideProgressBar()
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.insert_chat.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.tvMsg.text = ""
+                self.view.endEditing(true)
+               Task {
+                   await self.wsGetChatAgain()
                 }
-                self.hideProgressBar()
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func wsGetChatAgain()  {
+    func wsGetChatAgain() async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["receiver_id"]  =   userId as AnyObject
@@ -108,22 +129,37 @@ class UserChat: UIViewController {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_chat_detail.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arrMsgs  = swiftyJsonVar["result"].arrayValue
-                    self.tblView.reloadData()
-                    self.scrollToBottom()
-                    self.lbl_ChatReason.text = self.strReason
-                }
-                self.hideProgressBar()
+        //        CommunicationManager.callPostService(apiUrl: Router.get_chat_detail.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+        //            DispatchQueue.main.async {
+        //                let swiftyJsonVar = JSON(responseData)
+        //                print(swiftyJsonVar)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    self.arrMsgs  = swiftyJsonVar["result"].arrayValue
+        //                    self.tblView.reloadData()
+        //                    self.scrollToBottom()
+        //                    self.lbl_ChatReason.text = self.strReason
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //        }, failureBlock: { (error : Error) in
+        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+        //            self.hideProgressBar()
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_chat_detail.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arrMsgs  = swiftyJsonVar["result"].arrayValue
+                self.tblView.reloadData()
+                self.scrollToBottom()
+                self.lbl_ChatReason.text = self.strReason
             }
-        }, failureBlock: { (error : Error) in
+            
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        self.hideProgressBar()
     }
 }
 
@@ -141,17 +177,17 @@ extension UserChat: UITableViewDataSource, UITableViewDelegate {
         cell.chatRight.isHidden = true
         
         let dict = arrMsgs[indexPath.row]
-//        let strDate = dict["date_time"].stringValue
+        //        let strDate = dict["date_time"].stringValue
         
-//        if strDate != "0000-00-00 00:00:00" {
-//            let formatter = DateFormatter()
-//            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-//            let date = formatter.date(from: strDate)
-//            formatter.dateFormat = "dd MMM yyyy hh:mm a"
-//            cell.lblDate.text = formatter.string(from: date ?? Date())
-//        } else {
-//            cell.lblDate.text = ""
-//        }
+        //        if strDate != "0000-00-00 00:00:00" {
+        //            let formatter = DateFormatter()
+        //            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        //            let date = formatter.date(from: strDate)
+        //            formatter.dateFormat = "dd MMM yyyy hh:mm a"
+        //            cell.lblDate.text = formatter.string(from: date ?? Date())
+        //        } else {
+        //            cell.lblDate.text = ""
+        //        }
         
         cell.lblDate.text = dict["date_time"].stringValue
         

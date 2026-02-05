@@ -53,7 +53,9 @@ class ProfileSettingVC: UIViewController{
         self.tabBarController?.tabBar.isHidden = true
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Settings", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
         if Utility.isUserLogin() {
-            self.GetProfile()
+           Task {
+               await self.GetProfile()
+            }
         }
     }
     
@@ -191,7 +193,9 @@ class ProfileSettingVC: UIViewController{
     func deleteAccountConfirmation() {
         let alertController = UIAlertController(title: APP_NAME, message: "Are you sure you want to delete account?", preferredStyle: .alert)
         let yesAction: UIAlertAction = UIAlertAction(title: "Yes", style: .default) { action -> Void in
-            self.deleteAccount()
+           Task {
+               await self.deleteAccount()
+            }
         }
         let noAction: UIAlertAction = UIAlertAction(title: "No", style: .cancel) { action -> Void in
             //Just dismiss the action sheet
@@ -204,66 +208,103 @@ class ProfileSettingVC: UIViewController{
 
 extension ProfileSettingVC {
     
-    func GetProfile() {
+    func GetProfile() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    kappDelegate.dic_Profile = swiftyJsonVar["result"]
-                    let deleteStatus = swiftyJsonVar["result"]["delete_account_button_status"].stringValue
-                    if deleteStatus == "Yes" {
-                        self.btn_DeleteAccountOt.isHidden = false
-                    } else {
-                        self.btn_DeleteAccountOt.isHidden = true
-                    }
+//        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    kappDelegate.dic_Profile = swiftyJsonVar["result"]
+//                    let deleteStatus = swiftyJsonVar["result"]["delete_account_button_status"].stringValue
+//                    if deleteStatus == "Yes" {
+//                        self.btn_DeleteAccountOt.isHidden = false
+//                    } else {
+//                        self.btn_DeleteAccountOt.isHidden = true
+//                    }
+//                } else {
+//                    print(swiftyJsonVar["result"].string ?? "")
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                kappDelegate.dic_Profile = swiftyJsonVar["result"]
+                let deleteStatus = swiftyJsonVar["result"]["delete_account_button_status"].stringValue
+                if deleteStatus == "Yes" {
+                    self.btn_DeleteAccountOt.isHidden = false
                 } else {
-                    print(swiftyJsonVar["result"].string ?? "")
+                    self.btn_DeleteAccountOt.isHidden = true
                 }
-                self.hideProgressBar()
+            } else {
+                print(swiftyJsonVar["result"].string ?? "")
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func deleteAccount() {
+    func deleteAccount() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.delete_Account.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    UserDefaults.standard.removeObject(forKey: USER_TYPE)
-                    UserDefaults.standard.removeObject(forKey: STATUS)
-                    UserDefaults.standard.removeObject(forKey: CUSTOMERID)
-                    UserDefaults.standard.removeObject(forKey: CARDID)
-                    UserDefaults.standard.synchronize()
-                    Switcher.updateRootVC()
-                } else {
-                    print(swiftyJsonVar["result"].string ?? "")
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.delete_Account.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    UserDefaults.standard.removeObject(forKey: USER_TYPE)
+//                    UserDefaults.standard.removeObject(forKey: STATUS)
+//                    UserDefaults.standard.removeObject(forKey: CUSTOMERID)
+//                    UserDefaults.standard.removeObject(forKey: CARDID)
+//                    UserDefaults.standard.synchronize()
+//                    Switcher.updateRootVC()
+//                } else {
+//                    print(swiftyJsonVar["result"].string ?? "")
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_Account.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                UserDefaults.standard.removeObject(forKey: USER_TYPE)
+                UserDefaults.standard.removeObject(forKey: STATUS)
+                UserDefaults.standard.removeObject(forKey: CUSTOMERID)
+                UserDefaults.standard.removeObject(forKey: CARDID)
+                UserDefaults.standard.synchronize()
+                Switcher.updateRootVC()
+            } else {
+                print(swiftyJsonVar["result"].string ?? "")
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
 }

@@ -18,7 +18,9 @@ class PopupjobTypeVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.jobTypeTableVw.register(UINib(nibName: "AllJobTypeCell", bundle: nil), forCellReuseIdentifier: "AllJobTypeCell")
-        WebGetJobCategory()
+       Task {
+           await WebGetJobCategory()
+        }
     }
     
     @IBAction func btn_Cancel(_ sender: UIButton) {
@@ -28,30 +30,48 @@ class PopupjobTypeVC: UIViewController {
 
 extension PopupjobTypeVC {
     
-    func WebGetJobCategory() {
+    func WebGetJobCategory() async {
         let paramsDict:[String:AnyObject] = [:]
         
         print(paramsDict)
-        CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arr_AllCat  = swiftyJsonVar["result"].arrayValue
-                    self.jobTypeTableVw.backgroundView = UIView()
-                    self.jobTypeTableVw.reloadData()
-                } else {
-                    self.arr_AllCat = []
-                    self.jobTypeTableVw.backgroundView = UIView()
-                    self.jobTypeTableVw.reloadData()
-                    Utility.noDataFound("No Bookings At The Moment", tableViewOt: self.jobTypeTableVw, parentViewController: self)
-                }
+//        CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.arr_AllCat  = swiftyJsonVar["result"].arrayValue
+//                    self.jobTypeTableVw.backgroundView = UIView()
+//                    self.jobTypeTableVw.reloadData()
+//                } else {
+//                    self.arr_AllCat = []
+//                    self.jobTypeTableVw.backgroundView = UIView()
+//                    self.jobTypeTableVw.reloadData()
+//                    Utility.noDataFound("No Bookings At The Moment", tableViewOt: self.jobTypeTableVw, parentViewController: self)
+//                }
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arr_AllCat  = swiftyJsonVar["result"].arrayValue
+                self.jobTypeTableVw.backgroundView = UIView()
+                self.jobTypeTableVw.reloadData()
+            } else {
+                self.arr_AllCat = []
+                self.jobTypeTableVw.backgroundView = UIView()
+                self.jobTypeTableVw.reloadData()
+                Utility.noDataFound("No Bookings At The Moment", tableViewOt: self.jobTypeTableVw, parentViewController: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
 
 }

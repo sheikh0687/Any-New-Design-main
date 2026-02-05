@@ -28,7 +28,9 @@ class HistoryVC: UIViewController {
     
         setNavigationBarItem(LeftTitle: "", LeftImage: "back", CenterTitle: "History", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
 
-        WebGetApprovedBooking()
+        Task {
+           await WebGetApprovedBooking()
+        }
         
         table_List.estimatedRowHeight = 200
         table_List.rowHeight = UITableView.automaticDimension
@@ -38,7 +40,7 @@ class HistoryVC: UIViewController {
 //MARK: API
 extension HistoryVC {
     
-    func WebGetApprovedBooking() {
+    func WebGetApprovedBooking() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["client_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -74,6 +76,31 @@ extension HistoryVC {
             self.hideProgressBar()
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_shift_complete_by_client.url(), parameters: paramsDict, parentViewController: self)
+            table_List.isHidden = false
+            
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                
+                self.lbl_Earning.text = "\(kCurrency) \(swiftyJsonVar["total_earning"].number ?? 0)"
+                self.lbl_JobsCount.text = "\(swiftyJsonVar["total_job"].number ?? 0)"
+                self.table_List.backgroundView = UIView()
+                
+                self.arr_AllHistory = swiftyJsonVar["result"].arrayValue
+                self.table_List.reloadData()
+            } else {
+                self.arr_AllHistory = []
+                self.table_List.backgroundView = UIView()
+                self.table_List.reloadData()
+                Utility.noDataFound("No Transactions At The Moment", tableViewOt: self.table_List, parentViewController: self)
+            }
+            
+        } catch {
+            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        }
+        
+        hideProgressBar()
     }
     
 }
@@ -95,7 +122,7 @@ extension HistoryVC : UITableViewDataSource {
         cell.lbl_DayDate.text = (dic["format_date"].stringValue) + " - " +  ("\(dic["user_details"]["first_name"].stringValue) \(dic["user_details"]["last_name"].stringValue)")
         cell.lbl_CompanyName.text = "\(dic["address"].stringValue)"
         
-        let shiftTime = "\(dic["total_working_hr_time"].stringValue) Hour/Rate \(kCurrency)\(dic["shift_rate"].stringValue) = \(kCurrency)\(dic["total_amount"].stringValue)"
+        let shiftTime = "\(dic["total_working_hr_time"].stringValue) Hour/Rate \(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue) = \(dic["currency_symbol"].stringValue)\(dic["total_amount"].stringValue)"
      
         
         let strTyp = dic["set_shift_details"]["break_type"].stringValue

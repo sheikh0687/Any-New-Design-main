@@ -10,7 +10,6 @@ import InputMask
 import SwiftyJSON
 import StripePayments
 
-
 class PaymentVC: UIViewController {
     
     @IBOutlet weak var lblAmount: UILabel!
@@ -43,7 +42,9 @@ class PaymentVC: UIViewController {
         self.navigationController?.navigationBar.isHidden = false
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Card Payment Information", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
         if customer_Id == "" {
-            getCustomerId()
+           Task {
+               await getCustomerId()
+            }
         } else {
             print("Customer id already created!!")
         }
@@ -55,12 +56,11 @@ class PaymentVC: UIViewController {
         self.tabBarController?.tabBar.isHidden = true
     }
     
-    @IBAction func btnBack(_ sender: UIButton)
-    {
+    @IBAction func btnBack(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
     }
     
-    func getCustomerId() {
+    func getCustomerId() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         
@@ -68,24 +68,39 @@ class PaymentVC: UIViewController {
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.create_Customer.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    print("Save Customer id!!")
-                    self.customer_Id = swiftyJsonVar["result"]["customer_id"].stringValue
-                } else {
-                    let message = swiftyJsonVar["result"].string
-                    print(message ?? "")
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.create_Customer.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    print("Save Customer id!!")
+//                    self.customer_Id = swiftyJsonVar["result"]["customer_id"].stringValue
+//                } else {
+//                    let message = swiftyJsonVar["result"].string
+//                    print(message ?? "")
+//                }
+//                self.hideProgressBar()
+//            }
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.create_Customer.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                print("Save Customer id!!")
+                self.customer_Id = swiftyJsonVar["result"]["customer_id"].stringValue
+            } else {
+                let message = swiftyJsonVar["result"].string
+                print(message ?? "")
             }
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
     func configureListener()
@@ -147,8 +162,6 @@ class PaymentVC: UIViewController {
         paramsDict["customer_id"]  =  customer_Id as AnyObject
         paramsDict["tok_visa"]  =  token as AnyObject
         print(paramsDict)
-
-        
         showProgressBar()
         Api.shared.add_Card(self, paramsDict) { response in
             self.parseDataSaveCard(apiResponse: response)

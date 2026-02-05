@@ -34,7 +34,7 @@ class TermsAndCondVC: UIViewController {
         
     }
     
-    func CheckEmailStatus() {
+    func CheckEmailStatus() async {
         
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
@@ -43,30 +43,47 @@ class TermsAndCondVC: UIViewController {
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_user_page.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"] == "1") {
-                    let dicAll = swiftyJsonVar["result"]
-                    
-                    if kappDelegate.strTitle == "Terms and Conditions" {
-                        strDesc = dicAll["term_sp"].stringValue
-                        lbl_About.attributedText = strDesc.htmlToAttributedString
-                    } else {
-                        strDesc = dicAll["privacy_sp"].stringValue
-                        lbl_About.attributedText = strDesc.htmlToAttributedString
-                    }
+//        CommunicationManager.callPostService(apiUrl: Router.get_user_page.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"] == "1") {
+//                    let dicAll = swiftyJsonVar["result"]
+//                    
+//                    if kappDelegate.strTitle == "Terms and Conditions" {
+//                        strDesc = dicAll["term_sp"].stringValue
+//                        lbl_About.attributedText = strDesc.htmlToAttributedString
+//                    } else {
+//                        strDesc = dicAll["privacy_sp"].stringValue
+//                        lbl_About.attributedText = strDesc.htmlToAttributedString
+//                    }
+//                }
+//                self.hideProgressBar()
+//            }
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_user_page.url(), parameters: paramsDict,  parentViewController: self)
+            if(swiftyJsonVar["status"] == "1") {
+                let dicAll = swiftyJsonVar["result"]
+                if kappDelegate.strTitle == "Terms and Conditions" {
+                    strDesc = dicAll["term_sp"].stringValue
+                    lbl_About.attributedText = strDesc.htmlToAttributedString
+                } else {
+                    strDesc = dicAll["privacy_sp"].stringValue
+                    lbl_About.attributedText = strDesc.htmlToAttributedString
                 }
-                self.hideProgressBar()
             }
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
-    
 }
 
 extension String {

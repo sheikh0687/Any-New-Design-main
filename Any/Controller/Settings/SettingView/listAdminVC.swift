@@ -27,7 +27,9 @@ class listAdminVC: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        getDataGetChatList()
+        Task {
+            await getDataGetChatList()
+        }
         self.navigationController?.navigationBar.isHidden = false
         setNavigationBarItem(LeftTitle: "", LeftImage: "back", CenterTitle: strType, CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
         
@@ -39,33 +41,52 @@ class listAdminVC: UIViewController {
         self.navigationController?.pushViewController(objVC, animated: true)
     }
     
-    func getDataGetChatList() {
+    func getDataGetChatList() async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["client_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramDict["type"]  =   strType as AnyObject
         
-        CommunicationManager.callPostService(apiUrl: Router.get_OutletAdmin_AuthrisedApprover.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arr_List  = swiftyJsonVar["result"].arrayValue
-                    self.table_Chat.backgroundView = UIView()
-                    
-                    self.table_Chat.reloadData()
-                } else {
-                    self.arr_List = []
-                    self.table_Chat.backgroundView = UIView()
-                    self.table_Chat.reloadData()
-                    Utility.noDataFound("No Authrisers At The Moment", tableViewOt: self.table_Chat, parentViewController: self)
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_OutletAdmin_AuthrisedApprover.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.arr_List  = swiftyJsonVar["result"].arrayValue
+//                    self.table_Chat.backgroundView = UIView()
+//                    
+//                    self.table_Chat.reloadData()
+//                } else {
+//                    self.arr_List = []
+//                    self.table_Chat.backgroundView = UIView()
+//                    self.table_Chat.reloadData()
+//                    Utility.noDataFound("No Authrisers At The Moment", tableViewOt: self.table_Chat, parentViewController: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_OutletAdmin_AuthrisedApprover.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arr_List  = swiftyJsonVar["result"].arrayValue
+                self.table_Chat.backgroundView = UIView()
+                
+                self.table_Chat.reloadData()
+            } else {
+                self.arr_List = []
+                self.table_Chat.backgroundView = UIView()
+                self.table_Chat.reloadData()
+                Utility.noDataFound("No Authrisers At The Moment", tableViewOt: self.table_Chat, parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
     
     func webDeletShift(strSt:String) {
@@ -79,7 +100,9 @@ class listAdminVC: UIViewController {
                 let swiftyJsonVar = JSON(responseData)
                 print(swiftyJsonVar)
                 if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.getDataGetChatList()
+                    Task {
+                        await self.getDataGetChatList()
+                    }
                 } else {
                     Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
                 }
@@ -101,6 +124,7 @@ extension listAdminVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.arr_List.count
     }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! urgentTableCell
         
@@ -131,7 +155,6 @@ extension listAdminVC: UITableViewDataSource {
             webDeletShift(strSt: dic["id"].stringValue)
         }
     }
-    
 }
 
 extension listAdminVC: UITableViewDelegate {

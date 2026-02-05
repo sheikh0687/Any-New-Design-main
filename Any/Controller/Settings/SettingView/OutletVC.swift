@@ -28,7 +28,9 @@ class OutletVC: UIViewController {
         
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "My Outlets", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
         
-        WebGetOutlet()
+       Task {
+           await WebGetOutlet()
+        }
     }
     
     @IBAction func btn_AddOutlet(_ sender: UIButton) {
@@ -40,61 +42,96 @@ class OutletVC: UIViewController {
 
 extension OutletVC {
     
-    func WebGetOutlet() {
+    func WebGetOutlet() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["client_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
     
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arrayOutletList = swiftyJsonVar["result"].arrayValue
-                    print(self.arrayOutletList.count)
-                    self.outletTableVw.backgroundView = UIView()
-                    self.outletTableVw.reloadData()
-                    
-                } else {
-                    self.arrayOutletList = []
-                    self.outletTableVw.backgroundView = UIView()
-                    self.outletTableVw.reloadData()
-                    Utility.noDataFound("No outlet At The Moment", tableViewOt: self.outletTableVw, parentViewController: self)
-                }
-                
-                self.hideProgressBar()
-                
+//        CommunicationManager.callPostService(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.arrayOutletList = swiftyJsonVar["result"].arrayValue
+//                    print(self.arrayOutletList.count)
+//                    self.outletTableVw.backgroundView = UIView()
+//                    self.outletTableVw.reloadData()
+//                    
+//                } else {
+//                    self.arrayOutletList = []
+//                    self.outletTableVw.backgroundView = UIView()
+//                    self.outletTableVw.reloadData()
+//                    Utility.noDataFound("No outlet At The Moment", tableViewOt: self.outletTableVw, parentViewController: self)
+//                }
+//                
+//                self.hideProgressBar()
+//                
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arrayOutletList = swiftyJsonVar["result"].arrayValue
+                print(self.arrayOutletList.count)
+                self.outletTableVw.backgroundView = UIView()
+                self.outletTableVw.reloadData()
+            } else {
+                self.arrayOutletList = []
+                self.outletTableVw.backgroundView = UIView()
+                self.outletTableVw.reloadData()
+                Utility.noDataFound("No outlet At The Moment", tableViewOt: self.outletTableVw, parentViewController: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func webDeletOutlet(strSt:String) {
+    func webDeletOutlet(strSt:String) async {
         
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   strSt as AnyObject
         
-        CommunicationManager.callPostService(apiUrl: Router.delete_Outlet.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.WebGetOutlet()
-                } else {
-                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+//        CommunicationManager.callPostService(apiUrl: Router.delete_Outlet.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    Task {
+//                       await self.WebGetOutlet()
+//                    }
+//                } else {
+//                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_Outlet.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                Task {
+                   await self.WebGetOutlet()
                 }
-                self.hideProgressBar()
+            } else {
+                Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        self.hideProgressBar()
     }
 }
 
@@ -143,7 +180,9 @@ extension OutletVC: UITableViewDataSource, UITableViewDelegate {
                 vC.outletLon = dic["lon"].stringValue
                 self.navigationController?.pushViewController(vC, animated: true)
             } else {
-                webDeletOutlet(strSt: dic["id"].stringValue)
+                Task {
+                  await webDeletOutlet(strSt: dic["id"].stringValue)
+                }
             }
         }
     }

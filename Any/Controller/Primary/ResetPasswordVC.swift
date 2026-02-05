@@ -9,7 +9,7 @@ import UIKit
 import SwiftyJSON
 
 class ResetPasswordVC: UIViewController {
-
+    
     @IBOutlet weak var txt_NewPassword: UITextField!
     @IBOutlet weak var txt_ConfirmPassword: UITextField!
     
@@ -25,7 +25,9 @@ class ResetPasswordVC: UIViewController {
     
     @IBAction func btn_Finish(_ sender: UIButton) {
         if isValidInput() {
-            checkResestPassword()
+           Task {
+               await checkResestPassword()
+            }
         }
     }
     
@@ -53,7 +55,7 @@ class ResetPasswordVC: UIViewController {
 
 extension ResetPasswordVC {
     
-    func checkResestPassword() {
+    func checkResestPassword() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         
@@ -62,27 +64,47 @@ extension ResetPasswordVC {
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.reset_password.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"] == "1") {
-                    let vC = R.storyboard.main.popPasswordChangedVC()!
-                    vC.cloSuccess = {
-                        Switcher.updateRootVC()
-                    }
-                    vC.modalTransitionStyle = .crossDissolve
-                    vC.modalPresentationStyle = .overFullScreen
-                    self.present(vC, animated: true)
-                } else {
-                    let message = swiftyJsonVar["result"].stringValue
-                    print(message)
+//        CommunicationManager.callPostService(apiUrl: Router.reset_password.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                if(swiftyJsonVar["status"] == "1") {
+//                    let vC = R.storyboard.main.popPasswordChangedVC()!
+//                    vC.cloSuccess = {
+//                        Switcher.updateRootVC()
+//                    }
+//                    vC.modalTransitionStyle = .crossDissolve
+//                    vC.modalPresentationStyle = .overFullScreen
+//                    self.present(vC, animated: true)
+//                } else {
+//                    let message = swiftyJsonVar["result"].stringValue
+//                    print(message)
+//                }
+//                self.hideProgressBar()
+//            }
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.reset_password.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"] == "1") {
+                let vC = R.storyboard.main.popPasswordChangedVC()!
+                vC.cloSuccess = {
+                    Switcher.updateRootVC()
                 }
-                self.hideProgressBar()
+                vC.modalTransitionStyle = .crossDissolve
+                vC.modalPresentationStyle = .overFullScreen
+                self.present(vC, animated: true)
+            } else {
+                let message = swiftyJsonVar["result"].stringValue
+                print(message)
             }
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
 }

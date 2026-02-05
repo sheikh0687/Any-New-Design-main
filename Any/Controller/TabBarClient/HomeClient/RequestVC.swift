@@ -47,7 +47,9 @@ class RequestVC: UIViewController {
                 
         table_List.estimatedRowHeight = 188
         table_List.rowHeight = UITableView.automaticDimension
-        GetProfile()
+       Task {
+           await GetProfile()
+        }
     }
     
     @objc func GoSetting() {
@@ -71,14 +73,18 @@ class RequestVC: UIViewController {
     }
     
     @objc func showSpinningWheel(notification: NSNotification) {
-        GetNotificationCount()
+       Task {
+           await GetNotificationCount()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
         self.tabBarController?.tabBar.isHidden = false
-        WebGetApprovedBooking()
-        GetNotificationCount()
+        Task {
+           await WebGetApprovedBooking()
+           await GetNotificationCount()
+        }
     }
     
     @IBAction func RequestCurrent(_ sender: Any) {
@@ -88,7 +94,9 @@ class RequestVC: UIViewController {
         btn_Current.backgroundColor = UIColor.init(named: "BUTTON_COLOR")
         strStatus = "Accept"
         table_List.isHidden = true
-        WebGetApprovedBooking()
+       Task {
+           await WebGetApprovedBooking()
+        }
     }
     
     @IBAction func pendingApproval(_ sender: Any) {
@@ -98,70 +106,106 @@ class RequestVC: UIViewController {
         view_Pend.backgroundColor = UIColor.init(named: "BUTTON_COLOR")
         strStatus = "Pending"
         table_List.isHidden = true
-        WebGetApprovedBooking()
+        Task {
+          await WebGetApprovedBooking()
+        }
     }
 }
 
 //MARK: API
 extension RequestVC {
     
-    func GetProfile() {
+    func GetProfile() async {
         //        showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    let obj = swiftyJsonVar["result"]
-                    self.customer_Id = obj["customer_id"].stringValue
-                    self.card_Id = obj["card_id"].stringValue
-                    print(self.customer_Id ?? "")
-                    print(self.card_Id ?? "")
-                } else {
-                    print(swiftyJsonVar["result"].string ?? "Unknown error")
-                }
-                //                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    let obj = swiftyJsonVar["result"]
+//                    self.customer_Id = obj["customer_id"].stringValue
+//                    self.card_Id = obj["card_id"].stringValue
+//                    print(self.customer_Id ?? "")
+//                    print(self.card_Id ?? "")
+//                } else {
+//                    print(swiftyJsonVar["result"].string ?? "Unknown error")
+//                }
+//                //                self.hideProgressBar()
+//            }
+//        },failureBlock: { (error : Error) in
+//            //            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                let obj = swiftyJsonVar["result"]
+                self.customer_Id = obj["customer_id"].stringValue
+                self.card_Id = obj["card_id"].stringValue
+                print(self.customer_Id ?? "")
+                print(self.card_Id ?? "")
+            } else {
+                print(swiftyJsonVar["result"].string ?? "Unknown error")
             }
-        },failureBlock: { (error : Error) in
-            //            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
     }
     
-    func GetNotificationCount() {
+    func GetNotificationCount() async {
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
+//        CommunicationManager.callPostService(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    
+//                    let notificationData: [String: NSNumber] = [
+//                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
+//                        "requestCount": swiftyJsonVar["request"].numberValue
+//                    ]
+//                    
+//                    NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
+//                    WebGetApprovedBooking()
+//                }
+//            }
+//        },failureBlock: { (error : Error) in
+//            print(error)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
                 
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    
-                    let notificationData: [String: NSNumber] = [
-                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
-                        "requestCount": swiftyJsonVar["request"].numberValue
-                    ]
-                    
-                    NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
-                    WebGetApprovedBooking()
+                let notificationData: [String: NSNumber] = [
+                    "chatCount": swiftyJsonVar["chat_count"].numberValue,
+                    "requestCount": swiftyJsonVar["request"].numberValue
+                ]
+                
+                NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
+               Task {
+                   await WebGetApprovedBooking()
                 }
             }
-        },failureBlock: { (error : Error) in
+        } catch {
             print(error)
-        })
+        }
     }
     
-    func WebGetApprovedBooking() {
+    func WebGetApprovedBooking() async {
+        showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["client_id"]  =   USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         paramsDict["status"]  =   strStatus as AnyObject
@@ -169,61 +213,102 @@ extension RequestVC {
         
         print(paramsDict)
         
-        showProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_set_shift_book_by_date.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                
+//                table_List.isHidden = false
+//                
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    
+//                    if swiftyJsonVar["pending_shift_count"].numberValue != 0 {
+//                        view_Count.isHidden = false
+//                        lbl_Count.text = "\(swiftyJsonVar["pending_shift_count"].numberValue)"
+//                    } else {
+//                        view_Count.isHidden = true
+//                    }
+//                    self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
+//                    print(self.arr_AllCat.count)
+//                    self.table_List.backgroundView = UIView()
+//                    self.table_List.reloadData()
+//                    
+//                } else {
+//                    
+//                    if swiftyJsonVar["pending_shift_count"].numberValue != 0 {
+//                        view_Count.isHidden = false
+//                        lbl_Count.text = "\(swiftyJsonVar["pending_shift_count"].numberValue)"
+//                    } else {
+//                        view_Count.isHidden = true
+//                    }
+//                    
+//                    if strStatus == "Accept" {
+//                        self.arr_AllDriver = []
+//                        self.table_List.backgroundView = UIView()
+//                        self.table_List.reloadData()
+//                        Utility.noDataFound("No Approved Bookings At The Moment", tableViewOt: self.table_List, parentViewController: self)
+//                    } else {
+//                        self.arr_AllDriver = []
+//                        self.table_List.backgroundView = UIView()
+//                        self.table_List.reloadData()
+//                        Utility.noDataFound("No Pending Bookings At The Moment", tableViewOt: self.table_List, parentViewController: self)
+//                    }
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
         
-        print(paramsDict)
-        CommunicationManager.callPostService(apiUrl: Router.get_set_shift_book_by_date.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_set_shift_book_by_date.url(), parameters: paramsDict, parentViewController: self)
+             table_List.isHidden = false
             
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
+            if(swiftyJsonVar["status"].stringValue == "1") {
                 
-                table_List.isHidden = false
+                if swiftyJsonVar["pending_shift_count"].numberValue != 0 {
+                    view_Count.isHidden = false
+                    lbl_Count.text = "\(swiftyJsonVar["pending_shift_count"].numberValue)"
+                } else {
+                    view_Count.isHidden = true
+                }
+                self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
+                print(self.arr_AllCat.count)
+                self.table_List.backgroundView = UIView()
+                self.table_List.reloadData()
                 
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    
-                    if swiftyJsonVar["pending_shift_count"].numberValue != 0 {
-                        view_Count.isHidden = false
-                        lbl_Count.text = "\(swiftyJsonVar["pending_shift_count"].numberValue)"
-                    } else {
-                        view_Count.isHidden = true
-                    }
-                    self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
-                    print(self.arr_AllCat.count)
+            } else {
+                
+                if swiftyJsonVar["pending_shift_count"].numberValue != 0 {
+                    view_Count.isHidden = false
+                    lbl_Count.text = "\(swiftyJsonVar["pending_shift_count"].numberValue)"
+                } else {
+                    view_Count.isHidden = true
+                }
+                
+                if strStatus == "Accept" {
+                    self.arr_AllDriver = []
                     self.table_List.backgroundView = UIView()
                     self.table_List.reloadData()
-                    
+                    Utility.noDataFound("No Approved Bookings At The Moment", tableViewOt: self.table_List, parentViewController: self)
                 } else {
-                    
-                    if swiftyJsonVar["pending_shift_count"].numberValue != 0 {
-                        view_Count.isHidden = false
-                        lbl_Count.text = "\(swiftyJsonVar["pending_shift_count"].numberValue)"
-                    } else {
-                        view_Count.isHidden = true
-                    }
-                    
-                    if strStatus == "Accept" {
-                        self.arr_AllDriver = []
-                        self.table_List.backgroundView = UIView()
-                        self.table_List.reloadData()
-                        Utility.noDataFound("No Approved Bookings At The Moment", tableViewOt: self.table_List, parentViewController: self)
-                    } else {
-                        self.arr_AllDriver = []
-                        self.table_List.backgroundView = UIView()
-                        self.table_List.reloadData()
-                        Utility.noDataFound("No Pending Bookings At The Moment", tableViewOt: self.table_List, parentViewController: self)
-                    }
+                    self.arr_AllDriver = []
+                    self.table_List.backgroundView = UIView()
+                    self.table_List.reloadData()
+                    Utility.noDataFound("No Pending Bookings At The Moment", tableViewOt: self.table_List, parentViewController: self)
                 }
-                self.hideProgressBar()
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func WebRejectBooking(strCard:String) {
+    func WebRejectBooking(strCard:String) async {
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["cart_id"]  =   strCard as AnyObject
         paramsDict["status"]  =   "Reject" as AnyObject
@@ -243,7 +328,9 @@ extension RequestVC {
                 
                 if(swiftyJsonVar["status"].stringValue == "1") {
                     
-                    self.WebGetApprovedBooking()
+                   Task {
+                       await self.WebGetApprovedBooking()
+                    }
                     
                     let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpRejectVC") as! PopUpRejectVC
                     objVC.str_Desc = "You have rejected this shifts\n\nThe service provider selected has been notified of your rejection"
@@ -262,7 +349,7 @@ extension RequestVC {
         })
     }
     
-    func webDeletShift(strSt:String) {
+    func webDeletShift(strSt:String) async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["id"]  =   strSt as AnyObject
@@ -272,7 +359,9 @@ extension RequestVC {
                 let swiftyJsonVar = JSON(responseData)
                 print(swiftyJsonVar)
                 if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.WebGetApprovedBooking()
+                   Task {
+                       await self.WebGetApprovedBooking()
+                    }
                 } else {
                     Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
                 }
@@ -386,7 +475,9 @@ extension RequestVC : UITableViewDataSource {
     @objc func clcidReject(but: UIButton) {
         let dic = arr_AllDriver[but.tag]
         dicCrent = dic
-        WebRejectBooking(strCard: dic["id"].stringValue)
+        Task {
+           await WebRejectBooking(strCard: dic["id"].stringValue)
+        }
     }
     
     @objc func clickReview(but: UIButton) {
@@ -414,7 +505,9 @@ extension RequestVC : UITableViewDataSource {
             objVC.str_Desc1 = ""
             objVC.is_Navigate = navigateType
             objVC.completion = {
-                self.WebGetApprovedBooking()
+               Task {
+                   await self.WebGetApprovedBooking()
+                }
             }
             objVC.modalPresentationStyle = .overCurrentContext
             objVC.modalTransitionStyle = .crossDissolve

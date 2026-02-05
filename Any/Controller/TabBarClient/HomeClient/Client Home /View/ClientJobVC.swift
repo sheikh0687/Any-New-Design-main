@@ -139,9 +139,11 @@ class ClientJobVC: UIViewController {
         self.lbl_CurrentDay.text = Utility.getCurrentDay()
         self.lbl_CurrentDate.text = Utility.getCurrentDateWithMonth()
     }
-        
+    
     @objc func showSpinningWheel(notification: NSNotification) {
-        GetNotificationCount()
+        Task {
+            await GetNotificationCount()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -155,13 +157,17 @@ class ClientJobVC: UIViewController {
             dcuureDate = Calendar.current.date(byAdding: .day, value: 1, to: dcuureDate)!
         }
         date_CollectionVw.reloadData()
-        GetNotificationCount()
+        Task {
+            await GetNotificationCount()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        WebGetOutlet()
-        getManpowerJobRequests()
+        Task {
+            await WebGetOutlet()
+            await getManpowerJobRequests()
+        }
     }
     
     @objc func goChat() {
@@ -181,7 +187,7 @@ class ClientJobVC: UIViewController {
     
     func dropDownCustomCell() {
         dropDown.cellNib = UINib(nibName: "OutletCell", bundle: nil)
-
+        
         dropDown.direction = .bottom
         dropDown.width = UIScreen.main.bounds.width - 60   // or outletMainView.bounds.width
         dropDown.cellHeight = 64
@@ -195,16 +201,16 @@ class ClientJobVC: UIViewController {
                 let self = self,
                 let cell = cell as? OutletCell
             else { return }
-
+            
             let outlet = self.arrayOfOutlet[index]
-
+            
             // Name
             cell.lbl_OutletName.text = outlet["business_name"].stringValue
             cell.optionLabel = cell.lbl_OutletName   // optional but clear
             // Image
             let logoURL = outlet["business_logo"].stringValue
             Utility.setImageWithSDWebImage(logoURL, cell.outletImg)
-
+            
             // Pending count
             let pending = outlet["complete_shift_count"].intValue
             cell.lbl_OutletCount.text = "\(pending)"
@@ -232,8 +238,10 @@ class ClientJobVC: UIViewController {
             USER_DEFAULT.set(arrayOfOutlet[index]["id"].stringValue, forKey: CLIENTID)
             USER_DEFAULT.set(arrayOfOutlet[index]["business_name"].stringValue, forKey: OUTLET_NAME)
             USER_DEFAULT.set(arrayOfOutlet[index]["business_logo"].stringValue, forKey: OUTLET_IMAGE)
-            self.getManpowerJobRequests()
-            self.getUpcomingShifts()
+            Task {
+                await self.getManpowerJobRequests()
+                await self.getUpcomingShifts()
+            }
         }
     }
     
@@ -245,7 +253,9 @@ class ClientJobVC: UIViewController {
             btn_WeeklyJObOt.setTitleColor(.darkGray, for: .normal)
             DAILYJOB.isHidden = false
             WEEKLYJOB.isHidden = true
-            self.getManpowerJobRequests()
+            Task {
+                await self.getManpowerJobRequests()
+            }
         } else {
             btn_WeeklyJObOt.backgroundColor = R.color.button_COLOR()
             btn_WeeklyJObOt.setTitleColor(.white, for: .normal)
@@ -253,7 +263,9 @@ class ClientJobVC: UIViewController {
             btn_DailyJobOt.setTitleColor(.darkGray, for: .normal)
             DAILYJOB.isHidden = true
             WEEKLYJOB.isHidden = false
-            getWeekyReportList()
+            Task {
+                await getWeekyReportList()
+            }
         }
     }
     
@@ -270,7 +282,9 @@ class ClientJobVC: UIViewController {
                 dcuureDate = Calendar.current.date(byAdding: .day, value: 1, to: dcuureDate)!
             }
             date_CollectionVw.reloadData()
-            getWeekyReportList()
+            Task {
+                await getWeekyReportList()
+            }
         }
     }
     
@@ -283,55 +297,84 @@ class ClientJobVC: UIViewController {
             dcuureDate = Calendar.current.date(byAdding: .day, value: 1, to: dcuureDate)!
         }
         date_CollectionVw.reloadData()
-        getWeekyReportList()
+        Task {
+            await getWeekyReportList()
+        }
     }
 }
 
 // Api Calling
 extension ClientJobVC {
     
-    func GetNotificationCount() {
+    func GetNotificationCount() async {
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
+        //                CommunicationManager.callPostService(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //                    DispatchQueue.main.async { [self] in
+        //
+        //                        let swiftyJsonVar = JSON(responseData)
+        //                        if(swiftyJsonVar["status"].stringValue == "1") {
+        //
+        //                            let notificationData: [String: NSNumber] = [
+        //                                "chatCount": swiftyJsonVar["chat_count"].numberValue,
+        //                                "requestCount": swiftyJsonVar["request"].numberValue
+        //                            ]
+        //
+        //                            NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
+        //
+        //                            if swiftyJsonVar["request"].numberValue != 0 {
+        //                                if let items = self.tabBarController?.tabBar.items as NSArray? {
+        //                                    let tabItem = items.object(at: 3) as! UITabBarItem
+        //                                    tabItem.badgeValue = "\(swiftyJsonVar["request"].numberValue)"
+        //                                }
+        //                            } else {
+        //                                if let items = self.tabBarController?.tabBar.items as NSArray? {
+        //                                    let tabItem = items.object(at: 3) as! UITabBarItem
+        //                                    tabItem.badgeValue = nil
+        //                                    print("All Count")
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //
+        //                },failureBlock: { (error : Error) in
+        //                    print(error)
+        //                })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
                 
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    
-                    let notificationData: [String: NSNumber] = [
-                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
-                        "requestCount": swiftyJsonVar["request"].numberValue
-                    ]
-                    
-                    NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
-                    
-                    if swiftyJsonVar["request"].numberValue != 0 {
-                        if let items = self.tabBarController?.tabBar.items as NSArray? {
-                            let tabItem = items.object(at: 3) as! UITabBarItem
-                            tabItem.badgeValue = "\(swiftyJsonVar["request"].numberValue)"
-                        }
-                    } else {
-                        if let items = self.tabBarController?.tabBar.items as NSArray? {
-                            let tabItem = items.object(at: 3) as! UITabBarItem
-                            tabItem.badgeValue = nil
-                            print("All Count")
-                        }
+                let notificationData: [String: NSNumber] = [
+                    "chatCount": swiftyJsonVar["chat_count"].numberValue,
+                    "requestCount": swiftyJsonVar["request"].numberValue
+                ]
+                
+                NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
+                
+                if swiftyJsonVar["request"].numberValue != 0 {
+                    if let items = self.tabBarController?.tabBar.items as NSArray? {
+                        let tabItem = items.object(at: 3) as! UITabBarItem
+                        tabItem.badgeValue = "\(swiftyJsonVar["request"].numberValue)"
+                    }
+                } else {
+                    if let items = self.tabBarController?.tabBar.items as NSArray? {
+                        let tabItem = items.object(at: 3) as! UITabBarItem
+                        tabItem.badgeValue = nil
+                        print("All Count")
                     }
                 }
             }
-            
-        },failureBlock: { (error : Error) in
-            print(error)
-            
-        })
+        } catch {
+            print("Error while fetching the response from server :\(error.localizedDescription)")
+        }
     }
     
-    func getWeekyReportList() {
+    func getWeekyReportList() async {
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         
@@ -343,28 +386,45 @@ extension ClientJobVC {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_set_shift_book_client_side.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arrayForJobTypes  = swiftyJsonVar["result"].arrayValue
-                    print(self.arrayForJobTypes.count)
-                    self.jobsType_TableVw.backgroundView = UIView()
-                    self.jobsType_TableVw.reloadData()
-                    self.height_JobTypeTable.constant = CGFloat(self.arrayForJobTypes.count * 90)
-                } else {
-                    self.arrayForJobTypes = []
-                    self.jobsType_TableVw.backgroundView = UIView()
-                    self.jobsType_TableVw.reloadData()
-                }
+        //        CommunicationManager.callPostService(apiUrl: Router.get_set_shift_book_client_side.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async { [self] in
+        //                let swiftyJsonVar = JSON(responseData)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    self.arrayForJobTypes  = swiftyJsonVar["result"].arrayValue
+        //                    print(self.arrayForJobTypes.count)
+        //                    self.jobsType_TableVw.backgroundView = UIView()
+        //                    self.jobsType_TableVw.reloadData()
+        //                    self.height_JobTypeTable.constant = CGFloat(self.arrayForJobTypes.count * 90)
+        //                } else {
+        //                    self.arrayForJobTypes = []
+        //                    self.jobsType_TableVw.backgroundView = UIView()
+        //                    self.jobsType_TableVw.reloadData()
+        //                }
+        //            }
+        //        }, failureBlock: { (error : Error) in
+        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_set_shift_book_client_side.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arrayForJobTypes  = swiftyJsonVar["result"].arrayValue
+                print(self.arrayForJobTypes.count)
+                self.jobsType_TableVw.backgroundView = UIView()
+                self.jobsType_TableVw.reloadData()
+                self.height_JobTypeTable.constant = CGFloat(self.arrayForJobTypes.count * 90)
+            } else {
+                self.arrayForJobTypes = []
+                self.jobsType_TableVw.backgroundView = UIView()
+                self.jobsType_TableVw.reloadData()
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-        })
+        }
     }
     
-    func getManpowerJobRequests() {
+    func getManpowerJobRequests() async {
         var paramDict: [String : AnyObject] = [:]
         paramDict["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         paramDict["today_date"] = Utility.getCurrentShortDateNew() as AnyObject
@@ -372,82 +432,141 @@ extension ClientJobVC {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_client_shift_by_date.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let resSwiftyJson = JSON(responseData)
-                if (resSwiftyJson["status"].stringValue == "1") {
-                    self.manpower_TableVw.isHidden = false
-                    self.arrayManPowerReq = resSwiftyJson["result"]["worker_details"].arrayValue
-                    self.lbl_JobTypeAndDescription.text = "\(resSwiftyJson["result"]["shift_name"].stringValue)\n\(resSwiftyJson["result"]["shift_description"].stringValue)"
-                    print(self.arrayManPowerReq.count)
-                    
-                    if resSwiftyJson["pending_shift_count"].numberValue != 0 {
-                        self.lbl_WeeklyReqCount.isHidden = false
-                        self.lbl_WeeklyReqCount.clipsToBounds = true
-                        self.lbl_WeeklyReqCount.cornerRadius1 = 10
-                        self.lbl_WeeklyReqCount.text = "\(resSwiftyJson["pending_shift_count"].numberValue)"
-                    } else {
-                        self.lbl_WeeklyReqCount.isHidden = true
-                    }
-                    
-                    if resSwiftyJson["today_pending_shift_count"].numberValue != 0 {
-                        self.lbl_DailyReqCount.isHidden = false
-                        self.lbl_DailyReqCount.clipsToBounds = true
-                        self.lbl_DailyReqCount.cornerRadius1 = 10
-                        self.lbl_DailyReqCount.text = "\(resSwiftyJson["today_pending_shift_count"].numberValue)"
-                    } else {
-                        self.lbl_DailyReqCount.isHidden = true
-                    }
-                    
-                    self.manpower_TableVw.backgroundView = UIView()
-                    self.manpower_TableVw.reloadData()
-                    self.height_ManpowerTable.constant = CGFloat(self.arrayManPowerReq.count * 140)
+        //        CommunicationManager.callPostService(apiUrl: Router.get_client_shift_by_date.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async { [self] in
+        //                let resSwiftyJson = JSON(responseData)
+        //                if (resSwiftyJson["status"].stringValue == "1") {
+        //                    self.manpower_TableVw.isHidden = false
+        //                    self.arrayManPowerReq = resSwiftyJson["result"]["worker_details"].arrayValue
+        //                    self.lbl_JobTypeAndDescription.text = "\(resSwiftyJson["result"]["shift_name"].stringValue)\n\(resSwiftyJson["result"]["shift_description"].stringValue)"
+        //                    print(self.arrayManPowerReq.count)
+        //
+        //                    if resSwiftyJson["pending_shift_count"].numberValue != 0 {
+        //                        self.lbl_WeeklyReqCount.isHidden = false
+        //                        self.lbl_WeeklyReqCount.clipsToBounds = true
+        //                        self.lbl_WeeklyReqCount.cornerRadius1 = 10
+        //                        self.lbl_WeeklyReqCount.text = "\(resSwiftyJson["pending_shift_count"].numberValue)"
+        //                    } else {
+        //                        self.lbl_WeeklyReqCount.isHidden = true
+        //                    }
+        //
+        //                    if resSwiftyJson["today_pending_shift_count"].numberValue != 0 {
+        //                        self.lbl_DailyReqCount.isHidden = false
+        //                        self.lbl_DailyReqCount.clipsToBounds = true
+        //                        self.lbl_DailyReqCount.cornerRadius1 = 10
+        //                        self.lbl_DailyReqCount.text = "\(resSwiftyJson["today_pending_shift_count"].numberValue)"
+        //                    } else {
+        //                        self.lbl_DailyReqCount.isHidden = true
+        //                    }
+        //
+        //                    self.manpower_TableVw.backgroundView = UIView()
+        //                    self.manpower_TableVw.reloadData()
+        //                    self.height_ManpowerTable.constant = CGFloat(self.arrayManPowerReq.count * 140)
+        //                } else {
+        //                    self.lbl_WeeklyReqCount.isHidden = true
+        //                    self.lbl_DailyReqCount.isHidden = true
+        //                    self.arrayManPowerReq = []
+        //                    self.manpower_TableVw.isHidden = true
+        //                    self.manpower_TableVw.backgroundView = UIView()
+        //                    self.manpower_TableVw.reloadData()
+        //                }
+        //            }
+        //
+        //        }, failureBlock: { (error: Error) in
+        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+        //        })
+        
+        do {
+            let resSwiftyJson = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_client_shift_by_date.url(), parameters: paramDict, parentViewController: self)
+            if (resSwiftyJson["status"].stringValue == "1") {
+                self.manpower_TableVw.isHidden = false
+                self.arrayManPowerReq = resSwiftyJson["result"]["worker_details"].arrayValue
+                self.lbl_JobTypeAndDescription.text = "\(resSwiftyJson["result"]["shift_name"].stringValue)\n\(resSwiftyJson["result"]["shift_description"].stringValue)"
+                print(self.arrayManPowerReq.count)
+                
+                if resSwiftyJson["pending_shift_count"].numberValue != 0 {
+                    self.lbl_WeeklyReqCount.isHidden = false
+                    self.lbl_WeeklyReqCount.clipsToBounds = true
+                    self.lbl_WeeklyReqCount.cornerRadius1 = 10
+                    self.lbl_WeeklyReqCount.text = "\(resSwiftyJson["pending_shift_count"].numberValue)"
                 } else {
                     self.lbl_WeeklyReqCount.isHidden = true
-                    self.lbl_DailyReqCount.isHidden = true
-                    self.arrayManPowerReq = []
-                    self.manpower_TableVw.isHidden = true
-                    self.manpower_TableVw.backgroundView = UIView()
-                    self.manpower_TableVw.reloadData()
                 }
+                
+                if resSwiftyJson["today_pending_shift_count"].numberValue != 0 {
+                    self.lbl_DailyReqCount.isHidden = false
+                    self.lbl_DailyReqCount.clipsToBounds = true
+                    self.lbl_DailyReqCount.cornerRadius1 = 10
+                    self.lbl_DailyReqCount.text = "\(resSwiftyJson["today_pending_shift_count"].numberValue)"
+                } else {
+                    self.lbl_DailyReqCount.isHidden = true
+                }
+                
+                self.manpower_TableVw.backgroundView = UIView()
+                self.manpower_TableVw.reloadData()
+                self.height_ManpowerTable.constant = CGFloat(self.arrayManPowerReq.count * 140)
+            } else {
+                self.lbl_WeeklyReqCount.isHidden = true
+                self.lbl_DailyReqCount.isHidden = true
+                self.arrayManPowerReq = []
+                self.manpower_TableVw.isHidden = true
+                self.manpower_TableVw.backgroundView = UIView()
+                self.manpower_TableVw.reloadData()
             }
-            
-        }, failureBlock: { (error: Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-        })
+        }
     }
     
-    func getUpcomingShifts() {
+    func getUpcomingShifts() async {
         var paramDict: [String : AnyObject] = [:]
         paramDict["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_shift_by_10day_count.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let resSwiftyJson = JSON(responseData)
-                if (resSwiftyJson["status"].stringValue == "1") {
-                    self.arrayForUpcomingShift = resSwiftyJson["result"].arrayValue
-                    self.upcomingShiftTableVw.backgroundView = UIView()
-                    self.upcomingTableHeight.constant = calculateTableHeight()
-                    self.upcomingShiftTableVw.reloadData()
-                } else {
-                    self.arrayForUpcomingShift = []
-                    self.upcomingTableHeight.constant = calculateTableHeight()
-                    self.upcomingShiftTableVw.backgroundView = UIView()
-                    self.upcomingShiftTableVw.reloadData()
-                    Utility.noDataFound("No Upcoming Shift At The Moment", tableViewOt: self.upcomingShiftTableVw, parentViewController: self)
-                }
+        //        CommunicationManager.callPostService(apiUrl: Router.get_shift_by_10day_count.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async { [self] in
+        //                let resSwiftyJson = JSON(responseData)
+        //                if (resSwiftyJson["status"].stringValue == "1") {
+        //                    self.arrayForUpcomingShift = resSwiftyJson["result"].arrayValue
+        //                    self.upcomingShiftTableVw.backgroundView = UIView()
+        //                    self.upcomingTableHeight.constant = calculateTableHeight()
+        //                    self.upcomingShiftTableVw.reloadData()
+        //                } else {
+        //                    self.arrayForUpcomingShift = []
+        //                    self.upcomingTableHeight.constant = calculateTableHeight()
+        //                    self.upcomingShiftTableVw.backgroundView = UIView()
+        //                    self.upcomingShiftTableVw.reloadData()
+        //                    Utility.noDataFound("No Upcoming Shift At The Moment", tableViewOt: self.upcomingShiftTableVw, parentViewController: self)
+        //                }
+        //            }
+        //
+        //        }, failureBlock: { (error: Error) in
+        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+        //        })
+        
+        do {
+            let resSwiftyJson = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_shift_by_10day_count.url(), parameters: paramDict, parentViewController: self)
+            if (resSwiftyJson["status"].stringValue == "1") {
+                self.arrayForUpcomingShift = resSwiftyJson["result"].arrayValue
+                self.upcomingShiftTableVw.backgroundView = UIView()
+                self.upcomingTableHeight.constant = calculateTableHeight()
+                self.upcomingShiftTableVw.reloadData()
+            } else {
+                self.arrayForUpcomingShift = []
+                self.upcomingTableHeight.constant = calculateTableHeight()
+                self.upcomingShiftTableVw.backgroundView = UIView()
+                self.upcomingShiftTableVw.reloadData()
+                Utility.noDataFound("No Upcoming Shift At The Moment", tableViewOt: self.upcomingShiftTableVw, parentViewController: self)
             }
-            
-        }, failureBlock: { (error: Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-        })
+        }
     }
     
-    func WebGetOutlet() {
+    func WebGetOutlet() async {
         showProgressBar()
         
         var paramsDict:[String:AnyObject] = [:]
@@ -455,51 +574,97 @@ extension ClientJobVC {
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arrayOfOutlet = swiftyJsonVar["result"].arrayValue
-                    
-                    // ---- Add default user item at index 0 ----
-                    let defaultOutlet: JSON = [
-                        "id": USER_DEFAULT.value(forKey: USERID) as? String ?? "",
-                        "business_name": USER_DEFAULT.value(forKey: BUSINESS_NAME) as? String ?? "My Business",
-                        "business_logo": USER_DEFAULT.value(forKey: BUSINESS_LOGO) as? String ?? ""
-                    ]
-                    
-                    // Only insert if not already present
-                    if self.arrayOfOutlet.first?["id"].stringValue != defaultOutlet["id"].stringValue {
-                        self.arrayOfOutlet.insert(defaultOutlet, at: 0)
-                    }
-                    // -------------------------------------------------
-                    
-                    if USER_DEFAULT.value(forKey: CLIENTID) as? String ?? "" == "" {
-                        let firstOutlet = self.arrayOfOutlet[0]
-                        USER_DEFAULT.set(firstOutlet["id"].stringValue, forKey: CLIENTID)
-                        self.lbl_Outlet.text = firstOutlet["business_name"].stringValue
-                        Utility.setImageWithSDWebImage(firstOutlet["business_logo"].stringValue, self.outletImage)
-                    } else {
-                        self.strOutletiD = USER_DEFAULT.value(forKey: CLIENTID) as? String ?? ""
-                        self.lbl_Outlet.text = USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? ""
-                        let outletImg = USER_DEFAULT.value(forKey: OUTLET_IMAGE) as? String ?? ""
-                        Utility.setImageWithSDWebImage(outletImg, self.outletImage)
-                    }
-                    
-                    self.lbl_SelectOutlet.text = "Select To Change Outlet"
-                    self.getUpcomingShifts()
-                } else {
-                    self.lbl_SelectOutlet.text = "Add More Outlet(s) In Settings"
-                    self.getUpcomingShifts()
+        //        CommunicationManager.callPostService(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async {
+        //                let swiftyJsonVar = JSON(responseData)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    self.arrayOfOutlet = swiftyJsonVar["result"].arrayValue
+        //
+        //                    // ---- Add default user item at index 0 ----
+        //                    let defaultOutlet: JSON = [
+        //                        "id": USER_DEFAULT.value(forKey: USERID) as? String ?? "",
+        //                        "business_name": USER_DEFAULT.value(forKey: BUSINESS_NAME) as? String ?? "My Business",
+        //                        "business_logo": USER_DEFAULT.value(forKey: BUSINESS_LOGO) as? String ?? ""
+        //                    ]
+        //
+        //                    // Only insert if not already present
+        //                    if self.arrayOfOutlet.first?["id"].stringValue != defaultOutlet["id"].stringValue {
+        //                        self.arrayOfOutlet.insert(defaultOutlet, at: 0)
+        //                    }
+        //                    // -------------------------------------------------
+        //
+        //                    if USER_DEFAULT.value(forKey: CLIENTID) as? String ?? "" == "" {
+        //                        let firstOutlet = self.arrayOfOutlet[0]
+        //                        USER_DEFAULT.set(firstOutlet["id"].stringValue, forKey: CLIENTID)
+        //                        self.lbl_Outlet.text = firstOutlet["business_name"].stringValue
+        //                        Utility.setImageWithSDWebImage(firstOutlet["business_logo"].stringValue, self.outletImage)
+        //                    } else {
+        //                        self.strOutletiD = USER_DEFAULT.value(forKey: CLIENTID) as? String ?? ""
+        //                        self.lbl_Outlet.text = USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? ""
+        //                        let outletImg = USER_DEFAULT.value(forKey: OUTLET_IMAGE) as? String ?? ""
+        //                        Utility.setImageWithSDWebImage(outletImg, self.outletImage)
+        //                    }
+        //
+        //                    self.lbl_SelectOutlet.text = "Select To Change Outlet"
+        //                    self.getUpcomingShifts()
+        //                } else {
+        //                    self.lbl_SelectOutlet.text = "Add More Outlet(s) In Settings"
+        //                    self.getUpcomingShifts()
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //
+        //        },failureBlock: { (error : Error) in
+        //            self.hideProgressBar()
+        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arrayOfOutlet = swiftyJsonVar["result"].arrayValue
+                
+                // ---- Add default user item at index 0 ----
+                let defaultOutlet: JSON = [
+                    "id": USER_DEFAULT.value(forKey: USERID) as? String ?? "",
+                    "business_name": USER_DEFAULT.value(forKey: BUSINESS_NAME) as? String ?? "My Business",
+                    "business_logo": USER_DEFAULT.value(forKey: BUSINESS_LOGO) as? String ?? ""
+                ]
+                
+                // Only insert if not already present
+                if self.arrayOfOutlet.first?["id"].stringValue != defaultOutlet["id"].stringValue {
+                    self.arrayOfOutlet.insert(defaultOutlet, at: 0)
                 }
-                self.hideProgressBar()
+                // -------------------------------------------------
+                
+                if USER_DEFAULT.value(forKey: CLIENTID) as? String ?? "" == "" {
+                    let firstOutlet = self.arrayOfOutlet[0]
+                    USER_DEFAULT.set(firstOutlet["id"].stringValue, forKey: CLIENTID)
+                    self.lbl_Outlet.text = firstOutlet["business_name"].stringValue
+                    Utility.setImageWithSDWebImage(firstOutlet["business_logo"].stringValue, self.outletImage)
+                } else {
+                    self.strOutletiD = USER_DEFAULT.value(forKey: CLIENTID) as? String ?? ""
+                    self.lbl_Outlet.text = USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? ""
+                    let outletImg = USER_DEFAULT.value(forKey: OUTLET_IMAGE) as? String ?? ""
+                    Utility.setImageWithSDWebImage(outletImg, self.outletImage)
+                }
+                
+                self.lbl_SelectOutlet.text = "Select To Change Outlet"
+                Task {
+                    await self.getUpcomingShifts()
+                }
+            } else {
+                self.lbl_SelectOutlet.text = "Add More Outlet(s) In Settings"
+                Task {
+                    await self.getUpcomingShifts()
+                }
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
     func calculateTableHeight() -> CGFloat {
@@ -617,13 +782,13 @@ extension ClientJobVC: UITableViewDataSource, UITableViewDelegate {
                     let rowHeight = 60 + (rowCount * 310)
                     print(rowHeight)
                     return CGFloat(rowHeight)
-
+                    
                 } else {
                     let rowCount = self.arrayForUpcomingShift[indexPath.row]["shift_details"].count
                     let rowHeight = 60 + (rowCount * 220)
                     print(rowHeight)
                     return CGFloat(rowHeight)
-
+                    
                 }
             } else {
                 return 0

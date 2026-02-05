@@ -32,7 +32,9 @@ class ForgotPasswordVC: UIViewController {
     
     @IBAction func btnLogin(_ sender: UIButton) {
         if isValidInput() {
-            CheckEmailStatus()
+           Task {
+               await CheckEmailStatus()
+            }
         }
     }
     
@@ -62,7 +64,7 @@ class ForgotPasswordVC: UIViewController {
     }
     
     //MARK:API
-    func CheckEmailStatus() {
+    func CheckEmailStatus() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         
@@ -70,26 +72,44 @@ class ForgotPasswordVC: UIViewController {
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.forgot_password.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"] == "1") {
-                    let vC = R.storyboard.main.passwordOtpVC()!
-                    let otpCode = swiftyJsonVar["otp"].numberValue
-                    USER_DEFAULT.set(otpCode, forKey: PASSWORD_RESET_CODE)
-                    self.navigationController?.pushViewController(vC, animated: true)
-                } else {
-                    let message = swiftyJsonVar["result"].stringValue
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-                }
-                self.hideProgressBar()
+        //        CommunicationManager.callPostService(apiUrl: Router.forgot_password.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async { [self] in
+        //                let swiftyJsonVar = JSON(responseData)
+        //                print(swiftyJsonVar)
+        //                if(swiftyJsonVar["status"] == "1") {
+        //                    let vC = R.storyboard.main.passwordOtpVC()!
+        //                    let otpCode = swiftyJsonVar["otp"].numberValue
+        //                    USER_DEFAULT.set(otpCode, forKey: PASSWORD_RESET_CODE)
+        //                    self.navigationController?.pushViewController(vC, animated: true)
+        //                } else {
+        //                    let message = swiftyJsonVar["result"].stringValue
+        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //        },failureBlock: { (error : Error) in
+        //            self.hideProgressBar()
+        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.forgot_password.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"] == "1") {
+                let vC = R.storyboard.main.passwordOtpVC()!
+                let otpCode = swiftyJsonVar["otp"].numberValue
+                USER_DEFAULT.set(otpCode, forKey: PASSWORD_RESET_CODE)
+                self.navigationController?.pushViewController(vC, animated: true)
+            } else {
+                let message = swiftyJsonVar["result"].stringValue
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
             }
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+            
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
 }
 

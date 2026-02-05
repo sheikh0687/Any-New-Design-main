@@ -74,7 +74,9 @@ class AddOutletVC: UIViewController {
     
     @IBAction func btn_AddOutlet(_ sender: UIButton) {
         if isValidInput() {
-            WebAddOutlet()
+           Task {
+               await WebAddOutlet()
+            }
         }
     }
 }
@@ -100,7 +102,7 @@ extension AddOutletVC {
         return isValid
     }
 
-    func WebAddOutlet() {
+    func WebAddOutlet() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         if isComeOutlet {
@@ -120,31 +122,52 @@ extension AddOutletVC {
         
         print(paramImgDict)
         
-        CommunicationManager.uploadImagesAndData (
-            apiUrl: Router.add_UpdateOutlet.url(),
-            params: (paramsDict as! [String : String]),
-            imageParam: paramImgDict,
-            videoParam: [:],
-            parentViewController: self,
-            successBlock: { (responseData, message) in
-                
-                DispatchQueue.main.async { [self] in
-                    let swiftyJsonVar = JSON(responseData)
-                    print(swiftyJsonVar)
-                    if(swiftyJsonVar["status"].stringValue == "1") {
-                        Utility.showAlertWithAction(withTitle: APPNAME, message: isComeOutlet ? "Outlet updated successfully!" : "Outlet added successfully!",  delegate: nil, parentViewController: self) { bool in
-                            self.navigationController?.popViewController(animated: true)
-                        }
-                    } else {
-                        let message = swiftyJsonVar["message"].stringValue
-                        GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-                    }
-                    self.hideProgressBar()
+//        CommunicationManager.uploadImagesAndData (
+//            apiUrl: Router.add_UpdateOutlet.url(),
+//            params: (paramsDict as! [String : String]),
+//            imageParam: paramImgDict,
+//            videoParam: [:],
+//            parentViewController: self,
+//            successBlock: { (responseData, message) in
+//                
+//                DispatchQueue.main.async { [self] in
+//                    let swiftyJsonVar = JSON(responseData)
+//                    print(swiftyJsonVar)
+//                    if(swiftyJsonVar["status"].stringValue == "1") {
+//                        Utility.showAlertWithAction(withTitle: APPNAME, message: isComeOutlet ? "Outlet updated successfully!" : "Outlet added successfully!",  delegate: nil, parentViewController: self) { bool in
+//                            self.navigationController?.popViewController(animated: true)
+//                        }
+//                    } else {
+//                        let message = swiftyJsonVar["message"].stringValue
+//                        GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+//                    }
+//                    self.hideProgressBar()
+//                }
+//                
+//            },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.uploadImagesAndDataAsync (
+                apiUrl: Router.add_UpdateOutlet.url(),
+                params: (paramsDict as! [String : String]),
+                imageParam: paramImgDict,
+                videoParam: [:],
+                parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                Utility.showAlertWithAction(withTitle: APPNAME, message: isComeOutlet ? "Outlet updated successfully!" : "Outlet added successfully!",  delegate: nil, parentViewController: self) { bool in
+                    self.navigationController?.popViewController(animated: true)
                 }
-                
-            },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+            } else {
+                let message = swiftyJsonVar["message"].stringValue
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+            }
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        self.hideProgressBar()
     }
 }

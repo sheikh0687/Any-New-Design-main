@@ -70,7 +70,9 @@ class UpdateJobPublishVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.workerShiftTableVw.register(UINib(nibName: "WorkerShiftTimeCell", bundle: nil), forCellReuseIdentifier: "WorkerShiftTimeCell")
-        self.WebGetBookingDetails()
+       Task {
+           await self.WebGetBookingDetails()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -273,7 +275,9 @@ class UpdateJobPublishVC: UIViewController {
     
     @IBAction func btn_PublishJob(_ sender: UIButton) {
         if isValidInput() {
-            webUpdateJobPost()
+           Task {
+               await webUpdateJobPost()
+            }
         }
     }
     
@@ -317,133 +321,242 @@ class UpdateJobPublishVC: UIViewController {
 // Mark Api
 extension UpdateJobPublishVC {
     
-    func WebGetBookingDetails() {
+    func WebGetBookingDetails() async {
+        showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         
         paramsDict["set_shift_id"]  =   shift_iD as AnyObject
         
         print(paramsDict)
         
-        showProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_set_shift_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    
+//                    let resVal = swiftyJsonVar["result"]
+//                    
+//                    self.lbl_JobType.text = resVal["job_type"].stringValue
+//                    
+//                    self.lbl_WorkerNum.text = resVal["worker_count"].stringValue
+//                    self.lbl_ProvidedMeal.text = resVal["meals"].stringValue
+//                    
+//                    self.lbl_BreakType.text = resVal["break_type"].stringValue
+//                    self.txt_NoteToWorker.text = resVal["note"].stringValue
+//                    
+//                    self.strJobTypeName = resVal["job_type"].stringValue
+//                    self.strJobId = resVal["job_type_id"].stringValue
+//                    self.strBreak = resVal["break_type"].stringValue
+//                    self.strMeal = resVal["meals"].stringValue
+//                    self.shiftType = resVal["shift_type"].stringValue
+//                    self.strDaysName = resVal["day_name"].stringValue
+//                    self.strSingleDate = resVal["single_date"].stringValue
+//                    self.workerCount = Int(resVal["worker_count"].stringValue) ?? 0
+//                    self.strStartTime = resVal["start_time"].stringValue
+//                    self.strEndTime = resVal["end_time"].stringValue
+//                    self.strBreakTime = resVal["break_time"].stringValue
+//                    
+//                    self.strApplyForAllWorker = resVal["apply_time_same_for_allworkers"].stringValue
+//                    self.lbl_OutletName.text = self.strOutletName
+//                    
+//                    if strOutletiD != "" {
+//                        self.outletView.isHidden = false
+//                    } else {
+//                        self.outletView.isHidden = true
+//                    }
+//                    
+//                    if resVal["shift_multi_work_time"].arrayValue.count > 0 {
+//                        self.arrayStartTime = resVal["shift_multi_work_time"].arrayValue.map { $0["work_start_time"].stringValue
+//                        }
+//                        self.arrayEndTime = resVal["shift_multi_work_time"].arrayValue.map {
+//                            $0["work_end_time"].stringValue
+//                        }
+//                    } else {
+//                        self.arrayStartTime.append(resVal["start_time"].stringValue)
+//                        self.arrayEndTime.append(resVal["end_time"].stringValue)
+//                    }
+//                    
+//                    if resVal["shiftStatus"].stringValue == "" {
+//                        let daysShift = resVal["shift_brodcast_week_days"].arrayValue.map { $0["shiftStatus"].stringValue
+//                        }
+//                        self.strShiftStatus = daysShift.joined(separator: ",")
+//                    } else {
+//                        self.strShiftStatus = resVal["shiftStatus"].stringValue
+//                    }
+//                    
+//                    if resVal["shift_type"].stringValue == "Normal" {
+//                        self.lbl_SelectSchedule.text = "Weekly"
+//                        self.lbl_SelectDay.text = resVal["day_name"].stringValue
+//                        self.daysText.text = "Days"
+//                        self.lbl_SetRate.text = "Default Weekly Rate"
+//                        self.lbl_Note.isHidden = true
+//                    } else if resVal["shift_type"].stringValue == "SingleDate" {
+//                        self.lbl_SelectSchedule.text = "Specific Date"
+//                        self.lbl_SelectDay.text =  resVal["single_date"].stringValue
+//                        self.daysText.text = "Date"
+//                        self.lbl_SetRate.text = "Default Date or Date Rate"
+//                        self.lbl_Note.isHidden = true
+//                    } else {
+//                        self.lbl_SelectSchedule.text = "Today"
+//                        self.lbl_SelectDay.text = "Urgent"
+//                        self.lbl_SelectDay.textColor = .darkGray
+//                        self.daysText.text = "Date"
+//                        self.lbl_SetRate.text = "Default Urgent Rate"
+//                        self.daysText.textColor = .darkGray
+//                        self.lbl_Note.isHidden = false
+//                    }
+//                    
+//                    if resVal["apply_time_same_for_allworkers"].stringValue == "Yes" {
+//                        self.btn_ToAllWorkerOt.setImage(#imageLiteral(resourceName: "Checked"), for: .normal)
+//                        
+//                        self.fullFetchedShiftArrayFromAPI = resVal["shift_multi_work_time"].arrayValue
+//                        if let firstElement = self.fullFetchedShiftArrayFromAPI.first {
+//                            self.arrayWorkerShiftTime = [firstElement]
+//                        } else {
+//                            self.arrayWorkerShiftTime = []
+//                        }
+//                        self.workerShiftVw.isHidden = false
+//                        
+//                    } else {
+//                        self.btn_ToAllWorkerOt.setImage(#imageLiteral(resourceName: "RectangleUncheck"), for: .normal)
+//                        self.fullFetchedShiftArrayFromAPI = resVal["shift_multi_work_time"].arrayValue
+//                        self.arrayWorkerShiftTime = self.fullFetchedShiftArrayFromAPI
+//                        self.workerShiftVw.isHidden = true
+//                    }
+//                    
+//                    self.arrayDaysName = resVal["shift_brodcast_week_days"].arrayValue
+//                    print(self.arrayDaysName.count)
+//                    self.workerShiftTableHeight.constant = CGFloat(self.arrayWorkerShiftTime.count * 85)
+//                    self.workerShiftTableVw.backgroundView = UIView()
+//                    self.workerShiftTableVw.reloadData()
+//                } else {
+//                    self.arrayWorkerShiftTime = []
+//                    self.workerShiftTableVw.backgroundView = UIView()
+//                    self.workerShiftTableVw.reloadData()
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
         
-        CommunicationManager.callPostService(apiUrl: Router.get_set_shift_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_set_shift_details.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
                 
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    
-                    let resVal = swiftyJsonVar["result"]
-                    
-                    self.lbl_JobType.text = resVal["job_type"].stringValue
-                    
-                    self.lbl_WorkerNum.text = resVal["worker_count"].stringValue
-                    self.lbl_ProvidedMeal.text = resVal["meals"].stringValue
-                    
-                    self.lbl_BreakType.text = resVal["break_type"].stringValue
-                    self.txt_NoteToWorker.text = resVal["note"].stringValue
-                    
-                    self.strJobTypeName = resVal["job_type"].stringValue
-                    self.strJobId = resVal["job_type_id"].stringValue
-                    self.strBreak = resVal["break_type"].stringValue
-                    self.strMeal = resVal["meals"].stringValue
-                    self.shiftType = resVal["shift_type"].stringValue
-                    self.strDaysName = resVal["day_name"].stringValue
-                    self.strSingleDate = resVal["single_date"].stringValue
-                    self.workerCount = Int(resVal["worker_count"].stringValue) ?? 0
-                    self.strStartTime = resVal["start_time"].stringValue
-                    self.strEndTime = resVal["end_time"].stringValue
-                    self.strBreakTime = resVal["break_time"].stringValue
-                    
-                    self.strApplyForAllWorker = resVal["apply_time_same_for_allworkers"].stringValue
-                    self.lbl_OutletName.text = self.strOutletName
-                    
-                    if strOutletiD != "" {
-                        self.outletView.isHidden = false
-                    } else {
-                        self.outletView.isHidden = true
-                    }
-                    
-                    if resVal["shift_multi_work_time"].arrayValue.count > 0 {
-                        self.arrayStartTime = resVal["shift_multi_work_time"].arrayValue.map { $0["work_start_time"].stringValue
-                        }
-                        self.arrayEndTime = resVal["shift_multi_work_time"].arrayValue.map {
-                            $0["work_end_time"].stringValue
-                        }
-                    } else {
-                        self.arrayStartTime.append(resVal["start_time"].stringValue)
-                        self.arrayEndTime.append(resVal["end_time"].stringValue)
-                    }
-                    
-                    if resVal["shiftStatus"].stringValue == "" {
-                        let daysShift = resVal["shift_brodcast_week_days"].arrayValue.map { $0["shiftStatus"].stringValue
-                        }
-                        self.strShiftStatus = daysShift.joined(separator: ",")
-                    } else {
-                        self.strShiftStatus = resVal["shiftStatus"].stringValue
-                    }
-                    
-                    if resVal["shift_type"].stringValue == "Normal" {
-                        self.lbl_SelectSchedule.text = "Weekly"
-                        self.lbl_SelectDay.text = resVal["day_name"].stringValue
-                        self.daysText.text = "Days"
-                        self.lbl_SetRate.text = "Default Weekly Rate"
-                        self.lbl_Note.isHidden = true
-                    } else if resVal["shift_type"].stringValue == "SingleDate" {
-                        self.lbl_SelectSchedule.text = "Specific Date"
-                        self.lbl_SelectDay.text =  resVal["single_date"].stringValue
-                        self.daysText.text = "Date"
-                        self.lbl_SetRate.text = "Default Date or Date Rate"
-                        self.lbl_Note.isHidden = true
-                    } else {
-                        self.lbl_SelectSchedule.text = "Today"
-                        self.lbl_SelectDay.text = "Urgent"
-                        self.lbl_SelectDay.textColor = .darkGray
-                        self.daysText.text = "Date"
-                        self.lbl_SetRate.text = "Default Urgent Rate"
-                        self.daysText.textColor = .darkGray
-                        self.lbl_Note.isHidden = false
-                    }
-                    
-                    if resVal["apply_time_same_for_allworkers"].stringValue == "Yes" {
-                        self.btn_ToAllWorkerOt.setImage(#imageLiteral(resourceName: "Checked"), for: .normal)
-                        
-                        self.fullFetchedShiftArrayFromAPI = resVal["shift_multi_work_time"].arrayValue
-                        if let firstElement = self.fullFetchedShiftArrayFromAPI.first {
-                            self.arrayWorkerShiftTime = [firstElement]
-                        } else {
-                            self.arrayWorkerShiftTime = []
-                        }
-                        self.workerShiftVw.isHidden = false
-                        
-                    } else {
-                        self.btn_ToAllWorkerOt.setImage(#imageLiteral(resourceName: "RectangleUncheck"), for: .normal)
-                        self.fullFetchedShiftArrayFromAPI = resVal["shift_multi_work_time"].arrayValue
-                        self.arrayWorkerShiftTime = self.fullFetchedShiftArrayFromAPI
-                        self.workerShiftVw.isHidden = true
-                    }
-                    
-                    self.arrayDaysName = resVal["shift_brodcast_week_days"].arrayValue
-                    print(self.arrayDaysName.count)
-                    self.workerShiftTableHeight.constant = CGFloat(self.arrayWorkerShiftTime.count * 85)
-                    self.workerShiftTableVw.backgroundView = UIView()
-                    self.workerShiftTableVw.reloadData()
+                let resVal = swiftyJsonVar["result"]
+                
+                self.lbl_JobType.text = resVal["job_type"].stringValue
+                
+                self.lbl_WorkerNum.text = resVal["worker_count"].stringValue
+                self.lbl_ProvidedMeal.text = resVal["meals"].stringValue
+                
+                self.lbl_BreakType.text = resVal["break_type"].stringValue
+                self.txt_NoteToWorker.text = resVal["note"].stringValue
+                
+                self.strJobTypeName = resVal["job_type"].stringValue
+                self.strJobId = resVal["job_type_id"].stringValue
+                self.strBreak = resVal["break_type"].stringValue
+                self.strMeal = resVal["meals"].stringValue
+                self.shiftType = resVal["shift_type"].stringValue
+                self.strDaysName = resVal["day_name"].stringValue
+                self.strSingleDate = resVal["single_date"].stringValue
+                self.workerCount = Int(resVal["worker_count"].stringValue) ?? 0
+                self.strStartTime = resVal["start_time"].stringValue
+                self.strEndTime = resVal["end_time"].stringValue
+                self.strBreakTime = resVal["break_time"].stringValue
+                
+                self.strApplyForAllWorker = resVal["apply_time_same_for_allworkers"].stringValue
+                self.lbl_OutletName.text = self.strOutletName
+                
+                if strOutletiD != "" {
+                    self.outletView.isHidden = false
                 } else {
-                    self.arrayWorkerShiftTime = []
-                    self.workerShiftTableVw.backgroundView = UIView()
-                    self.workerShiftTableVw.reloadData()
+                    self.outletView.isHidden = true
                 }
-                self.hideProgressBar()
+                
+                if resVal["shift_multi_work_time"].arrayValue.count > 0 {
+                    self.arrayStartTime = resVal["shift_multi_work_time"].arrayValue.map { $0["work_start_time"].stringValue
+                    }
+                    self.arrayEndTime = resVal["shift_multi_work_time"].arrayValue.map {
+                        $0["work_end_time"].stringValue
+                    }
+                } else {
+                    self.arrayStartTime.append(resVal["start_time"].stringValue)
+                    self.arrayEndTime.append(resVal["end_time"].stringValue)
+                }
+                
+                if resVal["shiftStatus"].stringValue == "" {
+                    let daysShift = resVal["shift_brodcast_week_days"].arrayValue.map { $0["shiftStatus"].stringValue
+                    }
+                    self.strShiftStatus = daysShift.joined(separator: ",")
+                } else {
+                    self.strShiftStatus = resVal["shiftStatus"].stringValue
+                }
+                
+                if resVal["shift_type"].stringValue == "Normal" {
+                    self.lbl_SelectSchedule.text = "Weekly"
+                    self.lbl_SelectDay.text = resVal["day_name"].stringValue
+                    self.daysText.text = "Days"
+                    self.lbl_SetRate.text = "Default Weekly Rate"
+                    self.lbl_Note.isHidden = true
+                } else if resVal["shift_type"].stringValue == "SingleDate" {
+                    self.lbl_SelectSchedule.text = "Specific Date"
+                    self.lbl_SelectDay.text =  resVal["single_date"].stringValue
+                    self.daysText.text = "Date"
+                    self.lbl_SetRate.text = "Default Date or Date Rate"
+                    self.lbl_Note.isHidden = true
+                } else {
+                    self.lbl_SelectSchedule.text = "Today"
+                    self.lbl_SelectDay.text = "Urgent"
+                    self.lbl_SelectDay.textColor = .darkGray
+                    self.daysText.text = "Date"
+                    self.lbl_SetRate.text = "Default Urgent Rate"
+                    self.daysText.textColor = .darkGray
+                    self.lbl_Note.isHidden = false
+                }
+                
+                if resVal["apply_time_same_for_allworkers"].stringValue == "Yes" {
+                    self.btn_ToAllWorkerOt.setImage(#imageLiteral(resourceName: "Checked"), for: .normal)
+                    
+                    self.fullFetchedShiftArrayFromAPI = resVal["shift_multi_work_time"].arrayValue
+                    if let firstElement = self.fullFetchedShiftArrayFromAPI.first {
+                        self.arrayWorkerShiftTime = [firstElement]
+                    } else {
+                        self.arrayWorkerShiftTime = []
+                    }
+                    self.workerShiftVw.isHidden = false
+                    
+                } else {
+                    self.btn_ToAllWorkerOt.setImage(#imageLiteral(resourceName: "RectangleUncheck"), for: .normal)
+                    self.fullFetchedShiftArrayFromAPI = resVal["shift_multi_work_time"].arrayValue
+                    self.arrayWorkerShiftTime = self.fullFetchedShiftArrayFromAPI
+                    self.workerShiftVw.isHidden = true
+                }
+                
+                self.arrayDaysName = resVal["shift_brodcast_week_days"].arrayValue
+                print(self.arrayDaysName.count)
+                self.workerShiftTableHeight.constant = CGFloat(self.arrayWorkerShiftTime.count * 85)
+                self.workerShiftTableVw.backgroundView = UIView()
+                self.workerShiftTableVw.reloadData()
+            } else {
+                self.arrayWorkerShiftTime = []
+                self.workerShiftTableVw.backgroundView = UIView()
+                self.workerShiftTableVw.reloadData()
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func webUpdateJobPost()
-    {
+    func webUpdateJobPost() async {
+        showProgressBar()
         var paramsDict: [String : AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramsDict["id"]  =   shift_iD as AnyObject
@@ -471,25 +584,41 @@ extension UpdateJobPublishVC {
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.update_my_shifts.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"] == "1") {
-                    GlobalConstant.showAlertWithAction(withTitle: APPNAME, message: "Your shift updated successfully", delegate: nil, parentViewController: self) { bool in
-                        self.navigationController?.popViewController(animated: true)
-                    }
-                } else {
-                    let message = swiftyJsonVar["message"].stringValue
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+//        CommunicationManager.callPostService(apiUrl: Router.update_my_shifts.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"] == "1") {
+//                    GlobalConstant.showAlertWithAction(withTitle: APPNAME, message: "Your shift updated successfully", delegate: nil, parentViewController: self) { bool in
+//                        self.navigationController?.popViewController(animated: true)
+//                    }
+//                } else {
+//                    let message = swiftyJsonVar["message"].stringValue
+//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.update_my_shifts.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"] == "1") {
+                GlobalConstant.showAlertWithAction(withTitle: APPNAME, message: "Your shift updated successfully", delegate: nil, parentViewController: self) { bool in
+                    self.navigationController?.popViewController(animated: true)
                 }
-                self.hideProgressBar()
+            } else {
+                let message = swiftyJsonVar["message"].stringValue
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
             }
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
 }
 

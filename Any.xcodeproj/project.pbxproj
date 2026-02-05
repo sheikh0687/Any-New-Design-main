@@ -139,9 +139,12 @@
 		04E000672A3353180010E371 /* PopUpSameVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04E000662A3353180010E371 /* PopUpSameVC.swift */; };
 		4491E7B112F3522013E80653 /* Pods_Any.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83EA18D20CFAB83EEA34A581 /* Pods_Any.framework */; };
 		A8BD6F5D2ED444E80002C27D /* AccurateLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8BD6F5C2ED444E80002C27D /* AccurateLocationManager.swift */; };
+		B726BDF42F336ADA00641E3F /* PopDocView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B726BDF32F336ADA00641E3F /* PopDocView.swift */; };
+		B730ADAA2F29EA3300AA7C17 /* CurrentShiftAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B730ADA92F29EA3300AA7C17 /* CurrentShiftAlertView.swift */; };
 		B7366BFA2ED998BD0075E352 /* OutletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7366BF82ED998BD0075E352 /* OutletCell.swift */; };
 		B7366BFB2ED998BD0075E352 /* OutletCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7366BF92ED998BD0075E352 /* OutletCell.xib */; };
 		B749941E2F07E9A200E1426D /* ClientJobViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B749941D2F07E9A200E1426D /* ClientJobViewModel.swift */; };
+		B75531C62F34753E0044F7C9 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75531C52F34753E0044F7C9 /* R.generated.swift */; };
 		B78D1F442ED49854008F3D2A /* Stripe in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F432ED49854008F3D2A /* Stripe */; };
 		B78D1F462ED49854008F3D2A /* StripeApplePay in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F452ED49854008F3D2A /* StripeApplePay */; };
 		B78D1F482ED49854008F3D2A /* StripeCardScan in Frameworks */ = {isa = PBXBuildFile; productRef = B78D1F472ED49854008F3D2A /* StripeCardScan */; };
@@ -156,7 +159,6 @@
 		B7913F172F0E84690019BDB9 /* WorkerDtCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7913F142F0E84690019BDB9 /* WorkerDtCell.swift */; };
 		B79722512ED5DB5E00077245 /* AddressPickerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79722502ED5DB5E00077245 /* AddressPickerVC.swift */; };
 		B79722532ED5DD1B00077245 /* SearchLocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79722522ED5DD1B00077245 /* SearchLocationCell.swift */; };
-		B7CF347C2ED58A2B00DF720B /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7CF347B2ED58A2B00DF720B /* R.generated.swift */; };
 		CF119EC42CAD83450009F114 /* BookingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF119EC22CAD83450009F114 /* BookingCell.swift */; };
 		CF119EC52CAD83450009F114 /* BookingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF119EC32CAD83450009F114 /* BookingCell.xib */; };
 		CF1FB3D92E9690260096F91B /* UserRatingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1FB3D82E9690260096F91B /* UserRatingVC.swift */; };
@@ -166,7 +168,6 @@
 		CF2D93422ECB50B600FCAF20 /* AddOutletVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2D93412ECB50B600FCAF20 /* AddOutletVC.swift */; };
 		CF2D93482ECB533D00FCAF20 /* AddOutletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2D93462ECB533D00FCAF20 /* AddOutletCell.swift */; };
 		CF2D93492ECB533D00FCAF20 /* AddOutletCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF2D93472ECB533D00FCAF20 /* AddOutletCell.xib */; };
-		CF2FB3BD2E8508C900C17410 /* PopNRIC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2FB3BC2E8508C900C17410 /* PopNRIC.swift */; };
 		CF45623F2E8164D00024743C /* UpcomingShiftCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF45623D2E8164D00024743C /* UpcomingShiftCell.swift */; };
 		CF4562402E8164D00024743C /* UpcomingShiftCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45623E2E8164D00024743C /* UpcomingShiftCell.xib */; };
 		CF4562442E8166D60024743C /* SubShiftCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4562432E8166D60024743C /* SubShiftCell.xib */; };
@@ -370,14 +371,16 @@
 		68F3792A0E4B49323E142CEE /* Pods-Any.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Any.debug.xcconfig"; path = "Target Support Files/Pods-Any/Pods-Any.debug.xcconfig"; sourceTree = "<group>"; };
 		83EA18D20CFAB83EEA34A581 /* Pods_Any.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Any.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8BD6F5C2ED444E80002C27D /* AccurateLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccurateLocationManager.swift; sourceTree = "<group>"; };
+		B726BDF32F336ADA00641E3F /* PopDocView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopDocView.swift; sourceTree = "<group>"; };
+		B730ADA92F29EA3300AA7C17 /* CurrentShiftAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CurrentShiftAlertView.swift; path = "Any/Controller/Settings/New Module/Pop Alert/CurrentShiftAlertView.swift"; sourceTree = SOURCE_ROOT; };
 		B7366BF82ED998BD0075E352 /* OutletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutletCell.swift; sourceTree = "<group>"; };
 		B7366BF92ED998BD0075E352 /* OutletCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OutletCell.xib; sourceTree = "<group>"; };
 		B749941D2F07E9A200E1426D /* ClientJobViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientJobViewModel.swift; sourceTree = "<group>"; };
+		B75531C52F34753E0044F7C9 /* R.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = "<group>"; };
 		B7913F142F0E84690019BDB9 /* WorkerDtCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkerDtCell.swift; sourceTree = "<group>"; };
 		B7913F152F0E84690019BDB9 /* WorkerDtCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WorkerDtCell.xib; sourceTree = "<group>"; };
 		B79722502ED5DB5E00077245 /* AddressPickerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressPickerVC.swift; sourceTree = "<group>"; };
 		B79722522ED5DD1B00077245 /* SearchLocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchLocationCell.swift; sourceTree = "<group>"; };
-		B7CF347B2ED58A2B00DF720B /* R.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = "<group>"; };
 		CC365E38B998F7BAA90E83E1 /* Pods-Any.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Any.release.xcconfig"; path = "Target Support Files/Pods-Any/Pods-Any.release.xcconfig"; sourceTree = "<group>"; };
 		CF119EC22CAD83450009F114 /* BookingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingCell.swift; sourceTree = "<group>"; };
 		CF119EC32CAD83450009F114 /* BookingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BookingCell.xib; sourceTree = "<group>"; };
@@ -388,7 +391,6 @@
 		CF2D93412ECB50B600FCAF20 /* AddOutletVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOutletVC.swift; sourceTree = "<group>"; };
 		CF2D93462ECB533D00FCAF20 /* AddOutletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOutletCell.swift; sourceTree = "<group>"; };
 		CF2D93472ECB533D00FCAF20 /* AddOutletCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddOutletCell.xib; sourceTree = "<group>"; };
-		CF2FB3BC2E8508C900C17410 /* PopNRIC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopNRIC.swift; sourceTree = "<group>"; };
 		CF45623D2E8164D00024743C /* UpcomingShiftCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingShiftCell.swift; sourceTree = "<group>"; };
 		CF45623E2E8164D00024743C /* UpcomingShiftCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UpcomingShiftCell.xib; sourceTree = "<group>"; };
 		CF4562422E8166D60024743C /* SubShiftCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubShiftCell.swift; sourceTree = "<group>"; };
@@ -504,24 +506,8 @@
 		041C17DD2A233FC90020E309 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				CF9ED00B2CB68B13008D7691 /* ProfileSettingVC.swift */,
-				047B22712A0BC1D600AC3DA7 /* ChangePAssVC.swift */,
-				044B53462A1668D7002AE1CF /* ReferFriendVC.swift */,
-				047B22742A0BC1D600AC3DA7 /* TermsAndCondVC.swift */,
-				0443324D2A2669040037E3D9 /* HistoryVC.swift */,
-				CFD247802BD14904005270B7 /* SaveCardVC.swift */,
-				CFD247872BD15187005270B7 /* PaymentVC.swift */,
-				0443324F2A266CA30037E3D9 /* CurrentShiftVC.swift */,
-				0407EB642A2A546700BFE9DE /* AddAdminVC.swift */,
-				0407EB662A2A549300BFE9DE /* listAdminVC.swift */,
-				CF9A94322CBD238900ED1323 /* WalletTypeVC.swift */,
-				044036372A2B77580094ED62 /* SetRateVC.swift */,
-				04DDB9892A16536200AD4FB5 /* EditProfileVC.swift */,
-				CFC4B9832D34F88800452D80 /* SetCustomDateRateVC.swift */,
-				CF1FB3D82E9690260096F91B /* UserRatingVC.swift */,
-				CFB0DC912E9786C70011E340 /* AddRatingReviewVC.swift */,
-				CF2D933F2ECB4BE600FCAF20 /* OutletVC.swift */,
-				CF2D93412ECB50B600FCAF20 /* AddOutletVC.swift */,
+				B730ADA62F29E9D800AA7C17 /* SettingView */,
+				B730ADA52F29E9C000AA7C17 /* New Module */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -572,7 +558,7 @@
 		047B21DE2A0BC1D500AC3DA7 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				B7CF347B2ED58A2B00DF720B /* R.generated.swift */,
+				B75531C52F34753E0044F7C9 /* R.generated.swift */,
 				CF6185F22DBF965500DC9893 /* Version Manager */,
 				CF7C6B112BD24353000333FF /* Http */,
 				047B21DF2A0BC1D500AC3DA7 /* Extensions */,
@@ -824,7 +810,7 @@
 				0448BD6B2A18BF6700F3F1B9 /* BookingRequestVC.swift */,
 				CFDB26732D421FD40009966D /* PopUpBeforeBooking.swift */,
 				CF91CCD12E8419E400838F9F /* PopupjobTypeVC.swift */,
-				CF2FB3BC2E8508C900C17410 /* PopNRIC.swift */,
+				B726BDF32F336ADA00641E3F /* PopDocView.swift */,
 			);
 			path = Booking;
 			sourceTree = "<group>";
@@ -881,6 +867,55 @@
 				CC365E38B998F7BAA90E83E1 /* Pods-Any.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		B730ADA52F29E9C000AA7C17 /* New Module */ = {
+			isa = PBXGroup;
+			children = (
+				B730ADA72F29E9F100AA7C17 /* Pop Alert */,
+			);
+			path = "New Module";
+			sourceTree = "<group>";
+		};
+		B730ADA62F29E9D800AA7C17 /* SettingView */ = {
+			isa = PBXGroup;
+			children = (
+				CF9ED00B2CB68B13008D7691 /* ProfileSettingVC.swift */,
+				047B22712A0BC1D600AC3DA7 /* ChangePAssVC.swift */,
+				044B53462A1668D7002AE1CF /* ReferFriendVC.swift */,
+				047B22742A0BC1D600AC3DA7 /* TermsAndCondVC.swift */,
+				0443324D2A2669040037E3D9 /* HistoryVC.swift */,
+				CFD247802BD14904005270B7 /* SaveCardVC.swift */,
+				CFD247872BD15187005270B7 /* PaymentVC.swift */,
+				0443324F2A266CA30037E3D9 /* CurrentShiftVC.swift */,
+				0407EB642A2A546700BFE9DE /* AddAdminVC.swift */,
+				0407EB662A2A549300BFE9DE /* listAdminVC.swift */,
+				CF9A94322CBD238900ED1323 /* WalletTypeVC.swift */,
+				044036372A2B77580094ED62 /* SetRateVC.swift */,
+				04DDB9892A16536200AD4FB5 /* EditProfileVC.swift */,
+				CFC4B9832D34F88800452D80 /* SetCustomDateRateVC.swift */,
+				CF1FB3D82E9690260096F91B /* UserRatingVC.swift */,
+				CFB0DC912E9786C70011E340 /* AddRatingReviewVC.swift */,
+				CF2D933F2ECB4BE600FCAF20 /* OutletVC.swift */,
+				CF2D93412ECB50B600FCAF20 /* AddOutletVC.swift */,
+			);
+			path = SettingView;
+			sourceTree = "<group>";
+		};
+		B730ADA72F29E9F100AA7C17 /* Pop Alert */ = {
+			isa = PBXGroup;
+			children = (
+				B730ADA82F29EA1B00AA7C17 /* View */,
+			);
+			path = "Pop Alert";
+			sourceTree = "<group>";
+		};
+		B730ADA82F29EA1B00AA7C17 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B730ADA92F29EA3300AA7C17 /* CurrentShiftAlertView.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		B7366BF52ED998760075E352 /* Outlet */ = {
@@ -1365,6 +1400,7 @@
 				047B22A42A0BC1D700AC3DA7 /* PagingDirection.swift in Sources */,
 				CFDE19F32CBD4F25009CAC64 /* PreviousWorkerCell.swift in Sources */,
 				047B228A2A0BC1D600AC3DA7 /* PagingView.swift in Sources */,
+				B726BDF42F336ADA00641E3F /* PopDocView.swift in Sources */,
 				047B22E52A0BC1D700AC3DA7 /* Utility.swift in Sources */,
 				B79722512ED5DB5E00077245 /* AddressPickerVC.swift in Sources */,
 				047B22CD2A0BC1D700AC3DA7 /* CountryCell.swift in Sources */,
@@ -1379,6 +1415,7 @@
 				047B22FA2A0BC1D700AC3DA7 /* TermsAndCondVC.swift in Sources */,
 				CFE57BB82CB7A0D700C4A67C /* JobRequestCell.swift in Sources */,
 				04D536B52A32043000B57F28 /* PopUpRejectVC.swift in Sources */,
+				B75531C62F34753E0044F7C9 /* R.generated.swift in Sources */,
 				047B22832A0BC1D600AC3DA7 /* Reachability.m in Sources */,
 				041C17E12A23404C0020E309 /* RequestVC.swift in Sources */,
 				CF2D93422ECB50B600FCAF20 /* AddOutletVC.swift in Sources */,
@@ -1390,7 +1427,6 @@
 				047B22A22A0BC1D600AC3DA7 /* PagingMenuHorizontalAlignment.swift in Sources */,
 				047B228C2A0BC1D600AC3DA7 /* PagingIndicatorLayoutAttributes.swift in Sources */,
 				B7913F172F0E84690019BDB9 /* WorkerDtCell.swift in Sources */,
-				B7CF347C2ED58A2B00DF720B /* R.generated.swift in Sources */,
 				041C17E52A2342570020E309 /* TabBarClientVC.swift in Sources */,
 				CFA834842CB807E100F1CFFC /* PublishJobVC.swift in Sources */,
 				047B22852A0BC1D600AC3DA7 /* TableViewController.swift in Sources */,
@@ -1456,6 +1492,7 @@
 				A8BD6F5D2ED444E80002C27D /* AccurateLocationManager.swift in Sources */,
 				0443324E2A2669040037E3D9 /* HistoryVC.swift in Sources */,
 				043C141A2A2E33F500659822 /* RequestByDateVC.swift in Sources */,
+				B730ADAA2F29EA3300AA7C17 /* CurrentShiftAlertView.swift in Sources */,
 				047B229E2A0BC1D600AC3DA7 /* PagingMenuTransition.swift in Sources */,
 				CF9ED00C2CB68B13008D7691 /* ProfileSettingVC.swift in Sources */,
 				CFB2453A2CBE6BDE00CFE16A /* WorkerSigningDetailVC.swift in Sources */,
@@ -1465,7 +1502,6 @@
 				044B53472A1668D7002AE1CF /* ReferFriendVC.swift in Sources */,
 				047B22E22A0BC1D700AC3DA7 /* CommunicationManager.swift in Sources */,
 				047B22EE2A0BC1D700AC3DA7 /* UserTabBar.swift in Sources */,
-				CF2FB3BD2E8508C900C17410 /* PopNRIC.swift in Sources */,
 				047B22932A0BC1D600AC3DA7 /* PagingBorderView.swift in Sources */,
 				047B22902A0BC1D600AC3DA7 /* PagingInvalidationContext.swift in Sources */,
 				047B22C82A0BC1D700AC3DA7 /* TagView.swift in Sources */,
@@ -1702,7 +1738,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.93;
+				MARKETING_VERSION = 2.95;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1750,7 +1786,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.93;
+				MARKETING_VERSION = 2.95;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

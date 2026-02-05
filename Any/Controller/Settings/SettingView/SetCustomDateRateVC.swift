@@ -55,7 +55,9 @@ class SetCustomDateRateVC: UIViewController {
     
     @IBAction func btn_SetRate(_ sender: UIButton) {
         if strSelectedDate != "" {
-            WebAddShift()
+           Task {
+               await WebAddShift()
+            }
         } else {
             self.alert(alertmessage: "Please select the date")
         }
@@ -64,7 +66,7 @@ class SetCustomDateRateVC: UIViewController {
 
 extension SetCustomDateRateVC {
     
-    func WebAddShift() {
+    func WebAddShift() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -74,24 +76,38 @@ extension SetCustomDateRateVC {
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.add_client_date_rate.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.navigationController?.popViewController(animated: true)
-                } else {
-                    let message = swiftyJsonVar["message"].string
-                    print(message ?? "")
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.add_client_date_rate.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.navigationController?.popViewController(animated: true)
+//                } else {
+//                    let message = swiftyJsonVar["message"].string
+//                    print(message ?? "")
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_client_date_rate.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.navigationController?.popViewController(animated: true)
+            } else {
+                let message = swiftyJsonVar["message"].string
+                print(message ?? "")
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
 }
 

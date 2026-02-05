@@ -39,6 +39,8 @@ class EditProfileVC: UIViewController  {
     @IBOutlet weak var txt_BankNumber: SloyTextField!
     @IBOutlet weak var txt_BankName: SloyTextField!
     @IBOutlet weak var lbl_DoxText: UILabel!
+    @IBOutlet weak var lbl_PayNowText: UILabel!
+    @IBOutlet weak var textPayNowNumber: UILabel!
     
     var countryList = CountryList()
     var imageBuisnesslogo:UIImage? = nil
@@ -142,6 +144,19 @@ class EditProfileVC: UIViewController  {
                 strJobTypeName          = profile?["job_type_name"].string ?? ""
                 btn_Jobtype.setTitle(strJobTypeName, for: .normal)
                 
+                if profile?["country_name"].string == "India" {
+                    self.lbl_PayNowText.text = "UPI"
+                    self.textPayNowNumber.text = "Enter your UPI ID"
+                } else if profile?["country_name"].string == "Philippines" {
+                    self.lbl_PayNowText.text = "GCash"
+                    self.textPayNowNumber.text = "Same as phone number registered"
+                } else if profile?["country_name"].string == "Malaysia" {
+                    self.lbl_PayNowText.text = "DuitNow"
+                    self.textPayNowNumber.text = "Same as phone number registered"
+                } else {
+                    self.lbl_PayNowText.text = "PayNow"
+                    self.textPayNowNumber.text = "Same as phone number registered"
+                }
                 
                 // MARK: - Safe Image Loading (NO helper function)
                 
@@ -178,6 +193,7 @@ class EditProfileVC: UIViewController  {
                     )
                 }
             }
+            
         } else {
             text_BusName.isHidden = true
             text_Une.isHidden = true
@@ -199,8 +215,10 @@ class EditProfileVC: UIViewController  {
             setNavigationBarItem(LeftTitle: "My Profile", LeftImage: "", CenterTitle: "", CenterImage: "", RightTitle: "", RightImage: "menu", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
         }
         if Utility.isUserLogin() {
-            WebGetCategoryjobType()
-            GetClientInstruction()
+            Task {
+                await WebGetCategoryjobType()
+                await GetClientInstruction()
+            }
         }
     }
     
@@ -290,11 +308,15 @@ class EditProfileVC: UIViewController  {
         if Utility.isUserLogin() {
             if strType == "Client" {
                 if isValidInput() {
-                    WebUpdateClientProfile()
+                    Task {
+                        await WebUpdateClientProfile()
+                    }
                 }
             } else {
                 if isValidInputForWirker() {
-                    WebUpdateWorkerProfile()
+                    Task {
+                        await WebUpdateWorkerProfile()
+                    }
                 }
             }
             
@@ -382,60 +404,91 @@ extension EditProfileVC {
 // MARK: - Api Calling
 extension EditProfileVC {
     
-    func GetClientInstruction() {
+    func GetClientInstruction() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["country_id"]  =   USER_DEFAULT.value(forKey: COUNTRYID) as AnyObject
         
-        CommunicationManager.callPostService(apiUrl: Router.get_country_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    let obj = swiftyJsonVar["result"]
-                    print(obj["client_document"].stringValue)
-                    self.text_Une.placeholder = obj["client_document"].stringValue
-                    self.lbl_DoxText.text = obj["worker_document"].stringValue
-                } else {
-                    let message = swiftyJsonVar["message"].stringValue
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-                }
-                self.hideProgressBar()
+        //        CommunicationManager.callPostService(apiUrl: Router.get_country_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async { [self] in
+        //                let swiftyJsonVar = JSON(responseData)
+        //                print(swiftyJsonVar)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    let obj = swiftyJsonVar["result"]
+        //                    print(obj["client_document"].stringValue)
+        //                    self.text_Une.placeholder = obj["client_document"].stringValue
+        //                    self.lbl_DoxText.text = obj["worker_document"].stringValue
+        //                } else {
+        //                    let message = swiftyJsonVar["message"].stringValue
+        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //
+        //        },failureBlock: { (error : Error) in
+        //            self.hideProgressBar()
+        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_country_details.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                let obj = swiftyJsonVar["result"]
+                print(obj["client_document"].stringValue)
+                self.text_Une.placeholder = obj["client_document"].stringValue
+                self.lbl_DoxText.text = obj["worker_document"].stringValue
+            } else {
+                let message = swiftyJsonVar["message"].stringValue
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func WebGetCategoryjobType() {
+    func WebGetCategoryjobType() async {
         showProgressBar()
         let paramsDict:[String:AnyObject] = [:]
         
         print(paramsDict)
-        CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arr_AllCat = swiftyJsonVar["result"].arrayValue
-                } else {
-                    let message = swiftyJsonVar["result"].string
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-                }
-                self.hideProgressBar()
+        //        CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async {
+        //                let swiftyJsonVar = JSON(responseData)
+        //                print(swiftyJsonVar)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    self.arr_AllCat = swiftyJsonVar["result"].arrayValue
+        //                } else {
+        //                    let message = swiftyJsonVar["result"].string
+        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //
+        //        },failureBlock: { (error : Error) in
+        //            self.hideProgressBar()
+        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arr_AllCat = swiftyJsonVar["result"].arrayValue
+            } else {
+                let message = swiftyJsonVar["result"].string
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func WebUpdateClientProfile() {
+    func WebUpdateClientProfile() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -463,31 +516,49 @@ extension EditProfileVC {
         
         print(paramImgDict)
         
-        CommunicationManager.uploadImagesAndData(apiUrl: Router.update_profile_client.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    USER_DEFAULT.set("\(self.text_First.text!) \(self.text_Last.text!)", forKey: USER_NAME)
-                    USER_DEFAULT.set(swiftyJsonVar["result"]["request_payment_type"].stringValue, forKey: PAYMENT_TYPE)
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Your Profile Updated Successfully", on: self)
-                    Switcher.updateRootVC()
-                    
-                } else {
-                    let message = swiftyJsonVar["message"].stringValue
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-                }
-                self.hideProgressBar()
+        //        CommunicationManager.uploadImagesAndData(apiUrl: Router.update_profile_client.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async { [self] in
+        //                let swiftyJsonVar = JSON(responseData)
+        //                print(swiftyJsonVar)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    USER_DEFAULT.set("\(self.text_First.text!) \(self.text_Last.text!)", forKey: USER_NAME)
+        //                    USER_DEFAULT.set(swiftyJsonVar["result"]["request_payment_type"].stringValue, forKey: PAYMENT_TYPE)
+        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Your Profile Updated Successfully", on: self)
+        //                    Switcher.updateRootVC()
+        //
+        //                } else {
+        //                    let message = swiftyJsonVar["message"].stringValue
+        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //
+        //        },failureBlock: { (error : Error) in
+        //            self.hideProgressBar()
+        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.uploadImagesAndDataAsync(apiUrl: Router.update_profile_client.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                USER_DEFAULT.set("\(self.text_First.text!) \(self.text_Last.text!)", forKey: USER_NAME)
+                USER_DEFAULT.set(swiftyJsonVar["result"]["request_payment_type"].stringValue, forKey: PAYMENT_TYPE)
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Your Profile Updated Successfully", on: self)
+                Switcher.updateRootVC()
+                
+            } else {
+                let message = swiftyJsonVar["message"].stringValue
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func WebUpdateWorkerProfile() {
+    func WebUpdateWorkerProfile() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -520,25 +591,40 @@ extension EditProfileVC {
         
         print(paramImgDict)
         
-        CommunicationManager.uploadImagesAndData(apiUrl: Router.update_profile_worker.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    USER_DEFAULT.set("\(self.text_First.text!) \(self.text_Last.text!)", forKey: USER_NAME)
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Your Profile Updated Successfully", on: self)
-                } else {
-                    let message = swiftyJsonVar["message"].stringValue
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-                }
-                self.hideProgressBar()
+        //        CommunicationManager.uploadImagesAndData(apiUrl: Router.update_profile_worker.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async { [self] in
+        //                let swiftyJsonVar = JSON(responseData)
+        //                print(swiftyJsonVar)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    USER_DEFAULT.set("\(self.text_First.text!) \(self.text_Last.text!)", forKey: USER_NAME)
+        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Your Profile Updated Successfully", on: self)
+        //                } else {
+        //                    let message = swiftyJsonVar["message"].stringValue
+        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //
+        //        },failureBlock: { (error : Error) in
+        //            self.hideProgressBar()
+        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.uploadImagesAndDataAsync(apiUrl: Router.update_profile_worker.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                USER_DEFAULT.set("\(self.text_First.text!) \(self.text_Last.text!)", forKey: USER_NAME)
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Your Profile Updated Successfully", on: self)
+            } else {
+                let message = swiftyJsonVar["message"].stringValue
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
 }
 

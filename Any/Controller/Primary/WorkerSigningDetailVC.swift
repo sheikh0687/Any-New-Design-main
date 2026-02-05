@@ -84,7 +84,9 @@ class WorkerSigningDetailVC: UIViewController {
     
     @IBAction func btn_Finish(_ sender: UIButton) {
         if isValidInput() {
-            WebUpdateWorkerProfile()
+           Task {
+               await WebUpdateWorkerProfile()
+            }
         }
     }
     
@@ -119,36 +121,55 @@ class WorkerSigningDetailVC: UIViewController {
 
 extension WorkerSigningDetailVC {
     
-    func WebGetJobCategory() {
+    func WebGetJobCategory() async {
         showProgressBar()
         let paramsDict:[String:AnyObject] = [:]
         
         print(paramsDict)
-        CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arr_AllCat = swiftyJsonVar["result"].arrayValue
-                    let firstJobType = self.arr_AllCat[0]
-                    self.strJobTypeName = firstJobType["name"].stringValue
-                    self.strJobId = firstJobType["id"].stringValue
-                    self.btn_JobTypeOt.setTitle(firstJobType["name"].stringValue, for: .normal)
-                    print(self.arr_AllCat.count)
-                } else {
-                    let message = swiftyJsonVar["result"].string
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.arr_AllCat = swiftyJsonVar["result"].arrayValue
+//                    let firstJobType = self.arr_AllCat[0]
+//                    self.strJobTypeName = firstJobType["name"].stringValue
+//                    self.strJobId = firstJobType["id"].stringValue
+//                    self.btn_JobTypeOt.setTitle(firstJobType["name"].stringValue, for: .normal)
+//                    print(self.arr_AllCat.count)
+//                } else {
+//                    let message = swiftyJsonVar["result"].string
+//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arr_AllCat = swiftyJsonVar["result"].arrayValue
+                let firstJobType = self.arr_AllCat[0]
+                self.strJobTypeName = firstJobType["name"].stringValue
+                self.strJobId = firstJobType["id"].stringValue
+                self.btn_JobTypeOt.setTitle(firstJobType["name"].stringValue, for: .normal)
+                print(self.arr_AllCat.count)
+            } else {
+                let message = swiftyJsonVar["result"].string
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func WebUpdateWorkerProfile() {
+    func WebUpdateWorkerProfile() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -177,66 +198,41 @@ extension WorkerSigningDetailVC {
         
         print(paramImgDict)
         
-        CommunicationManager.uploadImagesAndData(apiUrl: Router.update_profile_worker.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    Utility.showAlertWithAction(withTitle: "Successfull!", message: "Your account is pending approval and you will receive notifications once you are authorized to book jobs.", delegate: self, parentViewController: self) { issy in
-                        Switcher.updateRootVC()
-                    }
-                } else {
-                    let message = swiftyJsonVar["message"].stringValue
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+//        CommunicationManager.uploadImagesAndData(apiUrl: Router.update_profile_worker.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    Utility.showAlertWithAction(withTitle: "Successfull!", message: "Your account is pending approval and you will receive notifications once you are authorized to book jobs.", delegate: self, parentViewController: self) { issy in
+//                        Switcher.updateRootVC()
+//                    }
+//                } else {
+//                    let message = swiftyJsonVar["message"].stringValue
+//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.uploadImagesAndDataAsync(apiUrl: Router.update_profile_worker.url(), params: (paramsDict as! [String : String]), imageParam: paramImgDict, videoParam: [:], parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                Utility.showAlertWithAction(withTitle: "Successfull!", message: "Your account is pending approval and you will receive notifications once you are authorized to book jobs.", delegate: self, parentViewController: self) { issy in
+                    Switcher.updateRootVC()
                 }
-                self.hideProgressBar()
+            } else {
+                let message = swiftyJsonVar["message"].stringValue
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
-    
-    
-    //    func WebSignUpForWorker() {
-    //
-    //        paramSignupDict["job_type_id"] = strJobId as AnyObject
-    //        paramSignupDict["job_type_name"] = strJobTypeName as AnyObject
-    //
-    //        print(paramSignupDict)
-    //
-    //        var paramImages: [String : UIImage] = [:]
-    //        paramImages["image"] = workerProfile
-    ////        paramImages["nrc_document"] = imageNRCDocument
-    //
-    ////        paramImages["job_document"] = imageBaristDocument
-    //
-    //        print(paramImages)
-    //
-    //        showProgressBar()
-    //
-    //        CommunicationManager.uploadImagesAndData(apiUrl: Router.signUp.url(), params: (paramSignupDict as! [String : String]) , imageParam: paramImages, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
-    //
-    //            DispatchQueue.main.async { [self] in
-    //                let swiftyJsonVar = JSON(responseData)
-    //                if(swiftyJsonVar["status"].stringValue == "1") {
-    //                    Utility.showAlertWithAction(withTitle: "Successfull!", message: "Your account is pending approval and you will receive notifications once you are authorized to book jobs.", delegate: self, parentViewController: self) { issy in
-    //                        USER_DEFAULT.set(swiftyJsonVar["result"]["type"].stringValue, forKey: USER_TYPE)
-    //                        USER_DEFAULT.set(swiftyJsonVar["result"]["id"].stringValue, forKey: USERID)
-    //                        USER_DEFAULT.set(swiftyJsonVar["status"].stringValue, forKey: STATUS)
-    //                        Switcher.updateRootVC()
-    //                    }
-    //                } else {
-    //                    let message = swiftyJsonVar["message"].stringValue
-    //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-    //                }
-    //                self.hideProgressBar()
-    //            }
-    //        },failureBlock: { (error : Error) in
-    //            self.hideProgressBar()
-    //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-    //        })
-    //    }
 }

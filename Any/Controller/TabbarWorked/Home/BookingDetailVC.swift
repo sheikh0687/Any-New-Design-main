@@ -38,7 +38,9 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        WebGetBookingDetail()
+       Task {
+           await WebGetBookingDetail()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -72,7 +74,9 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
             guard isNear else { return }
             
             if self.dicRequestDetail["working_status"].stringValue == "Pending" {
-                self.WebAddClockIn(strType: "IN")
+               Task {
+                   await self.WebAddClockIn(strType: "IN")
+                }
             } else {
                 let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopClockInVC") as! PopClockInVC
                 objVC.str_Head = "Check-out"
@@ -107,14 +111,20 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
             
         } else if text == "Retry"  {
             
-            WebAddClockIn(strType: "IN")
+           Task {
+               await WebAddClockIn(strType: "IN")
+            }
             
         } else if text == "CheckOut"  {
             
-            WebAddClockIn(strType: "OUT")
+           Task {
+               await WebAddClockIn(strType: "OUT")
+            }
             
         } else {
-            WebGetBookingDetail()
+           Task {
+               await WebGetBookingDetail()
+            }
         }
     }
     
@@ -161,7 +171,7 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
     
     //MARK: API
     
-    func WebAddClockIn(strType:String) {
+    func WebAddClockIn(strType:String) async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         
@@ -176,47 +186,80 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.add_clock_in_time.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                
-                print(swiftyJsonVar)
-                
+//        CommunicationManager.callPostService(apiUrl: Router.add_clock_in_time.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                
+//                print(swiftyJsonVar)
+//                
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    if swiftyJsonVar["result"]["working_status"].stringValue == "Clock-Out" {
+//                        let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "BookingCompleteDetailVC") as! BookingCompleteDetailVC
+//                        objVC.dicCartDetail = dicRequestDetail
+//                        objVC.dicClinetDetail = swiftyJsonVar["result"]
+//                        self.navigationController?.pushViewController(objVC, animated: true)
+//                    } else if swiftyJsonVar["result"]["working_status"].stringValue == "Clock-In" {
+//                        self.navigationController?.popViewController(animated: true)
+//                    } else  {
+//                        WebGetBookingDetail()
+//                    }
+//                } else {
+//                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopClockInVC") as! PopClockInVC
+//                    objVC.str_Head = "Clock-in Unsuccessful"
+//                    objVC.str_Desc = swiftyJsonVar["message"].stringValue
+//                    objVC.str_Sub_Desc = dicRequestDetail["address"].stringValue
+//                    objVC.delegate = self
+//                    objVC.str_One = "Retry, Clock-in"
+//                    objVC.str_Two = "Message"
+//                    objVC.modalPresentationStyle = .overCurrentContext
+//                    objVC.modalTransitionStyle = .crossDissolve
+//                    self.present(objVC, animated: false, completion: nil)
+//                }
+//                self.hideProgressBar()
+//                
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_clock_in_time.url(), parameters: paramsDict, parentViewController: self)
                 if(swiftyJsonVar["status"].stringValue == "1") {
-                    if swiftyJsonVar["result"]["working_status"].stringValue == "Clock-Out" {
-                        let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "BookingCompleteDetailVC") as! BookingCompleteDetailVC
-                        objVC.dicCartDetail = dicRequestDetail
-                        objVC.dicClinetDetail = swiftyJsonVar["result"]
-                        self.navigationController?.pushViewController(objVC, animated: true)
-                    } else if swiftyJsonVar["result"]["working_status"].stringValue == "Clock-In" {
-                        self.navigationController?.popViewController(animated: true)
-                    } else  {
-                        WebGetBookingDetail()
+                if swiftyJsonVar["result"]["working_status"].stringValue == "Clock-Out" {
+                    let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "BookingCompleteDetailVC") as! BookingCompleteDetailVC
+                    objVC.dicCartDetail = dicRequestDetail
+                    objVC.dicClinetDetail = swiftyJsonVar["result"]
+                    self.navigationController?.pushViewController(objVC, animated: true)
+                } else if swiftyJsonVar["result"]["working_status"].stringValue == "Clock-In" {
+                    self.navigationController?.popViewController(animated: true)
+                } else  {
+                   Task {
+                       await WebGetBookingDetail()
                     }
-                } else {
-                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopClockInVC") as! PopClockInVC
-                    objVC.str_Head = "Clock-in Unsuccessful"
-                    objVC.str_Desc = swiftyJsonVar["message"].stringValue
-                    objVC.str_Sub_Desc = dicRequestDetail["address"].stringValue
-                    objVC.delegate = self
-                    objVC.str_One = "Retry, Clock-in"
-                    objVC.str_Two = "Message"
-                    objVC.modalPresentationStyle = .overCurrentContext
-                    objVC.modalTransitionStyle = .crossDissolve
-                    self.present(objVC, animated: false, completion: nil)
                 }
-                self.hideProgressBar()
-                
+            } else {
+                let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopClockInVC") as! PopClockInVC
+                objVC.str_Head = "Clock-in Unsuccessful"
+                objVC.str_Desc = swiftyJsonVar["message"].stringValue
+                objVC.str_Sub_Desc = dicRequestDetail["address"].stringValue
+                objVC.delegate = self
+                objVC.str_One = "Retry, Clock-in"
+                objVC.str_Two = "Message"
+                objVC.modalPresentationStyle = .overCurrentContext
+                objVC.modalTransitionStyle = .crossDissolve
+                self.present(objVC, animated: false, completion: nil)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        self.hideProgressBar()
     }
     
-    func WebGetBookingDetail() {
+    func WebGetBookingDetail() async {
         
         showProgressBar()
         
@@ -226,30 +269,39 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_set_shift_cart_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    
-                    dicRequestDetail = swiftyJsonVar["result"]
-                    getDataShiftAvailble()
-                    
-                } else {
-                    
-                }
-                
-                self.hideProgressBar()
-                
-            }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
-            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+//        CommunicationManager.callPostService(apiUrl: Router.get_set_shift_cart_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    
+//                    dicRequestDetail = swiftyJsonVar["result"]
+//                    getDataShiftAvailble()
+//                    
+//                }
+//                
+//                self.hideProgressBar()
+//                
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
         
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_set_shift_cart_details.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                dicRequestDetail = swiftyJsonVar["result"]
+                getDataShiftAvailble()
+            }
+        } catch {
+            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        }
+        
+        hideProgressBar()
     }
     
     func getDataShiftAvailble() {

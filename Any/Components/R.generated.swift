@@ -256,7 +256,7 @@ struct _R {
     var whitE: RswiftResources.ColorResource { .init(name: "WHITE", path: [], bundle: bundle) }
   }
 
-  /// This `_R.image` struct is generated, and contains static references to 341 images.
+  /// This `_R.image` struct is generated, and contains static references to 344 images.
   struct image {
     let bundle: Foundation.Bundle
 
@@ -488,6 +488,9 @@ struct _R {
     /// Image `camera1`.
     var camera1: RswiftResources.ImageResource { .init(name: "camera1", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
 
+    /// Image `cancel`.
+    var cancel: RswiftResources.ImageResource { .init(name: "cancel", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
+
     /// Image `cancel 3`.
     var cancel3: RswiftResources.ImageResource { .init(name: "cancel 3", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
 
@@ -566,6 +569,9 @@ struct _R {
     /// Image `circle`.
     var circle: RswiftResources.ImageResource { .init(name: "circle", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
 
+    /// Image `clocation`.
+    var clocation: RswiftResources.ImageResource { .init(name: "clocation", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
+
     /// Image `comment`.
     var comment: RswiftResources.ImageResource { .init(name: "comment", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
 
@@ -634,6 +640,9 @@ struct _R {
 
     /// Image `driver1`.
     var driver1: RswiftResources.ImageResource { .init(name: "driver1", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
+
+    /// Image `drop`.
+    var drop: RswiftResources.ImageResource { .init(name: "drop", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
 
     /// Image `drop_marker`.
     var drop_marker: RswiftResources.ImageResource { .init(name: "drop_marker", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
@@ -1297,7 +1306,7 @@ struct _R {
     var googleServiceInfoPlist: RswiftResources.FileResource { .init(name: "GoogleService-Info", pathExtension: "plist", bundle: bundle, locale: LocaleReference.none) }
   }
 
-  /// This `_R.nib` struct is generated, and contains static references to 20 nibs.
+  /// This `_R.nib` struct is generated, and contains static references to 22 nibs.
   struct nib {
     let bundle: Foundation.Bundle
 
@@ -1334,6 +1343,9 @@ struct _R {
     /// Nib `MultiDateCell`.
     var multiDateCell: RswiftResources.NibReferenceReuseIdentifier<MultiDateCell, MultiDateCell> { .init(name: "MultiDateCell", bundle: bundle, identifier: "MultiDateCell") }
 
+    /// Nib `OutletCell`.
+    var outletCell: RswiftResources.NibReferenceReuseIdentifier<OutletCell, OutletCell> { .init(name: "OutletCell", bundle: bundle, identifier: "DropDownCell") }
+
     /// Nib `PreviousWorkerCell`.
     var previousWorkerCell: RswiftResources.NibReferenceReuseIdentifier<PreviousWorkerCell, PreviousWorkerCell> { .init(name: "PreviousWorkerCell", bundle: bundle, identifier: "PreviousWorkerCell") }
 
@@ -1357,6 +1369,9 @@ struct _R {
 
     /// Nib `WeeklyRateCell`.
     var weeklyRateCell: RswiftResources.NibReference<WeeklyRateCell> { .init(name: "WeeklyRateCell", bundle: bundle) }
+
+    /// Nib `WorkerDtCell`.
+    var workerDtCell: RswiftResources.NibReference<WorkerDtCell> { .init(name: "WorkerDtCell", bundle: bundle) }
 
     /// Nib `WorkerShiftTimeCell`.
     var workerShiftTimeCell: RswiftResources.NibReferenceReuseIdentifier<WorkerShiftTimeCell, WorkerShiftTimeCell> { .init(name: "WorkerShiftTimeCell", bundle: bundle, identifier: "WorkerShiftTimeCell") }
@@ -1393,6 +1408,7 @@ struct _R {
       if UIKit.UIColor(named: "GREEN", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'GREEN' is used in nib 'ManpowerCell', but couldn't be loaded.") }
       if UIKit.UIColor(named: "LIGHTGRAY", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'LIGHTGRAY' is used in nib 'ManpowerCell', but couldn't be loaded.") }
       if UIKit.UIImage(named: "cancel_black", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'cancel_black' is used in nib 'MultiDateCell', but couldn't be loaded.") }
+      if UIKit.UIColor(named: "DARK_GREY", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'DARK_GREY' is used in nib 'OutletCell', but couldn't be loaded.") }
       if UIKit.UIImage(named: "check01", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'check01' is used in nib 'PreviousWorkerCell', but couldn't be loaded.") }
       if UIKit.UIImage(named: "je pic 1", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'je pic 1' is used in nib 'PreviousWorkerCell', but couldn't be loaded.") }
       if #available(iOS 13.0, *) { if UIKit.UIImage(systemName: "suitcase.fill") == nil { throw RswiftResources.ValidationError("[R.swift] System image named 'suitcase.fill' is used in nib 'PreviousWorkerCell', but couldn't be loaded.") } }
@@ -1424,11 +1440,12 @@ struct _R {
       if UIKit.UIImage(named: "plus circle 1", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'plus circle 1' is used in nib 'WeeklyRateCell', but couldn't be loaded.") }
       if UIKit.UIColor(named: "BLACK", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'BLACK' is used in nib 'WeeklyRateCell', but couldn't be loaded.") }
       if UIKit.UIColor(named: "THEME_COLOR", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'THEME_COLOR' is used in nib 'WeeklyRateCell', but couldn't be loaded.") }
+      if UIKit.UIImage(named: "Profile_Pla", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'Profile_Pla' is used in nib 'WorkerDtCell', but couldn't be loaded.") }
       if UIKit.UIColor(named: "DARK_GREY", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'DARK_GREY' is used in nib 'WorkerShiftTimeCell', but couldn't be loaded.") }
     }
   }
 
-  /// This `_R.reuseIdentifier` struct is generated, and contains static references to 18 reuse identifiers.
+  /// This `_R.reuseIdentifier` struct is generated, and contains static references to 20 reuse identifiers.
   struct reuseIdentifier {
 
     /// Reuse identifier `AddOutletCell`.
@@ -1458,6 +1475,9 @@ struct _R {
     /// Reuse identifier `DateWiseCell`.
     var dateWiseCell: RswiftResources.ReuseIdentifier<DateWiseCell> { .init(identifier: "DateWiseCell") }
 
+    /// Reuse identifier `DropDownCell`.
+    var dropDownCell: RswiftResources.ReuseIdentifier<OutletCell> { .init(identifier: "DropDownCell") }
+
     /// Reuse identifier `JobRequestCell`.
     var jobRequestCell: RswiftResources.ReuseIdentifier<JobRequestCell> { .init(identifier: "JobRequestCell") }
 
@@ -1475,6 +1495,9 @@ struct _R {
 
     /// Reuse identifier `SaveCardCell`.
     var saveCardCell: RswiftResources.ReuseIdentifier<SaveCardCell> { .init(identifier: "SaveCardCell") }
+
+    /// Reuse identifier `searchLocationCell`.
+    var searchLocationCell: RswiftResources.ReuseIdentifier<SearchLocationCell> { .init(identifier: "searchLocationCell") }
 
     /// Reuse identifier `ShiftCell`.
     var shiftCell: RswiftResources.ReuseIdentifier<ShiftCell> { .init(identifier: "ShiftCell") }
@@ -1528,6 +1551,7 @@ struct _R {
       var addAdminVC: RswiftResources.StoryboardViewControllerIdentifier<AddAdminVC> { .init(identifier: "AddAdminVC", storyboard: name, bundle: bundle) }
       var addOutletVC: RswiftResources.StoryboardViewControllerIdentifier<AddOutletVC> { .init(identifier: "AddOutletVC", storyboard: name, bundle: bundle) }
       var addRatingReviewVC: RswiftResources.StoryboardViewControllerIdentifier<AddRatingReviewVC> { .init(identifier: "AddRatingReviewVC", storyboard: name, bundle: bundle) }
+      var addressPickerVC: RswiftResources.StoryboardViewControllerIdentifier<AddressPickerVC> { .init(identifier: "AddressPickerVC", storyboard: name, bundle: bundle) }
       var bookingCompleteDetailVC: RswiftResources.StoryboardViewControllerIdentifier<BookingCompleteDetailVC> { .init(identifier: "BookingCompleteDetailVC", storyboard: name, bundle: bundle) }
       var bookingDetailVC: RswiftResources.StoryboardViewControllerIdentifier<BookingDetailVC> { .init(identifier: "BookingDetailVC", storyboard: name, bundle: bundle) }
       var bookingRequestVC: RswiftResources.StoryboardViewControllerIdentifier<BookingRequestVC> { .init(identifier: "BookingRequestVC", storyboard: name, bundle: bundle) }
@@ -1554,7 +1578,6 @@ struct _R {
       var passwordOtpVC: RswiftResources.StoryboardViewControllerIdentifier<PasswordOtpVC> { .init(identifier: "PasswordOtpVC", storyboard: name, bundle: bundle) }
       var paymentVC: RswiftResources.StoryboardViewControllerIdentifier<PaymentVC> { .init(identifier: "PaymentVC", storyboard: name, bundle: bundle) }
       var popClockInVC: RswiftResources.StoryboardViewControllerIdentifier<PopClockInVC> { .init(identifier: "PopClockInVC", storyboard: name, bundle: bundle) }
-      var popNRIC: RswiftResources.StoryboardViewControllerIdentifier<PopNRIC> { .init(identifier: "PopNRIC", storyboard: name, bundle: bundle) }
       var popPasswordChangedVC: RswiftResources.StoryboardViewControllerIdentifier<PopPasswordChangedVC> { .init(identifier: "PopPasswordChangedVC", storyboard: name, bundle: bundle) }
       var popUPNoBreakVC: RswiftResources.StoryboardViewControllerIdentifier<PopUPNoBreakVC> { .init(identifier: "PopUPNoBreakVC", storyboard: name, bundle: bundle) }
       var popUpApprovalVC: RswiftResources.StoryboardViewControllerIdentifier<PopUpApprovalVC> { .init(identifier: "PopUpApprovalVC", storyboard: name, bundle: bundle) }
@@ -1614,6 +1637,7 @@ struct _R {
         if UIKit.UIImage(named: "americanexpress", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'americanexpress' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "authorisedapprvar", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'authorisedapprvar' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "back", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'back' is used in storyboard 'Main', but couldn't be loaded.") }
+        if UIKit.UIImage(named: "cancel", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'cancel' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "cancel_black", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'cancel_black' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "card_amex", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'card_amex' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "chat_b2", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'chat_b2' is used in storyboard 'Main', but couldn't be loaded.") }
@@ -1622,12 +1646,15 @@ struct _R {
         if #available(iOS 13.0, *) { if UIKit.UIImage(systemName: "chevron.down") == nil { throw RswiftResources.ValidationError("[R.swift] System image named 'chevron.down' is used in storyboard 'Main', but couldn't be loaded.") } }
         if #available(iOS 13.0, *) { if UIKit.UIImage(systemName: "chevron.right") == nil { throw RswiftResources.ValidationError("[R.swift] System image named 'chevron.right' is used in storyboard 'Main', but couldn't be loaded.") } }
         if UIKit.UIImage(named: "chevron_down.png", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'chevron_down.png' is used in storyboard 'Main', but couldn't be loaded.") }
+        if UIKit.UIImage(named: "clocation", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'clocation' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "darroe", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'darroe' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "dot", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'dot' is used in storyboard 'Main', but couldn't be loaded.") }
+        if UIKit.UIImage(named: "drop", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'drop' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "edit", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'edit' is used in storyboard 'Main', but couldn't be loaded.") }
         if #available(iOS 13.0, *) { if UIKit.UIImage(systemName: "eye") == nil { throw RswiftResources.ValidationError("[R.swift] System image named 'eye' is used in storyboard 'Main', but couldn't be loaded.") } }
         if UIKit.UIImage(named: "for-workers 1", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'for-workers 1' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "history 2", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'history 2' is used in storyboard 'Main', but couldn't be loaded.") }
+        if UIKit.UIImage(named: "ic_back", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'ic_back' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "logo", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'logo' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "mastercard", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'mastercard' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "minus circle 2", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'minus circle 2' is used in storyboard 'Main', but couldn't be loaded.") }
@@ -1635,6 +1662,7 @@ struct _R {
         if UIKit.UIImage(named: "otp 1", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'otp 1' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "outlet", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'outlet' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "outletadmin", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'outletadmin' is used in storyboard 'Main', but couldn't be loaded.") }
+        if UIKit.UIImage(named: "pin", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'pin' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "pin (1) 1", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'pin (1) 1' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "placeholder", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'placeholder' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "plus", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'plus' is used in storyboard 'Main', but couldn't be loaded.") }
@@ -1660,7 +1688,6 @@ struct _R {
         if UIKit.UIColor(named: "GREEN", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'GREEN' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIColor(named: "Grey", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'Grey' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIColor(named: "LIGHTGRAY", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'LIGHTGRAY' is used in storyboard 'Main', but couldn't be loaded.") }
-        if UIKit.UIColor(named: "StartColor", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'StartColor' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIColor(named: "TEXTCOLOR", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'TEXTCOLOR' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIColor(named: "THEME_COLOR", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'THEME_COLOR' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIColor(named: "WHITE", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Color named 'WHITE' is used in storyboard 'Main', but couldn't be loaded.") }
@@ -1669,6 +1696,7 @@ struct _R {
         if addAdminVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'addAdminVC' could not be loaded from storyboard 'Main' as 'AddAdminVC'.") }
         if addOutletVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'addOutletVC' could not be loaded from storyboard 'Main' as 'AddOutletVC'.") }
         if addRatingReviewVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'addRatingReviewVC' could not be loaded from storyboard 'Main' as 'AddRatingReviewVC'.") }
+        if addressPickerVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'addressPickerVC' could not be loaded from storyboard 'Main' as 'AddressPickerVC'.") }
         if bookingCompleteDetailVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'bookingCompleteDetailVC' could not be loaded from storyboard 'Main' as 'BookingCompleteDetailVC'.") }
         if bookingDetailVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'bookingDetailVC' could not be loaded from storyboard 'Main' as 'BookingDetailVC'.") }
         if bookingRequestVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'bookingRequestVC' could not be loaded from storyboard 'Main' as 'BookingRequestVC'.") }
@@ -1694,7 +1722,6 @@ struct _R {
         if passwordOtpVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'passwordOtpVC' could not be loaded from storyboard 'Main' as 'PasswordOtpVC'.") }
         if paymentVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'paymentVC' could not be loaded from storyboard 'Main' as 'PaymentVC'.") }
         if popClockInVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'popClockInVC' could not be loaded from storyboard 'Main' as 'PopClockInVC'.") }
-        if popNRIC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'popNRIC' could not be loaded from storyboard 'Main' as 'PopNRIC'.") }
         if popPasswordChangedVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'popPasswordChangedVC' could not be loaded from storyboard 'Main' as 'PopPasswordChangedVC'.") }
         if popUPNoBreakVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'popUPNoBreakVC' could not be loaded from storyboard 'Main' as 'PopUPNoBreakVC'.") }
         if popUpApprovalVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'popUpApprovalVC' could not be loaded from storyboard 'Main' as 'PopUpApprovalVC'.") }

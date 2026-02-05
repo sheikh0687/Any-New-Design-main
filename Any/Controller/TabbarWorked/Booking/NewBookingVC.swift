@@ -49,7 +49,6 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         table_List.estimatedRowHeight = 100
         table_List.rowHeight = UITableView.automaticDimension
         
-        getListOfDatesShift()
         searchBar.delegate = self
         setupSearchBar(for: searchBar)
         
@@ -59,6 +58,9 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         strDate = Utility.getCurrentShortDate()
         strDay = Utility.getCurrentDay()
 
+       Task {
+           await getListOfDatesShift()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -68,12 +70,13 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         //   GetProfile()
         table_List.isHidden = true
         
-        
         getAddressFromLatLon(pdblLatitude: kappDelegate.CURRENT_LAT, withLongitude: kappDelegate.CURRENT_LON)
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        getClientList(strJobiD: "", strJobName: "")
+       Task {
+           await getClientList(strJobiD: "", strJobName: "")
+        }
     }
     
     //MARK: Searchfirld delegate
@@ -118,31 +121,46 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         table_List.isHidden = true
     }
     
-    func getListOfDatesShift() {
+    func getListOfDatesShift() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_days_List.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arr_AllDates = swiftyJsonVar["result"].arrayValue
-                    print(self.arr_AllDates.count)
-                } else {
-                    let message = swiftyJsonVar["result"].string
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_days_List.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.arr_AllDates = swiftyJsonVar["result"].arrayValue
+//                    print(self.arr_AllDates.count)
+//                } else {
+//                    let message = swiftyJsonVar["result"].string
+//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_days_List.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arr_AllDates = swiftyJsonVar["result"].arrayValue
+                print(self.arr_AllDates.count)
+            } else {
+                let message = swiftyJsonVar["result"].string
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
     @IBAction func Today(_ sender: UIButton) {
@@ -162,7 +180,9 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
             formatter.locale = .current
             formatter.dateFormat = "yyyy-MM-dd"
             self.strDateOnly = formatter.date(from: strContainDate)
-            getClientList(strJobiD: "", strJobName: "")
+           Task {
+              await getClientList(strJobiD: "", strJobName: "")
+            }
         }
     }
     
@@ -170,14 +190,16 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         let vC = R.storyboard.main.popupjobTypeVC()!
         vC.cloJobType = { [weak self] strJobName, strJobiD in
             guard let self else { return }
-            getClientList(strJobiD: strJobiD, strJobName: strJobName)
+           Task {
+               await self.getClientList(strJobiD: strJobiD, strJobName: strJobName)
+            }
         }
         vC.modalTransitionStyle = .crossDissolve
         vC.modalPresentationStyle = .overFullScreen
         self.present(vC, animated: true)
     }
     
-    func getClientList(strJobiD: String, strJobName: String) {
+    func getClientList(strJobiD: String, strJobName: String) async {
         showProgressBar()
         
         var paramDict : [String:AnyObject] = [:]
@@ -193,30 +215,53 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_client_list.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    let resultArr = swiftyJsonVar["result"].arrayValue
-                    
-                    self.arr_List = resultArr
-                    self.arr_FilterList = resultArr
-                    
-                    self.clientList_TableVw.backgroundView = UIView()
-                    self.clientList_TableVw.reloadData()
-                } else {
-                    self.arr_List = []
-                    self.arr_FilterList = []
-                    self.clientList_TableVw.backgroundView = UIView()
-                    self.clientList_TableVw.reloadData()
-                    Utility.noDataFound("No Bookings At The Moment", tableViewOt: self.clientList_TableVw, parentViewController: self)
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_client_list.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    let resultArr = swiftyJsonVar["result"].arrayValue
+//                    
+//                    self.arr_List = resultArr
+//                    self.arr_FilterList = resultArr
+//                    
+//                    self.clientList_TableVw.backgroundView = UIView()
+//                    self.clientList_TableVw.reloadData()
+//                } else {
+//                    self.arr_List = []
+//                    self.arr_FilterList = []
+//                    self.clientList_TableVw.backgroundView = UIView()
+//                    self.clientList_TableVw.reloadData()
+//                    Utility.noDataFound("No Bookings At The Moment", tableViewOt: self.clientList_TableVw, parentViewController: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_client_list.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                let resultArr = swiftyJsonVar["result"].arrayValue
+                
+                self.arr_List = resultArr
+                self.arr_FilterList = resultArr
+                
+                self.clientList_TableVw.backgroundView = UIView()
+                self.clientList_TableVw.reloadData()
+            } else {
+                self.arr_List = []
+                self.arr_FilterList = []
+                self.clientList_TableVw.backgroundView = UIView()
+                self.clientList_TableVw.reloadData()
+                Utility.noDataFound("No Bookings At The Moment", tableViewOt: self.clientList_TableVw, parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
     
     func getAddressFromLatLon(pdblLatitude: String, withLongitude pdblLongitude: String) {
@@ -273,7 +318,7 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         })
     }
     
-    func getLikeUnlike(strClientiD:String) {
+    func getLikeUnlike(strClientiD:String) async {
         showProgressBar()
         
         var paramDict : [String:AnyObject] = [:]
@@ -282,21 +327,33 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         
         print("Do print the \(paramDict)")
         
-        CommunicationManager.callPostService(apiUrl: Router.like_unlike.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.getClientList(strJobiD: "", strJobName: "")
+//        CommunicationManager.callPostService(apiUrl: Router.like_unlike.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.getClientList(strJobiD: "", strJobName: "")
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.like_unlike.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+               Task {
+                   await self.getClientList(strJobiD: "", strJobName: "")
                 }
-                self.hideProgressBar()
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        self.hideProgressBar()
     }
 }
-
 
 extension NewBookingVC : UITableViewDataSource {
     
@@ -365,7 +422,9 @@ extension NewBookingVC : UITableViewDataSource {
             }
             
             cell.cloLike = {
-                self.getLikeUnlike(strClientiD: dic["id"].stringValue)
+               Task {
+                   await self.getLikeUnlike(strClientiD: dic["id"].stringValue)
+                }
             }
             
             return cell
@@ -415,7 +474,6 @@ extension NewBookingVC : UITableViewDelegate {
         }
     }
 }
-
 
 extension NewBookingVC: MKLocalSearchCompleterDelegate {
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {

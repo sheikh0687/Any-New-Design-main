@@ -33,7 +33,9 @@ class NotificationVC: UIViewController {
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Notification", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
 
         if USER_DEFAULT.value(forKey: USERID) != nil {
-            WebGetCategory()
+           Task {
+               await WebGetCategory()
+            }
         }
         table_News.estimatedRowHeight = 100
         table_News.rowHeight = UITableView.automaticDimension
@@ -45,35 +47,54 @@ class NotificationVC: UIViewController {
     }
     
     //MARK:API
-    func WebGetCategory() {
+    func WebGetCategory() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramsDict["type"]  =  "USER" as AnyObject
 
         print(paramsDict)
-        CommunicationManager.callPostService(apiUrl: Router.get_notification_list.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arr_AllCat = swiftyJsonVar["result"].arrayValue
-                    print(self.arr_AllCat.count)
-                    self.table_News.backgroundView = UIView()
-                    self.table_News.reloadData()
-                } else {
-                    self.arr_AllCat = []
-                    self.table_News.backgroundView = UIView()
-                    self.table_News.reloadData()
-                    Utility.noDataFound("No Notifications At The Moment", tableViewOt: self.table_News, parentViewController: self)
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_notification_list.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.arr_AllCat = swiftyJsonVar["result"].arrayValue
+//                    print(self.arr_AllCat.count)
+//                    self.table_News.backgroundView = UIView()
+//                    self.table_News.reloadData()
+//                } else {
+//                    self.arr_AllCat = []
+//                    self.table_News.backgroundView = UIView()
+//                    self.table_News.reloadData()
+//                    Utility.noDataFound("No Notifications At The Moment", tableViewOt: self.table_News, parentViewController: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_notification_list.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arr_AllCat = swiftyJsonVar["result"].arrayValue
+                print(self.arr_AllCat.count)
+                self.table_News.backgroundView = UIView()
+                self.table_News.reloadData()
+            } else {
+                self.arr_AllCat = []
+                self.table_News.backgroundView = UIView()
+                self.table_News.reloadData()
+                Utility.noDataFound("No Notifications At The Moment", tableViewOt: self.table_News, parentViewController: self)
             }
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
 }

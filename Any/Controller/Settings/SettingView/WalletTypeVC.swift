@@ -53,18 +53,20 @@ class WalletTypeVC: UIViewController {
     }
     
     @IBAction func btn_SaveCard(_ sender: UIButton) {
-        UpdatePaymentMethod()
+       Task {
+           await UpdatePaymentMethod()
+        }
     }
 }
 
 extension WalletTypeVC {
     
-    func UpdatePaymentMethod() {
+    func UpdatePaymentMethod() async {
         showProgressBar()
         guard let userId = USER_DEFAULT.value(forKey: USERID),
               let paymentType = USER_DEFAULT.value(forKey: PAYMENT_TYPE) else {
             hideProgressBar()
-            Utility.showAlertMessage(
+            Utility.showAlertMessage (
                 withTitle: APPNAME,
                 message: "User or payment type is missing.",
                 delegate: nil,
@@ -80,20 +82,33 @@ extension WalletTypeVC {
         
         print("Sending Parameters: \(paramDict)")
         
-        CommunicationManager.callPostService(apiUrl: Router.update_request_payment_type.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    Utility.showAlertWithAction(withTitle: APPNAME, message: "Your payment method has been successfully updated", delegate: nil, parentViewController: self) { bool in
-                        self.navigationController?.popViewController(animated: true)
-                    }
+//        CommunicationManager.callPostService(apiUrl: Router.update_request_payment_type.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    Utility.showAlertWithAction(withTitle: APPNAME, message: "Your payment method has been successfully updated", delegate: nil, parentViewController: self) { bool in
+//                        self.navigationController?.popViewController(animated: true)
+//                    }
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.update_request_payment_type.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                Utility.showAlertWithAction(withTitle: APPNAME, message: "Your payment method has been successfully updated", delegate: nil, parentViewController: self) { bool in
+                    self.navigationController?.popViewController(animated: true)
                 }
-                self.hideProgressBar()
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        self.hideProgressBar()
     }
 }

@@ -12,6 +12,9 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <customFonts key="customFonts">
+        <array key="Apercu Regular.otf">
+            <string>Apercu-Regular</string>
+        </array>
         <array key="JosefinSans-Regular.ttf">
             <string>JosefinSans-Regular</string>
         </array>
@@ -26,7 +29,6 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="smJ-8W-EOe" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="aaU-i6-e7a">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -68,7 +70,6 @@
                     <tabBarItem key="tabBarItem" title="My Booking" image="Booking" id="n6A-bX-xqR"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="ZKO-8y-s9M">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -87,7 +88,6 @@
                     <tabBarItem key="tabBarItem" title="Wallet" image="waller1" id="NH7-p2-Nnv"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="etS-q2-dk1">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -106,7 +106,6 @@
                     <tabBarItem key="tabBarItem" title="Find a Job" image="Search" id="1pa-ky-QXk"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="DsF-yq-XUs">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -790,7 +789,6 @@
                     <tabBarItem key="tabBarItem" title="Chat" image="chat_b2" selectedImage="chat_b21" id="EnP-eE-RkM"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="rv9-pR-TH8">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1647,7 +1645,7 @@
             <objects>
                 <viewController storyboardIdentifier="EditProfileVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="2t0-8L-ehq" customClass="EditProfileVC" customModule="Any" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="6e1-d4-6VS">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="800"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TaS-hW-ZG3">
@@ -2255,7 +2253,9 @@
                         <outlet property="img_Nrc" destination="VPe-Up-Gi1" id="bd7-J5-lEo"/>
                         <outlet property="img_Profile" destination="tBF-l8-6hD" id="Oz0-Qi-uas"/>
                         <outlet property="lbl_DoxText" destination="0OK-Eb-dAb" id="b5o-Gm-VTK"/>
+                        <outlet property="lbl_PayNowText" destination="FNS-B1-H1S" id="8gW-7k-6Cd"/>
                         <outlet property="localBankDetails" destination="XRH-cc-Tv5" id="kpd-yX-dCS"/>
+                        <outlet property="textPayNowNumber" destination="ws5-WE-Icy" id="GnF-0p-C53"/>
                         <outlet property="text_BusName" destination="uuP-Jc-bDz" id="sk7-Ni-4fA"/>
                         <outlet property="text_First" destination="BUa-pY-6Sc" id="ShE-NA-riE"/>
                         <outlet property="text_Last" destination="lGR-sg-LD9" id="lPB-Ta-Sjp"/>
@@ -3230,7 +3230,7 @@ Arrive 3:06 pm → 3:15 pm.)</string>
             <objects>
                 <viewController storyboardIdentifier="BookingCompleteDetailVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="D7P-WF-gO7" customClass="BookingCompleteDetailVC" customModule="Any" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="JYf-xs-dzF">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="800"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hfE-iK-Mf0">
@@ -4014,7 +4014,6 @@ Taken</string>
                     <tabBarItem key="tabBarItem" title="My Jobs" image="Booking" id="Auq-iu-xIP"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="shq-Rq-FJF">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -4547,7 +4546,6 @@ Taken</string>
                     <tabBarItem key="tabBarItem" title="Post A Job" image="plus1" id="kHm-58-hXP"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="X4b-T0-PXc">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -4565,7 +4563,6 @@ Taken</string>
                 <navigationController id="LYu-uY-64k" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Urgent" image="Search" id="dCe-Le-L0S"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="18z-87-Jst">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -5478,7 +5475,6 @@ Taken</string>
                     <tabBarItem key="tabBarItem" title="Requests" image="Req" selectedImage="Req1" id="zuT-h3-twb"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Qc1-Ku-k6E">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -5991,7 +5987,7 @@ Taken</string>
             <objects>
                 <viewController storyboardIdentifier="CurrentShiftVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="thF-Bx-8Lf" customClass="CurrentShiftVC" customModule="Any" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8y7-8P-aGU">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="750"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="985-Vk-IVA">
@@ -11264,7 +11260,6 @@ Taken</string>
                     <tabBarItem key="tabBarItem" title="Profile" id="kyB-63-JXD"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="4SX-lh-LVP">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -12172,7 +12167,7 @@ Taken</string>
             <objects>
                 <viewController storyboardIdentifier="PublishJobVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bd7-dG-qxJ" customClass="PublishJobVC" customModule="Any" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="W7R-t6-bNb">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="1000"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cea-6t-pjn">
@@ -13331,7 +13326,7 @@ Taken</string>
             <objects>
                 <viewController storyboardIdentifier="SetRateVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="n1k-nG-tQw" customClass="SetRateVC" customModule="Any" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bHr-Ca-E7O">
-                        <rect key="frame" x="0.0" y="0.0" width="379" height="1048"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="haD-gG-W80">
@@ -13775,7 +13770,7 @@ Taken</string>
             <objects>
                 <viewController storyboardIdentifier="UpdateJobPublishVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="kdR-4b-fdk" customClass="UpdateJobPublishVC" customModule="Any" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="jx8-M9-5bx">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="1000"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Idc-Ju-UNI">
@@ -15449,7 +15444,6 @@ Taken</string>
                     <tabBarItem key="tabBarItem" title="Wishlist" image="unfav24" id="PvM-oH-YRa"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="3jS-sI-djq">
-                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -15460,193 +15454,6 @@ Taken</string>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cpU-dd-ykT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="16788" y="4330"/>
-        </scene>
-        <!--PopNRIC-->
-        <scene sceneID="KA9-5f-cKI">
-            <objects>
-                <viewController storyboardIdentifier="PopNRIC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="jg8-Zy-kZl" customClass="PopNRIC" customModule="Any" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="OS6-q7-ge3">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lJC-H6-hAw">
-                                <rect key="frame" x="40" y="240.5" width="334" height="415"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="NRIC Verification Required" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PoL-33-XtA">
-                                        <rect key="frame" x="10" y="47" width="314" height="22"/>
-                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="16"/>
-                                        <color key="textColor" name="BLACK"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageSizeForAccessibilityContentSizeCategory="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tPJ-Vf-72N">
-                                        <rect key="frame" x="295" y="15" width="24" height="24"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="24" id="AVb-e4-Auh"/>
-                                            <constraint firstAttribute="height" constant="24" id="ayM-Ai-mL9"/>
-                                        </constraints>
-                                        <state key="normal" image="cancel_black">
-                                            <color key="titleColor" systemColor="labelColor"/>
-                                        </state>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                <real key="value" value="8"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                        <connections>
-                                            <action selector="btn_Cancel:" destination="jg8-Zy-kZl" eventType="touchUpInside" id="IiO-Nq-od4"/>
-                                        </connections>
-                                    </button>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Hhw-cq-hJx">
-                                        <rect key="frame" x="10" y="84" width="314" height="256"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I4M-V9-yjC">
-                                                <rect key="frame" x="0.0" y="0.0" width="314" height="134"/>
-                                                <string key="text">To complete your first booking, please upload a clear photo of your NRIC for identity verification.
-This is a one-time requirement to ensure the safety and security of our platform.
-
-Your information will be kept confidential and used only for verification purposes.</string>
-                                                <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="14"/>
-                                                <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="Front Page NRIC Picture" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tJO-V9-GR4">
-                                                <rect key="frame" x="0.0" y="144" width="314" height="22"/>
-                                                <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="16"/>
-                                                <color key="textColor" name="BLACK"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="v8y-ho-3h7">
-                                                <rect key="frame" x="0.0" y="176" width="314" height="80"/>
-                                                <subviews>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="2NB-qf-rm9">
-                                                        <rect key="frame" x="137" y="0.0" width="40" height="80"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="40" id="ny1-Wa-lGF"/>
-                                                        </constraints>
-                                                    </imageView>
-                                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nl2-zG-24F">
-                                                        <rect key="frame" x="97" y="24" width="120" height="32"/>
-                                                        <color key="backgroundColor" name="BUTTON_COLOR"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="120" id="pcX-JP-NZe"/>
-                                                        </constraints>
-                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
-                                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                        <state key="normal" title="Upload a photo">
-                                                            <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        </state>
-                                                        <userDefinedRuntimeAttributes>
-                                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                                <real key="value" value="8"/>
-                                                            </userDefinedRuntimeAttribute>
-                                                        </userDefinedRuntimeAttributes>
-                                                        <connections>
-                                                            <action selector="btn_UploadDoc:" destination="jg8-Zy-kZl" eventType="touchUpInside" id="q1F-7m-d0q"/>
-                                                        </connections>
-                                                    </button>
-                                                </subviews>
-                                                <color key="backgroundColor" systemColor="systemGray6Color"/>
-                                                <constraints>
-                                                    <constraint firstItem="Nl2-zG-24F" firstAttribute="centerY" secondItem="v8y-ho-3h7" secondAttribute="centerY" id="6I8-ME-Wsn"/>
-                                                    <constraint firstItem="2NB-qf-rm9" firstAttribute="centerX" secondItem="v8y-ho-3h7" secondAttribute="centerX" id="Asc-3J-bwH"/>
-                                                    <constraint firstItem="2NB-qf-rm9" firstAttribute="top" secondItem="v8y-ho-3h7" secondAttribute="top" id="Ezm-6h-IB0"/>
-                                                    <constraint firstItem="2NB-qf-rm9" firstAttribute="centerY" secondItem="v8y-ho-3h7" secondAttribute="centerY" id="KaV-RM-DdX"/>
-                                                    <constraint firstItem="Nl2-zG-24F" firstAttribute="centerX" secondItem="v8y-ho-3h7" secondAttribute="centerX" id="MjW-r6-9eC"/>
-                                                    <constraint firstAttribute="bottom" secondItem="2NB-qf-rm9" secondAttribute="bottom" id="jwl-Al-bEW"/>
-                                                    <constraint firstAttribute="height" constant="80" id="rW3-Mt-R0x"/>
-                                                </constraints>
-                                            </view>
-                                        </subviews>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Kd8-YO-Lac">
-                                        <rect key="frame" x="10" y="355" width="314" height="40"/>
-                                        <subviews>
-                                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0s9-av-w7T">
-                                                <rect key="frame" x="0.0" y="0.0" width="152" height="40"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
-                                                <state key="normal" title="Submit">
-                                                    <color key="titleColor" name="TEXTCOLOR"/>
-                                                </state>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                        <real key="value" value="15"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
-                                                        <real key="value" value="1"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                                        <color key="value" name="BUTTON_COLOR"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                </userDefinedRuntimeAttributes>
-                                                <connections>
-                                                    <action selector="btn_Submit:" destination="jg8-Zy-kZl" eventType="touchUpInside" id="8Xv-Nv-aY2"/>
-                                                </connections>
-                                            </button>
-                                            <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PK2-wp-RVx">
-                                                <rect key="frame" x="162" y="0.0" width="152" height="40"/>
-                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="14"/>
-                                                <state key="normal" title="Back">
-                                                    <color key="titleColor" name="TEXTCOLOR"/>
-                                                </state>
-                                                <userDefinedRuntimeAttributes>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                                        <real key="value" value="15"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
-                                                        <real key="value" value="1"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                                        <color key="value" name="BUTTON_COLOR"/>
-                                                    </userDefinedRuntimeAttribute>
-                                                </userDefinedRuntimeAttributes>
-                                                <connections>
-                                                    <action selector="btn_Back:" destination="jg8-Zy-kZl" eventType="touchUpInside" id="1nw-a1-vPN"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="CA3-r8-Zxe"/>
-                                        </constraints>
-                                    </stackView>
-                                </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <constraints>
-                                    <constraint firstItem="tPJ-Vf-72N" firstAttribute="top" secondItem="lJC-H6-hAw" secondAttribute="top" constant="15" id="1uw-S6-P3j"/>
-                                    <constraint firstItem="Hhw-cq-hJx" firstAttribute="top" secondItem="PoL-33-XtA" secondAttribute="bottom" constant="15" id="72N-Cg-gzg"/>
-                                    <constraint firstAttribute="trailing" secondItem="PoL-33-XtA" secondAttribute="trailing" constant="10" id="HpO-ZW-YwM"/>
-                                    <constraint firstItem="Kd8-YO-Lac" firstAttribute="top" secondItem="Hhw-cq-hJx" secondAttribute="bottom" constant="15" id="Kpm-yb-c7g"/>
-                                    <constraint firstItem="Hhw-cq-hJx" firstAttribute="leading" secondItem="lJC-H6-hAw" secondAttribute="leading" constant="10" id="Uxe-0x-XcV"/>
-                                    <constraint firstAttribute="trailing" secondItem="tPJ-Vf-72N" secondAttribute="trailing" constant="15" id="X3d-GQ-3A4"/>
-                                    <constraint firstAttribute="trailing" secondItem="Hhw-cq-hJx" secondAttribute="trailing" constant="10" id="ZRg-pZ-9FF"/>
-                                    <constraint firstItem="PoL-33-XtA" firstAttribute="top" secondItem="tPJ-Vf-72N" secondAttribute="bottom" constant="8" id="gST-YC-ex0"/>
-                                    <constraint firstItem="PoL-33-XtA" firstAttribute="leading" secondItem="lJC-H6-hAw" secondAttribute="leading" constant="10" id="ga7-V8-EVK"/>
-                                    <constraint firstItem="Kd8-YO-Lac" firstAttribute="leading" secondItem="lJC-H6-hAw" secondAttribute="leading" constant="10" id="i1t-eY-snO"/>
-                                    <constraint firstAttribute="trailing" secondItem="Kd8-YO-Lac" secondAttribute="trailing" constant="10" id="pf5-ch-XuU"/>
-                                    <constraint firstAttribute="bottom" secondItem="Kd8-YO-Lac" secondAttribute="bottom" constant="20" id="xQ2-3z-ezA"/>
-                                </constraints>
-                            </view>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="xdQ-q2-rjO"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.64402093949999994" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <constraints>
-                            <constraint firstItem="lJC-H6-hAw" firstAttribute="leading" secondItem="xdQ-q2-rjO" secondAttribute="leading" constant="40" id="DZi-PZ-zdf"/>
-                            <constraint firstItem="lJC-H6-hAw" firstAttribute="centerX" secondItem="OS6-q7-ge3" secondAttribute="centerX" id="UCp-KF-ood"/>
-                            <constraint firstItem="xdQ-q2-rjO" firstAttribute="trailing" secondItem="lJC-H6-hAw" secondAttribute="trailing" constant="40" id="ao7-kf-q7w"/>
-                            <constraint firstItem="lJC-H6-hAw" firstAttribute="centerY" secondItem="OS6-q7-ge3" secondAttribute="centerY" id="q0C-l6-tgF"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="srv-LR-kbi"/>
-                    <connections>
-                        <outlet property="imgNRIC" destination="2NB-qf-rm9" id="1zK-Db-0Ed"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="92D-Wq-HPv" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="18633" y="5160"/>
         </scene>
         <!--User RatingVC-->
         <scene sceneID="n7p-Jb-zg9">
@@ -16480,13 +16287,13 @@ Your information will be kept confidential and used only for verification purpos
         <image name="referfriend" width="500" height="380"/>
         <image name="right-arrow (1) 2" width="150" height="150"/>
         <image name="send-message 1" width="150" height="150"/>
-        <image name="star" width="98" height="97"/>
+        <image name="star" width="30" height="28"/>
         <image name="unfav24" width="24" height="24"/>
         <image name="upload_image" width="150" height="150"/>
         <image name="visa" width="512" height="512"/>
         <image name="waller1" width="19" height="19"/>
         <image name="wallet-filled-money-tool 1" width="150" height="150"/>
-        <image name="wallet_ic" width="128" height="128"/>
+        <image name="wallet_ic" width="60" height="60"/>
         <namedColor name="BG_COLOR">
             <color red="0.792156862745098" green="0.96862745098039216" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

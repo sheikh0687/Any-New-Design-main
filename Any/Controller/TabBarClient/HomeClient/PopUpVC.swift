@@ -55,7 +55,9 @@ class PopUpVC: UIViewController {
     @IBAction func one(_ sender: Any) {
         
         if strFrom == "Home" {
-            getDataGetList()
+           Task {
+               await getDataGetList()
+            }
         } else {
             self.dismiss(animated: false, completion: nil)
         }
@@ -74,7 +76,7 @@ class PopUpVC: UIViewController {
         }
     }
     
-    func getDataGetList() {
+    func getDataGetList() async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["client_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -85,26 +87,44 @@ class PopUpVC: UIViewController {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.add_client_date_wise_open_close.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    
-                    if let completion = completion {
-                        completion()
-                    }
-                    self.dismiss(animated: false, completion: nil)
-                    
-                } else {
-                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+//        CommunicationManager.callPostService(apiUrl: Router.add_client_date_wise_open_close.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    
+//                    if let completion = completion {
+//                        completion()
+//                    }
+//                    self.dismiss(animated: false, completion: nil)
+//                    
+//                } else {
+//                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_client_date_wise_open_close.url(), parameters: paramDict, parentViewController: self)
+            
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                
+                if let completion = completion {
+                    completion()
                 }
-                self.hideProgressBar()
+                self.dismiss(animated: false, completion: nil)
+                
+            } else {
+                Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        self.hideProgressBar()
     }
     
 }

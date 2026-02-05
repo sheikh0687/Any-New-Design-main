@@ -21,7 +21,6 @@ class SameDayRequestCell: UITableViewCell {
     @IBOutlet weak var lbl_Location: UILabel!
     @IBOutlet weak var btn_Decline: UIButton!
     @IBOutlet weak var btn_Accept: UIButton!
-    
 }
 
 class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
@@ -46,8 +45,9 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
         self.tabBarController?.tabBar.isHidden = true
         setNavigationBarItem(LeftTitle: "", LeftImage: "back", CenterTitle: "Urgent Booking", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
         
-        WebGetApprovedBooking()
-        
+       Task {
+           await WebGetApprovedBooking()
+        }
     }
     
     func myVCDidFinish(text: String) {
@@ -55,13 +55,17 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
         if text == "Accept" {
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
-                WebRejectBooking(strCard: "Accept")
+               Task {
+                   await WebRejectBooking(strCard: "Accept")
+                }
                 
             }
             
             
         } else if text == "Reject" {
-            webDeletShift(strSt: dicCrent["id"].stringValue)
+           Task {
+               await webDeletShift(strSt: dicCrent["id"].stringValue)
+            }
         } else if text == "Message" {
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
@@ -76,14 +80,16 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
         } else if text == "Confirm" {
             //     WebRejectBooking(strCard: "1")
             
-            self.WebGetApprovedBooking()
+           Task {
+               await self.WebGetApprovedBooking()
+            }
             
         }
     }
     
     //MARK: API
     
-    func WebRejectBooking(strCard:String) {
+    func WebRejectBooking(strCard:String) async {
         
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -94,111 +100,187 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
         
         showProgressBar()
         
-        CommunicationManager.callPostService(apiUrl: Router.add_to_set_shift_cart_broadcast.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
+//        CommunicationManager.callPostService(apiUrl: Router.add_to_set_shift_cart_broadcast.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    
+//                    if strCard == "Accept" {
+//                        let sdsd = kappDelegate.dicCrent["start_time"].stringValue
+//                        
+//                        let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpBookingConfirmVC") as! PopUpBookingConfirmVC
+//                        objVC.str_Desc = "Your shift will start at (\(sdsd)) today at this location:"
+//                        objVC.str_Sub_Desc = "\(kappDelegate.dicCrent["client_details"]["business_name"].stringValue), \(kappDelegate.dicCrent["address"].stringValue)\n\n\(kCurrency)\(kappDelegate.dicCrent["shift_rate"].stringValue)/Hour"
+//                        objVC.str_Sub_Desc2 = "\(kappDelegate.dicCrent["job_type"].stringValue)\n\(kappDelegate.dicCrent["note"].stringValue)"
+//                        objVC.delegate = self
+//                        objVC.modalPresentationStyle = .overCurrentContext
+//                        objVC.modalTransitionStyle = .crossDissolve
+//                        self.present(objVC, animated: false, completion: nil)
+//                        
+//                    } else  {
+//                        self.WebGetApprovedBooking()
+//                    }
+//                } else {
+//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: swiftyJsonVar["message"].stringValue, on: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_to_set_shift_cart_broadcast.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
                 
-                if(swiftyJsonVar["status"].stringValue == "1") {
+                if strCard == "Accept" {
+                    let sdsd = kappDelegate.dicCrent["start_time"].stringValue
                     
-                    if strCard == "Accept" {
-                        let sdsd = kappDelegate.dicCrent["start_time"].stringValue
-                        
-                        let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpBookingConfirmVC") as! PopUpBookingConfirmVC
-                        objVC.str_Desc = "Your shift will start at (\(sdsd)) today at this location:"
-                        objVC.str_Sub_Desc = "\(kappDelegate.dicCrent["client_details"]["business_name"].stringValue), \(kappDelegate.dicCrent["address"].stringValue)\n\n\(kCurrency)\(kappDelegate.dicCrent["shift_rate"].stringValue)/Hour"
-                        objVC.str_Sub_Desc2 = "\(kappDelegate.dicCrent["job_type"].stringValue)\n\(kappDelegate.dicCrent["note"].stringValue)"
-                        objVC.delegate = self
-                        objVC.modalPresentationStyle = .overCurrentContext
-                        objVC.modalTransitionStyle = .crossDissolve
-                        self.present(objVC, animated: false, completion: nil)
-                        
-                    } else  {
-                        self.WebGetApprovedBooking()
+                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpBookingConfirmVC") as! PopUpBookingConfirmVC
+                    objVC.str_Desc = "Your shift will start at (\(sdsd)) today at this location:"
+                    objVC.str_Sub_Desc = "\(kappDelegate.dicCrent["client_details"]["business_name"].stringValue), \(kappDelegate.dicCrent["address"].stringValue)\n\n\(kappDelegate.dicCrent["currency_symbol"].stringValue)\(kappDelegate.dicCrent["shift_rate"].stringValue)/Hour"
+                    objVC.str_Sub_Desc2 = "\(kappDelegate.dicCrent["job_type"].stringValue)\n\(kappDelegate.dicCrent["note"].stringValue)"
+                    objVC.delegate = self
+                    objVC.modalPresentationStyle = .overCurrentContext
+                    objVC.modalTransitionStyle = .crossDissolve
+                    self.present(objVC, animated: false, completion: nil)
+                    
+                } else  {
+                   Task {
+                       await self.WebGetApprovedBooking()
                     }
-                } else {
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: swiftyJsonVar["message"].stringValue, on: self)
                 }
-                self.hideProgressBar()
+            } else {
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: swiftyJsonVar["message"].stringValue, on: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func WebGetApprovedBooking() {
+    func WebGetApprovedBooking() async {
+        showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramsDict["status"]  =   strStatus as AnyObject
         paramsDict["date"]  =   strDate as AnyObject
         
-        showProgressBar()
-        
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_broadcast_shift.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+        //        CommunicationManager.callPostService(apiUrl: Router.get_broadcast_shift.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async { [self] in
+        //                let swiftyJsonVar = JSON(responseData)
+        //                print(swiftyJsonVar)
+        //
+        //                table_List.isHidden = false
+        //
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
+        //                    self.table_List.backgroundView = UIView()
+        //                    self.table_List.reloadData()
+        //                } else {
+        //                    self.arr_AllDriver = []
+        //                    self.table_List.backgroundView = UIView()
+        //                    self.table_List.reloadData()
+        //                    Utility.noDataFound("No Requests At The Moment", tableViewOt: self.table_List, parentViewController: self)
+        //                }
+        //
+        //                self.hideProgressBar()
+        //            }
+        //
+        //        },failureBlock: { (error : Error) in
+        //            self.hideProgressBar()
+        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_broadcast_shift.url(), parameters: paramsDict, parentViewController: self)
+            table_List.isHidden = false
             
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                
-                table_List.isHidden = false
-                
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
-                    self.table_List.backgroundView = UIView()
-                    self.table_List.reloadData()
-                    
-                } else {
-                    self.arr_AllDriver = []
-                    self.table_List.backgroundView = UIView()
-                    self.table_List.reloadData()
-                    Utility.noDataFound("No Requests At The Moment", tableViewOt: self.table_List, parentViewController: self)
-                }
-                
-                self.hideProgressBar()
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
+                self.table_List.backgroundView = UIView()
+                self.table_List.reloadData()
+            } else {
+                self.arr_AllDriver = []
+                self.table_List.backgroundView = UIView()
+                self.table_List.reloadData()
+                Utility.noDataFound("No Requests At The Moment", tableViewOt: self.table_List, parentViewController: self)
             }
             
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func webDeletShift(strSt:String) {
+    func webDeletShift(strSt:String) async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["worker_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramDict["shift_id"]  =   strSt as AnyObject
         
-        CommunicationManager.callPostService(apiUrl: Router.shift_rejected_by_worker.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.WebGetApprovedBooking()
-                    
-                    let shiftTime = "\(dicCrent["start_time"].stringValue) to \(dicCrent["end_time"].stringValue)"
-                    
-                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpRejectVC") as! PopUpRejectVC
-                    objVC.str_Desc = "\(dicCrent["client_details"]["business_name"].stringValue),  \(dicCrent["address"].stringValue)\n\(dicCrent["day_name"].stringValue), \(shiftTime)"
-                    objVC.str_Head = "Your shift has been successfully cancelled in:"
-                    objVC.modalPresentationStyle = .overCurrentContext
-                    objVC.modalTransitionStyle = .crossDissolve
-                    self.present(objVC, animated: false, completion: nil)
-                    
-                } else {
-                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+//        CommunicationManager.callPostService(apiUrl: Router.shift_rejected_by_worker.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                   Task {
+//                       await self.WebGetApprovedBooking()
+//                    }
+//                    
+//                    let shiftTime = "\(dicCrent["start_time"].stringValue) to \(dicCrent["end_time"].stringValue)"
+//                    
+//                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpRejectVC") as! PopUpRejectVC
+//                    objVC.str_Desc = "\(dicCrent["client_details"]["business_name"].stringValue),  \(dicCrent["address"].stringValue)\n\(dicCrent["day_name"].stringValue), \(shiftTime)"
+//                    objVC.str_Head = "Your shift has been successfully cancelled in:"
+//                    objVC.modalPresentationStyle = .overCurrentContext
+//                    objVC.modalTransitionStyle = .crossDissolve
+//                    self.present(objVC, animated: false, completion: nil)
+//                    
+//                } else {
+//                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+//        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.shift_rejected_by_worker.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+               Task {
+                   await self.WebGetApprovedBooking()
                 }
-                self.hideProgressBar()
+                
+                let shiftTime = "\(dicCrent["start_time"].stringValue) to \(dicCrent["end_time"].stringValue)"
+                
+                let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpRejectVC") as! PopUpRejectVC
+                objVC.str_Desc = "\(dicCrent["client_details"]["business_name"].stringValue),  \(dicCrent["address"].stringValue)\n\(dicCrent["day_name"].stringValue), \(shiftTime)"
+                objVC.str_Head = "Your shift has been successfully cancelled in:"
+                objVC.modalPresentationStyle = .overCurrentContext
+                objVC.modalTransitionStyle = .crossDissolve
+                self.present(objVC, animated: false, completion: nil)
+                
+            } else {
+                Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
 }
 
@@ -213,11 +295,11 @@ extension SameDayRequestVC : UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-      
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! SameDayRequestCell
-            
+        
         let dic = arr_AllDriver[indexPath.row]
-
+        
         cell.lbl_BusinessNameAndTime.text = "\(dic["client_details"]["business_name"].stringValue), (\(dic["start_time"].stringValue) - \(dic["end_time"].stringValue))\nToday"
         
         cell.lbl_ShiftRate.text = "\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
@@ -230,22 +312,22 @@ extension SameDayRequestVC : UITableViewDataSource {
         
         cell.btn_Accept.tag = indexPath.row
         cell.btn_Accept.addTarget(self, action: #selector(clciBookApprove), for: .touchUpInside)
-
+        
         cell.btn_Decline.tag = indexPath.row
         cell.btn_Decline.addTarget(self, action: #selector(clcidReject), for: .touchUpInside)
-
+        
         return cell
     }
     
     @objc func clciBookApprove(but:UIButton)  {
-       
+        
         let dic = arr_AllDriver[but.tag]
         dicCrent = dic
         kappDelegate.dicCrent = dic
-
+        
         let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpSameVC") as! PopUpSameVC
-        objVC.str_Head = "\(dic["client_details"]["business_name"].stringValue), \(dic["address"].stringValue)\n\n\(kCurrency)\(dic["shift_rate"].stringValue)/Hour"
-
+        objVC.str_Head = "\(dic["client_details"]["business_name"].stringValue), \(dic["address"].stringValue)\n\n\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
+        
         objVC.str_Desc = "Break : \(dic["break_type"].stringValue)\n\nMeals : \(dic["meals"].stringValue)"
         objVC.str_Sub_Desc = "\(dic["job_type"].stringValue)\n\n\(dic["note"].stringValue)"
         objVC.delegate = self
@@ -259,8 +341,8 @@ extension SameDayRequestVC : UITableViewDataSource {
         let dic = arr_AllDriver[but.tag]
         dicCrent = dic
         let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpSameVC") as! PopUpSameVC
-        objVC.str_Head = "\(dic["client_details"]["business_name"].stringValue), \(dic["address"].stringValue)\n\n\(kCurrency)\(dic["shift_rate"].stringValue)/Hour"
-
+        objVC.str_Head = "\(dic["client_details"]["business_name"].stringValue), \(dic["address"].stringValue)\n\n\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
+        
         objVC.str_Desc = "Break : \(dic["break_type"].stringValue)\n\nMeals : \(dic["meals"].stringValue)"
         objVC.str_Sub_Desc = "\(dic["job_type"].stringValue)\n\n\(dic["note"].stringValue)"
         objVC.delegate = self
@@ -273,8 +355,8 @@ extension SameDayRequestVC : UITableViewDataSource {
 
 extension SameDayRequestVC : UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
-
+        
+        
     }
 }
 

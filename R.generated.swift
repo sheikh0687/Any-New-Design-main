@@ -1578,7 +1578,6 @@ struct _R {
       var passwordOtpVC: RswiftResources.StoryboardViewControllerIdentifier<PasswordOtpVC> { .init(identifier: "PasswordOtpVC", storyboard: name, bundle: bundle) }
       var paymentVC: RswiftResources.StoryboardViewControllerIdentifier<PaymentVC> { .init(identifier: "PaymentVC", storyboard: name, bundle: bundle) }
       var popClockInVC: RswiftResources.StoryboardViewControllerIdentifier<PopClockInVC> { .init(identifier: "PopClockInVC", storyboard: name, bundle: bundle) }
-      var popNRIC: RswiftResources.StoryboardViewControllerIdentifier<PopNRIC> { .init(identifier: "PopNRIC", storyboard: name, bundle: bundle) }
       var popPasswordChangedVC: RswiftResources.StoryboardViewControllerIdentifier<PopPasswordChangedVC> { .init(identifier: "PopPasswordChangedVC", storyboard: name, bundle: bundle) }
       var popUPNoBreakVC: RswiftResources.StoryboardViewControllerIdentifier<PopUPNoBreakVC> { .init(identifier: "PopUPNoBreakVC", storyboard: name, bundle: bundle) }
       var popUpApprovalVC: RswiftResources.StoryboardViewControllerIdentifier<PopUpApprovalVC> { .init(identifier: "PopUpApprovalVC", storyboard: name, bundle: bundle) }
@@ -1723,7 +1722,6 @@ struct _R {
         if passwordOtpVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'passwordOtpVC' could not be loaded from storyboard 'Main' as 'PasswordOtpVC'.") }
         if paymentVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'paymentVC' could not be loaded from storyboard 'Main' as 'PaymentVC'.") }
         if popClockInVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'popClockInVC' could not be loaded from storyboard 'Main' as 'PopClockInVC'.") }
-        if popNRIC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'popNRIC' could not be loaded from storyboard 'Main' as 'PopNRIC'.") }
         if popPasswordChangedVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'popPasswordChangedVC' could not be loaded from storyboard 'Main' as 'PopPasswordChangedVC'.") }
         if popUPNoBreakVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'popUPNoBreakVC' could not be loaded from storyboard 'Main' as 'PopUPNoBreakVC'.") }
         if popUpApprovalVC() == nil { throw RswiftResources.ValidationError("[R.swift] ViewController with identifier 'popUpApprovalVC' could not be loaded from storyboard 'Main' as 'PopUpApprovalVC'.") }

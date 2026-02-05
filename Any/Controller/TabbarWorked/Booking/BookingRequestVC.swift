@@ -8,6 +8,7 @@
 import UIKit
 import SwiftyJSON
 import SDWebImage
+import SwiftUI
 
 class BookingShiftCell: UICollectionViewCell {
     
@@ -95,9 +96,6 @@ class BookingRequestVC: UIViewController {
         
         selectDate = formatter.date(from: strDate)
         
-        GetProfile()
-        getDataShiftAvailble()
-        
         let lastDayOfTheYear = Calendar.current.date(byAdding: .day, value: 100, to: Date())
         var currentDate = Date()
         let dateFormatter = DateFormatter()
@@ -141,6 +139,11 @@ class BookingRequestVC: UIViewController {
             
             currentDate = calendar.date(byAdding: .weekOfYear, value: 1, to: currentDate)!
         }
+        
+        Task {
+            await GetProfile()
+            await getDataShiftAvailble()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -155,7 +158,9 @@ class BookingRequestVC: UIViewController {
             dcuureDate = Calendar.current.date(byAdding: .day, value: 1, to: dcuureDate)!
         }
         coll_date.reloadData()
-        getDataGetList()
+        Task {
+           await getDataGetList()
+        }
     }
     
     func getDate(strDte:String) -> Date? {
@@ -178,8 +183,10 @@ class BookingRequestVC: UIViewController {
                 arrWeekDAys.append(dcuureDate)
                 dcuureDate = Calendar.current.date(byAdding: .day, value: 1, to: dcuureDate)!
             }
-//            coll_date.reloadData()
-            getDataGetList()
+            //            coll_date.reloadData()
+           Task {
+               await getDataGetList()
+            }
         }
         
     }
@@ -193,43 +200,61 @@ class BookingRequestVC: UIViewController {
             arrWeekDAys.append(dcuureDate)
             dcuureDate = Calendar.current.date(byAdding: .day, value: 1, to: dcuureDate)!
         }
-//        coll_date.reloadData()
-        getDataGetList()
+        //        coll_date.reloadData()
+       Task {
+           await getDataGetList()
+        }
     }
 }
 
 //MARK: API
 extension BookingRequestVC {
     
-    func GetProfile() {
+    func GetProfile() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    if let jobiD = swiftyJsonVar["result"]["job_type_id"].string {
-                        self.strSessionJobiD = jobiD
-                        print(self.strSessionJobiD ?? "")
-                    }
-                } else {
-                    _ = swiftyJsonVar["result"].string
+        //        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async {
+        //                let swiftyJsonVar = JSON(responseData)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    if let jobiD = swiftyJsonVar["result"]["job_type_id"].string {
+        //                        self.strSessionJobiD = jobiD
+        //                        print(self.strSessionJobiD ?? "")
+        //                    }
+        //                } else {
+        //                    _ = swiftyJsonVar["result"].string
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //
+        //        },failureBlock: { (error : Error) in
+        //            self.hideProgressBar()
+        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                if let jobiD = swiftyJsonVar["result"]["job_type_id"].string {
+                    self.strSessionJobiD = jobiD
+                    print(self.strSessionJobiD ?? "")
                 }
-                self.hideProgressBar()
+            } else {
+                _ = swiftyJsonVar["result"].string
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func webAddToCartSubmit(_ shiftId: String,_ shiftRate: String, autoApproved: String, singleDate: String, outletiD: String) {
+    func webAddToCartSubmit(_ shiftId: String,_ shiftRate: String, autoApproved: String, singleDate: String, outletiD: String) async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         
@@ -257,23 +282,40 @@ extension BookingRequestVC {
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.add_to_set_shift_cart.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"] == "1") {
-                    let cartId = swiftyJsonVar["cart_id"].int
-                    self.addBookingFinal(cartId ?? 0, autoShift: autoApproved, singleDate: singleDate, date: arrDate.joined(separator: ","))
-                } else {
-                    let message = swiftyJsonVar["message"].stringValue
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+        //        CommunicationManager.callPostService(apiUrl: Router.add_to_set_shift_cart.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async {
+        //                let swiftyJsonVar = JSON(responseData)
+        //                if(swiftyJsonVar["status"] == "1") {
+        //                    let cartId = swiftyJsonVar["cart_id"].int
+        //                    self.addBookingFinal(cartId ?? 0, autoShift: autoApproved, singleDate: singleDate, date: arrDate.joined(separator: ","))
+        //                } else {
+        //                    let message = swiftyJsonVar["message"].stringValue
+        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //        },failureBlock: { (error : Error) in
+        //            self.hideProgressBar()
+        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_to_set_shift_cart.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"] == "1") {
+                let cartId = swiftyJsonVar["cart_id"].int
+               Task {
+                   await self.addBookingFinal(cartId ?? 0, autoShift: autoApproved, singleDate: singleDate, date: arrDate.joined(separator: ","))
                 }
-                self.hideProgressBar()
+            } else {
+                let message = swiftyJsonVar["message"].stringValue
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
             }
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
     func chnageDataAccordingDate(doc:JSON)  {
@@ -281,7 +323,7 @@ extension BookingRequestVC {
         lbl_Descrip2.text = "Note: \(doc["note"].stringValue)"
     }
     
-    func getDataGetList() {
+    func getDataGetList() async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   dicClinetDetail["id"].stringValue as AnyObject
@@ -293,24 +335,38 @@ extension BookingRequestVC {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_shift_by_day_week_count.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arrShiftCount = swiftyJsonVar["result"].arrayValue
-                    self.coll_date.reloadData()
-                } else {
-                    self.arrShiftCount = []
-                }
-                self.hideProgressBar()
+        //        CommunicationManager.callPostService(apiUrl: Router.get_shift_by_day_week_count.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+        //            DispatchQueue.main.async { [self] in
+        //                let swiftyJsonVar = JSON(responseData)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    self.arrShiftCount = swiftyJsonVar["result"].arrayValue
+        //                    self.coll_date.reloadData()
+        //                } else {
+        //                    self.arrShiftCount = []
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //        }, failureBlock: { (error : Error) in
+        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+        //            self.hideProgressBar()
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_shift_by_day_week_count.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arrShiftCount = swiftyJsonVar["result"].arrayValue
+                self.coll_date.reloadData()
+            } else {
+                self.arrShiftCount = []
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func getDataShiftAvailble() {
+    func getDataShiftAvailble() async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -329,32 +385,54 @@ extension BookingRequestVC {
         
         print("paramDict\(paramDict)")
         
-        CommunicationManager.callPostService(apiUrl: Router.get_shift_by_day.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arr_List  = swiftyJsonVar["result"].arrayValue
-                    self.nrcDocumentUpdated = swiftyJsonVar["nrc_document_uploaded"].stringValue
-                    self.chnageDataAccordingDate(doc: self.arr_List [0])
-                    
-                    self.tableViewShift.backgroundView = UIView()
-                    self.height_TableVw.constant = CGFloat(200 * self.arr_List.count)
-                    self.tableViewShift.reloadData()
-                } else {
-                    self.arr_List = []
-                    self.tableViewShift.backgroundView = UIView()
-                    self.tableViewShift.reloadData()
-                    Utility.noDataFound("No Shift Available", tableViewOt: self.tableViewShift, parentViewController: self)
-                }
-                self.hideProgressBar()
+        //        CommunicationManager.callPostService(apiUrl: Router.get_shift_by_day.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+        //            DispatchQueue.main.async {
+        //                let swiftyJsonVar = JSON(responseData)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    self.arr_List  = swiftyJsonVar["result"].arrayValue
+        //                    self.nrcDocumentUpdated = swiftyJsonVar["nrc_document_uploaded"].stringValue
+        //                    self.chnageDataAccordingDate(doc: self.arr_List [0])
+        //
+        //                    self.tableViewShift.backgroundView = UIView()
+        //                    self.height_TableVw.constant = CGFloat(200 * self.arr_List.count)
+        //                    self.tableViewShift.reloadData()
+        //                } else {
+        //                    self.arr_List = []
+        //                    self.tableViewShift.backgroundView = UIView()
+        //                    self.tableViewShift.reloadData()
+        //                    Utility.noDataFound("No Shift Available", tableViewOt: self.tableViewShift, parentViewController: self)
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //        }, failureBlock: { (error : Error) in
+        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+        //            self.hideProgressBar()
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_shift_by_day.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arr_List  = swiftyJsonVar["result"].arrayValue
+                self.nrcDocumentUpdated = swiftyJsonVar["nrc_document_uploaded"].stringValue
+                self.chnageDataAccordingDate(doc: self.arr_List [0])
+                
+                self.tableViewShift.backgroundView = UIView()
+                self.height_TableVw.constant = CGFloat(200 * self.arr_List.count)
+                self.tableViewShift.reloadData()
+            } else {
+                self.arr_List = []
+                self.tableViewShift.backgroundView = UIView()
+                self.tableViewShift.reloadData()
+                Utility.noDataFound("No Shift Available", tableViewOt: self.tableViewShift, parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func addBookingFinal(_ cartID: Int, autoShift: String, singleDate: String, date: String) {
+    func addBookingFinal(_ cartID: Int, autoShift: String, singleDate: String, date: String) async {
         
         showProgressBar()
         
@@ -365,51 +443,92 @@ extension BookingRequestVC {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.add_set_shift_book.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
-                    objVC.strFrom = "Summery"
-                    if autoShift == "Yes" {
-                        objVC.str_Head = ""
-                        objVC.str_Desc = "Your shift booking for \(singleDate) has been auto approved. Kindly be on time for your shift."
-                    } else {
-                        objVC.str_Head = "Your Booking Request Has Been Sent"
-                        objVC.str_Desc = "You will receive a notification once the unit manager has approved/declined your shift."
-                    }
-                    objVC.completion = {
-                        Switcher.updateRootVC()
-                    }
-                    
-                    objVC.modalPresentationStyle = .overCurrentContext
-                    objVC.modalTransitionStyle = .crossDissolve
-                    self.present(objVC, animated: false, completion: nil)
-                } else if (swiftyJsonVar["status"].stringValue == "2") {
-                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
-                    objVC.strFrom = "Summery"
-                    objVC.str_Head = "Booking status update"
-                    objVC.str_Desc = "Bookings for \(self.dicClinetDetail["business_name"].stringValue) on \(date) have been switched from Instant Approval to Pending Approval due to the client’s billing issue. Please wait a few hours for the approval notification. No action needed on your side for now."
-                    
-                    objVC.completion = {
-                        Switcher.updateRootVC()
-                    }
-                    
-                    objVC.modalPresentationStyle = .overCurrentContext
-                    objVC.modalTransitionStyle = .crossDissolve
-                    self.present(objVC, animated: false, completion: nil)
+        //        CommunicationManager.callPostService(apiUrl: Router.add_set_shift_book.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+        //            DispatchQueue.main.async {
+        //                let swiftyJsonVar = JSON(responseData)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
+        //                    objVC.strFrom = "Summery"
+        //                    if autoShift == "Yes" {
+        //                        objVC.str_Head = ""
+        //                        objVC.str_Desc = "Your shift booking for \(singleDate) has been auto approved. Kindly be on time for your shift."
+        //                    } else {
+        //                        objVC.str_Head = "Your Booking Request Has Been Sent"
+        //                        objVC.str_Desc = "You will receive a notification once the unit manager has approved/declined your shift."
+        //                    }
+        //                    objVC.completion = {
+        //                        Switcher.updateRootVC()
+        //                    }
+        //
+        //                    objVC.modalPresentationStyle = .overCurrentContext
+        //                    objVC.modalTransitionStyle = .crossDissolve
+        //                    self.present(objVC, animated: false, completion: nil)
+        //                } else if (swiftyJsonVar["status"].stringValue == "2") {
+        //                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
+        //                    objVC.strFrom = "Summery"
+        //                    objVC.str_Head = "Booking status update"
+        //                    objVC.str_Desc = "Bookings for \(self.dicClinetDetail["business_name"].stringValue) on \(date) have been switched from Instant Approval to Pending Approval due to the client’s billing issue. Please wait a few hours for the approval notification. No action needed on your side for now."
+        //
+        //                    objVC.completion = {
+        //                        Switcher.updateRootVC()
+        //                    }
+        //
+        //                    objVC.modalPresentationStyle = .overCurrentContext
+        //                    objVC.modalTransitionStyle = .crossDissolve
+        //                    self.present(objVC, animated: false, completion: nil)
+        //                } else {
+        //                    Utility.showAlertMessage(withTitle: APPNAME, message: "Some went wrong", delegate: self, parentViewController: self)
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //        }, failureBlock: { (error : Error) in
+        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+        //            self.hideProgressBar()
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_set_shift_book.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
+                objVC.strFrom = "Summery"
+                if autoShift == "Yes" {
+                    objVC.str_Head = ""
+                    objVC.str_Desc = "Your shift booking for \(singleDate) has been auto approved. Kindly be on time for your shift."
                 } else {
-                    Utility.showAlertMessage(withTitle: APPNAME, message: "Some went wrong", delegate: self, parentViewController: self)
+                    objVC.str_Head = "Your Booking Request Has Been Sent"
+                    objVC.str_Desc = "You will receive a notification once the unit manager has approved/declined your shift."
                 }
-                self.hideProgressBar()
+                objVC.completion = {
+                    Switcher.updateRootVC()
+                }
+                
+                objVC.modalPresentationStyle = .overCurrentContext
+                objVC.modalTransitionStyle = .crossDissolve
+                self.present(objVC, animated: false, completion: nil)
+            } else if (swiftyJsonVar["status"].stringValue == "2") {
+                let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
+                objVC.strFrom = "Summery"
+                objVC.str_Head = "Booking status update"
+                objVC.str_Desc = "Bookings for \(self.dicClinetDetail["business_name"].stringValue) on \(date) have been switched from Instant Approval to Pending Approval due to the client’s billing issue. Please wait a few hours for the approval notification. No action needed on your side for now."
+                
+                objVC.completion = {
+                    Switcher.updateRootVC()
+                }
+                
+                objVC.modalPresentationStyle = .overCurrentContext
+                objVC.modalTransitionStyle = .crossDissolve
+                self.present(objVC, animated: false, completion: nil)
+            } else {
+                Utility.showAlertMessage(withTitle: APPNAME, message: "Some went wrong", delegate: self, parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func webDeletShift(strCartiD:String) {
+    func webDeletShift(strCartiD:String) async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["cart_id"]  =   strCartiD as AnyObject
@@ -417,23 +536,38 @@ extension BookingRequestVC {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.change_set_shift_status_worker_side.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.getDataShiftAvailble()
-                } else {
-                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+        //        CommunicationManager.callPostService(apiUrl: Router.change_set_shift_status_worker_side.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+        //            DispatchQueue.main.async {
+        //                let swiftyJsonVar = JSON(responseData)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    self.getDataShiftAvailble()
+        //                } else {
+        //                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //        }, failureBlock: { (error : Error) in
+        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+        //            self.hideProgressBar()
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.change_set_shift_status_worker_side.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+               Task {
+                   await self.getDataShiftAvailble()
                 }
-                self.hideProgressBar()
+            } else {
+                Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func webWorkerUpdateDocc(workerDocc: UIImage) {
+    func webWorkerUpdateDocc(workerDocc: UIImage) async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -442,29 +576,45 @@ extension BookingRequestVC {
         
         var paramImgDict: [String : UIImage] = [:]
         paramImgDict["nrc_document"] = workerDocc
-
+        
         print(paramImgDict)
         
-        CommunicationManager.uploadImagesAndData(apiUrl: Router.worker_update_document.url(), params: (paramDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    Utility.showAlertWithAction(withTitle: "", message: "Your account is pending approval and you will receive notifications once you are authorized to book jobs.", delegate: self, parentViewController: self) { issy in
-                        Switcher.updateRootVC()
-                    }
-                } else {
-                    let message = swiftyJsonVar["message"].stringValue
-                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+        //        CommunicationManager.uploadImagesAndData(apiUrl: Router.worker_update_document.url(), params: (paramDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
+        //
+        //            DispatchQueue.main.async { [self] in
+        //                let swiftyJsonVar = JSON(responseData)
+        //                print(swiftyJsonVar)
+        //                if(swiftyJsonVar["status"].stringValue == "1") {
+        //                    Utility.showAlertWithAction(withTitle: "", message: "Your account is pending approval and you will receive notifications once you are authorized to book jobs.", delegate: self, parentViewController: self) { issy in
+        //                        Switcher.updateRootVC()
+        //                    }
+        //                } else {
+        //                    let message = swiftyJsonVar["message"].stringValue
+        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+        //                }
+        //                self.hideProgressBar()
+        //            }
+        //
+        //        },failureBlock: { (error : Error) in
+        //            self.hideProgressBar()
+        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+        //        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.uploadImagesAndDataAsync(apiUrl: Router.worker_update_document.url(), params: (paramDict as! [String : String]), imageParam: paramImgDict, videoParam: [:], parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                Utility.showAlertWithAction(withTitle: "", message: "Your account is pending approval and you will receive notifications once you are authorized to book jobs.", delegate: self, parentViewController: self) { issy in
+                    Switcher.updateRootVC()
                 }
-                self.hideProgressBar()
+            } else {
+                let message = swiftyJsonVar["message"].stringValue
+                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
 }
 
@@ -569,7 +719,9 @@ extension BookingRequestVC: UICollectionViewDataSource, UICollectionViewDelegate
                 }
             }
             
-            getDataShiftAvailble()
+           Task {
+               await getDataShiftAvailble()
+            }
         }
     }
 }
@@ -592,13 +744,13 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
         cell.lbl_Meal.text = "Meals: \(dic["meals"].stringValue)"
         cell.lbl_JobType.text = "Job Type: \(dic["job_type"].stringValue)"
         cell.lbl_Note.text = "Notes: \(dic["note"].stringValue)"
-                
+        
         let shiftCartStatus = dic["set_shift_cart_status_value"].stringValue
         let bookingStatus = dic["booking_status"].stringValue
         let booking = dic["booking"].stringValue
         
         cell.view_Bg.borderWidth1 = 0.5
-
+        
         if dic["client_details"]["shift_autoapproval"].stringValue == "Yes" {
             cell.lbl_InstantApproval.isHidden = false
             cell.lbl_InstantApproval.textColor = R.color.button_COLOR()
@@ -620,7 +772,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
             cell.btn_BookOt.isHidden = true
             cell.btn_ClosedOt.isHidden = true
             cell.btn_WithdrawOt.isHidden = true
-
+            
         } else if shiftCartStatus == "Pending" {
             cell.view_Bg.borderColor1 = R.color.button_COLOR()
             cell.lbl_Status.text = "Pending\nConfirmation!"
@@ -677,7 +829,9 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
                         vC.cloBook = { [self] in
                             let shiftId = dic["id"].stringValue
                             let shiftRate = dic["shift_rate"].stringValue
-                            self.webAddToCartSubmit(shiftId, shiftRate, autoApproved: dic["shift_autoapproval"].stringValue, singleDate: dic["single_date"].stringValue, outletiD: dic["outlet_id"].stringValue)
+                           Task {
+                               await self.webAddToCartSubmit(shiftId, shiftRate, autoApproved: dic["shift_autoapproval"].stringValue, singleDate: dic["single_date"].stringValue, outletiD: dic["outlet_id"].stringValue)
+                            }
                         }
                         
                         vC.modalTransitionStyle = .crossDissolve
@@ -701,7 +855,9 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
                     vC.cloBook = { [self] in
                         let shiftId = dic["id"].stringValue
                         let shiftRate = dic["shift_rate"].stringValue
-                        self.webAddToCartSubmit(shiftId, shiftRate, autoApproved: dic["shift_autoapproval"].stringValue, singleDate: dic["single_date"].stringValue, outletiD: dic["outlet_id"].stringValue)
+                       Task {
+                           await self.webAddToCartSubmit(shiftId, shiftRate, autoApproved: dic["shift_autoapproval"].stringValue, singleDate: dic["single_date"].stringValue, outletiD: dic["outlet_id"].stringValue)
+                        }
                     }
                     
                     vC.modalTransitionStyle = .crossDissolve
@@ -709,13 +865,30 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
                     self.present(vC, animated: true)
                 }
             } else {
-                let vC = R.storyboard.main.popNRIC()!
-                vC.cloSubmit = { doccImg in
-                    self.webWorkerUpdateDocc(workerDocc: doccImg)
-                }
-                vC.modalTransitionStyle = .crossDissolve
-                vC.modalPresentationStyle = .overFullScreen
-                self.present(vC, animated: true)
+//                let vC = R.storyboard.main.popNRIC()!
+//                vC.cloSubmit = { doccImg in
+//                   Task {
+//                       await self.webWorkerUpdateDocc(workerDocc: doccImg)
+//                    }
+//                }
+//                vC.modalTransitionStyle = .crossDissolve
+//                vC.modalPresentationStyle = .overFullScreen
+//                self.present(vC, animated: true)
+                
+                let objClient = dic["client_details"].dictionaryValue
+                let swiftUIView = PopDocView (
+                    countryName: objClient["country_name"]?.stringValue ?? "") { img in
+                        Task {
+                            await self.webWorkerUpdateDocc(workerDocc: img)
+                         }
+                    }
+                
+                let hostingVC = UIHostingController(rootView: swiftUIView)
+                hostingVC.modalPresentationStyle = .overFullScreen
+                hostingVC.modalTransitionStyle = .crossDissolve
+                hostingVC.view.backgroundColor = .clear
+                
+                self.present(hostingVC, animated: true)
             }
         }
         
@@ -727,7 +900,9 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
             vC.isPendingBooking = shiftCartStatus
             
             vC.cloBook = { [self] in
-                self.webDeletShift(strCartiD: dic["set_shift_cart_id"].stringValue)
+               Task {
+                   await self.webDeletShift(strCartiD: dic["set_shift_cart_id"].stringValue)
+                }
                 self.dismiss(animated: true)
             }
             

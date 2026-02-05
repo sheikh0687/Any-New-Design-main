@@ -16,7 +16,9 @@ class WishlistVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         wishlistTableVw.register(UINib(nibName: "ClientListCell", bundle: nil), forCellReuseIdentifier: "ClientListCell")
-        getClientList()
+        Task {
+           await getClientList()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -29,7 +31,7 @@ class WishlistVC: UIViewController {
 
 extension WishlistVC {
     
-    func getClientList() {
+    func getClientList() async {
         showProgressBar()
         
         var paramDict : [String:AnyObject] = [:]
@@ -43,25 +45,43 @@ extension WishlistVC {
         
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_fav_client_list.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arrayList  = swiftyJsonVar["result"].arrayValue
-                    self.wishlistTableVw.backgroundView = UIView()
-                    self.wishlistTableVw.reloadData()
-                } else {
-                    self.arrayList = []
-                    self.wishlistTableVw.backgroundView = UIView()
-                    self.wishlistTableVw.reloadData()
-                    Utility.noDataFound("No Wishlist At The Moment", tableViewOt: self.wishlistTableVw, parentViewController: self)
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_fav_client_list.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.arrayList  = swiftyJsonVar["result"].arrayValue
+//                    self.wishlistTableVw.backgroundView = UIView()
+//                    self.wishlistTableVw.reloadData()
+//                } else {
+//                    self.arrayList = []
+//                    self.wishlistTableVw.backgroundView = UIView()
+//                    self.wishlistTableVw.reloadData()
+//                    Utility.noDataFound("No Wishlist At The Moment", tableViewOt: self.wishlistTableVw, parentViewController: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_fav_client_list.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arrayList  = swiftyJsonVar["result"].arrayValue
+                self.wishlistTableVw.backgroundView = UIView()
+                self.wishlistTableVw.reloadData()
+            } else {
+                self.arrayList = []
+                self.wishlistTableVw.backgroundView = UIView()
+                self.wishlistTableVw.reloadData()
+                Utility.noDataFound("No Wishlist At The Moment", tableViewOt: self.wishlistTableVw, parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
 }
 

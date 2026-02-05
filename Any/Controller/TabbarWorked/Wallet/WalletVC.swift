@@ -53,12 +53,16 @@ class WalletVC: UIViewController {
     }
 
     @objc func showSpinningWheel(notification: NSNotification) {
-        GetNotificationCount()
+       Task {
+           await GetNotificationCount()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        WebGetApprovedBooking()
-        GetNotificationCount()
+        Task {
+            await WebGetApprovedBooking()
+            await GetNotificationCount()
+        }
         self.navigationController?.navigationBar.isHidden = true
         self.tabBarController?.tabBar.isHidden = false
     }
@@ -67,78 +71,128 @@ class WalletVC: UIViewController {
 //MARK: API
 extension WalletVC {
     
-    func GetNotificationCount() {
+    func GetNotificationCount() async {
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
+//        CommunicationManager.callPostService(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    
+//                    let notificationData: [String: NSNumber] = [
+//                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
+//                        "requestCount": swiftyJsonVar["request"].numberValue
+//                    ]
+//                    
+//                    NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
+//                    
+//                    WebGetApprovedBooking()
+//                    
+//                }
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            print(error)
+//            
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
                 
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    
-                    let notificationData: [String: NSNumber] = [
-                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
-                        "requestCount": swiftyJsonVar["request"].numberValue
-                    ]
-                    
-                    NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
-                    
-                    WebGetApprovedBooking()
-                    
+                let notificationData: [String: NSNumber] = [
+                    "chatCount": swiftyJsonVar["chat_count"].numberValue,
+                    "requestCount": swiftyJsonVar["request"].numberValue
+                ]
+                
+                NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
+                
+               Task {
+                   await WebGetApprovedBooking()
                 }
+                
             }
-            
-        },failureBlock: { (error : Error) in
-            print(error)
-            
-        })
+        } catch {
+            print(error.localizedDescription)
+        }
+        
     }
     
-    func WebGetApprovedBooking() {
+    func WebGetApprovedBooking() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["worker_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_shift_complete_by_worker.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//        CommunicationManager.callPostService(apiUrl: Router.get_shift_complete_by_worker.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                
+//                table_List.isHidden = false
+//                
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    
+//                    self.lbl_Earning.text = "\(USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) ?? "") \(swiftyJsonVar["total_earning"].number ?? 0)"
+//                    self.lbl_JobsCount.text = "\(swiftyJsonVar["total_job"].number ?? 0)"
+//                    
+//                    self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
+//                    self.table_List.backgroundView = UIView()
+//                    
+//                    self.table_List.reloadData()
+//                } else {
+//                    self.lbl_Earning.text = "0"
+//                    self.lbl_JobsCount.text = "0"
+//                    
+//                    self.arr_AllDriver = []
+//                    self.table_List.backgroundView = UIView()
+//                    self.table_List.reloadData()
+//                    Utility.noDataFound("No Transactions At The Moment", tableViewOt: self.table_List, parentViewController: self)
+//                    
+//                }
+//                self.hideProgressBar()
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            self.hideProgressBar()
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_shift_complete_by_worker.url(), parameters: paramsDict, parentViewController: self)
+            table_List.isHidden = false
             
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
+            if(swiftyJsonVar["status"].stringValue == "1") {
                 
-                table_List.isHidden = false
+                self.lbl_Earning.text = "\(USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) ?? "") \(swiftyJsonVar["total_earning"].number ?? 0)"
+                self.lbl_JobsCount.text = "\(swiftyJsonVar["total_job"].number ?? 0)"
                 
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    
-                    self.lbl_Earning.text = "\(USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) ?? "") \(swiftyJsonVar["total_earning"].number ?? 0)"
-                    self.lbl_JobsCount.text = "\(swiftyJsonVar["total_job"].number ?? 0)"
-                    
-                    self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
-                    self.table_List.backgroundView = UIView()
-                    
-                    self.table_List.reloadData()
-                } else {
-                    self.lbl_Earning.text = "0"
-                    self.lbl_JobsCount.text = "0"
-                    
-                    self.arr_AllDriver = []
-                    self.table_List.backgroundView = UIView()
-                    self.table_List.reloadData()
-                    Utility.noDataFound("No Transactions At The Moment", tableViewOt: self.table_List, parentViewController: self)
-                    
-                }
-                self.hideProgressBar()
+                self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
+                self.table_List.backgroundView = UIView()
+                
+                self.table_List.reloadData()
+            } else {
+                self.lbl_Earning.text = "0"
+                self.lbl_JobsCount.text = "0"
+                
+                self.arr_AllDriver = []
+                self.table_List.backgroundView = UIView()
+                self.table_List.reloadData()
+                Utility.noDataFound("No Transactions At The Moment", tableViewOt: self.table_List, parentViewController: self)
+                
             }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
 }
 

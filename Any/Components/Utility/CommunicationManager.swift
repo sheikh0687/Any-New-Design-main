@@ -13,7 +13,7 @@ class CommunicationManager {
     }()
 
     // MARK: - POST API Request
-    class func callPostService(
+    class func callPostService (
         apiUrl urlString: String,
         parameters params: [String: Any]?,
         parentViewController parentVC: UIViewController,
@@ -110,6 +110,117 @@ class CommunicationManager {
             case .failure(let error):
                 print("Upload Error: \(error.localizedDescription)")
                 failure(error)
+            }
+        }
+    }
+    
+    static func callPostServiceAsync (
+        apiUrl urlString: String,
+        parameters params: [String: Any]?,
+        parentViewController parentVC: UIViewController
+    ) async throws -> JSON {
+
+        guard Utility.checkNetworkConnectivityWithDisplayAlert(isShowAlert: true) else {
+            await parentVC.hideProgressBar()
+            throw URLError(.notConnectedToInternet)
+        }
+
+        return try await withCheckedThrowingContinuation { continuation in
+            
+            let urlWithParams = params?
+                .map { "\($0.key)=\($0.value)" }
+                .joined(separator: "&") ?? ""
+            
+            print("FULL_API_FOR_BROWSER\n\(urlString)\(urlWithParams)")
+            
+            session.request (
+                urlString,
+                method: .get,
+                parameters: params
+            )
+            .validate()
+            .responseData { response in
+                switch response.result {
+                case .success(let data):
+                    do {
+                        let json = try JSON(data: data)
+                        continuation.resume(returning: json)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                    
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    static func uploadImagesAndDataAsync (
+        apiUrl urlString: String,
+        params: [String: String]?,
+        imageParam: [String: UIImage?]?,
+        videoParam: [String: Data?]?,
+        parentViewController parentVC: UIViewController
+    ) async throws -> JSON {
+
+        guard Utility.checkNetworkConnectivityWithDisplayAlert(isShowAlert: true) else {
+            await parentVC.hideProgressBar()
+            throw URLError(.notConnectedToInternet)
+        }
+
+        await parentVC.showProgressBar()
+
+        return try await withCheckedThrowingContinuation { continuation in
+
+            AF.upload(
+                multipartFormData: { multipartFormData in
+                    
+                    params?.forEach { key, value in
+                        if let data = value.data(using: .utf8) {
+                            multipartFormData.append(data, withName: key)
+                        }
+                    }
+
+                    imageParam?.forEach { key, image in
+                        if let data = image?.jpegData(compressionQuality: 0.5) {
+                            multipartFormData.append(
+                                data,
+                                withName: key,
+                                fileName: "\(key).jpg",
+                                mimeType: "image/jpeg"
+                            )
+                        }
+                    }
+
+                    videoParam?.forEach { key, data in
+                        if let data = data {
+                            multipartFormData.append(
+                                data,
+                                withName: key,
+                                fileName: "\(key).mp4",
+                                mimeType: "video/mp4"
+                            )
+                        }
+                    }
+                },
+                to: urlString
+            )
+            .validate()
+            .responseData { response in
+                parentVC.hideProgressBar()
+                
+                switch response.result {
+                case .success(let data):
+                    do {
+                        let json = try JSON(data: data)
+                        continuation.resume(returning: json)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
             }
         }
     }

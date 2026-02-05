@@ -65,14 +65,18 @@ class UrgentBookingVC: UIViewController {
     }
     
     @objc func showSpinningWheel(notification: NSNotification) {
-        GetNotificationCount()
+       Task {
+           await GetNotificationCount()
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
         self.tabBarController?.tabBar.isHidden = false
-        getUrgentBookingList()
-        GetNotificationCount()
+        Task {
+            await getUrgentBookingList()
+            await GetNotificationCount()
+        }
     }
     
     @IBAction func pluss(_ sender: Any) {
@@ -85,39 +89,59 @@ class UrgentBookingVC: UIViewController {
 //MARK: API
 extension UrgentBookingVC {
     
-    func GetNotificationCount() {
+    func GetNotificationCount() async {
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         print(paramsDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
+//        CommunicationManager.callPostService(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
+//            
+//            DispatchQueue.main.async { [self] in
+//                
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    
+//                    let notificationData: [String: NSNumber] = [
+//                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
+//                        "requestCount": swiftyJsonVar["request"].numberValue
+//                    ]
+//                    
+//                    NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
+//                    
+//                    getUrgentBookingList()
+//                    
+//                }
+//            }
+//            
+//        },failureBlock: { (error : Error) in
+//            print(error)
+//            
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
                 
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    
-                    let notificationData: [String: NSNumber] = [
-                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
-                        "requestCount": swiftyJsonVar["request"].numberValue
-                    ]
-                    
-                    NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
-                    
-                    getUrgentBookingList()
-                    
+                let notificationData: [String: NSNumber] = [
+                    "chatCount": swiftyJsonVar["chat_count"].numberValue,
+                    "requestCount": swiftyJsonVar["request"].numberValue
+                ]
+                
+                NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
+                
+               Task {
+                  await getUrgentBookingList()
                 }
+                
             }
-            
-        },failureBlock: { (error : Error) in
+        } catch {
             print(error)
-            
-        })
+        }
     }
 
     
-    func getUrgentBookingList() {
+    func getUrgentBookingList() async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -125,49 +149,85 @@ extension UrgentBookingVC {
 
         print(paramDict)
         
-        CommunicationManager.callPostService(apiUrl: Router.get_my_set_shift.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.arr_List  = swiftyJsonVar["result"].arrayValue
-                    self.table_Chat.backgroundView = UIView()
-                    
-                    self.table_Chat.reloadData()
-                } else {
-                    self.arr_List = []
-                    self.table_Chat.backgroundView = UIView()
-                    self.table_Chat.reloadData()
-                    Utility.noDataFound("No Urgent Bookings At The Moment", tableViewOt: self.table_Chat, parentViewController: self)
-                }
-                self.hideProgressBar()
+//        CommunicationManager.callPostService(apiUrl: Router.get_my_set_shift.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                    self.arr_List  = swiftyJsonVar["result"].arrayValue
+//                    self.table_Chat.backgroundView = UIView()
+//                    
+//                    self.table_Chat.reloadData()
+//                } else {
+//                    self.arr_List = []
+//                    self.table_Chat.backgroundView = UIView()
+//                    self.table_Chat.reloadData()
+//                    Utility.noDataFound("No Urgent Bookings At The Moment", tableViewOt: self.table_Chat, parentViewController: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_my_set_shift.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.arr_List  = swiftyJsonVar["result"].arrayValue
+                self.table_Chat.backgroundView = UIView()
+                
+                self.table_Chat.reloadData()
+            } else {
+                self.arr_List = []
+                self.table_Chat.backgroundView = UIView()
+                self.table_Chat.reloadData()
+                Utility.noDataFound("No Urgent Bookings At The Moment", tableViewOt: self.table_Chat, parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
     
-    func webDeletShift(strSt:String) {
+    func webDeletShift(strSt:String) async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["id"]  =   strSt as AnyObject
         
-        CommunicationManager.callPostService(apiUrl: Router.delete_my_shifts.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.getUrgentBookingList()
-                } else {
-                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+//        CommunicationManager.callPostService(apiUrl: Router.delete_my_shifts.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
+//            DispatchQueue.main.async {
+//                let swiftyJsonVar = JSON(responseData)
+//                print(swiftyJsonVar)
+//                if(swiftyJsonVar["status"].stringValue == "1") {
+//                   Task {
+//                       await self.getUrgentBookingList()
+//                    }
+//                } else {
+//                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+//                }
+//                self.hideProgressBar()
+//            }
+//        }, failureBlock: { (error : Error) in
+//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
+//            self.hideProgressBar()
+//        })
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_my_shifts.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+               Task {
+                   await self.getUrgentBookingList()
                 }
-                self.hideProgressBar()
+            } else {
+                Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        hideProgressBar()
     }
 }
 
@@ -187,7 +247,7 @@ extension UrgentBookingVC: UITableViewDataSource {
         let dic = self.arr_List[indexPath.row]
         
         cell.lbl_jobtype.text = (dic["job_type"].stringValue)
-        cell.lbl_Rate.text = "\(kCurrency)\(dic["shift_rate"].stringValue)/Hour"
+        cell.lbl_Rate.text = "\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
 
         cell.lbl_StartTime.text = (dic["start_time"].stringValue)
         cell.lbl_EndTime.text = (dic["end_time"].stringValue)
@@ -221,7 +281,9 @@ extension UrgentBookingVC: UITableViewDataSource {
                 vC.shift_iD = dic["id"].stringValue
                 self.navigationController?.pushViewController(vC, animated: true)
             } else {
-                webDeletShift(strSt: dic["id"].stringValue)
+               Task {
+                   await webDeletShift(strSt: dic["id"].stringValue)
+                }
             }
         }
     }
