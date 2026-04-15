@@ -76,31 +76,6 @@ extension WalletVC {
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         print(paramsDict)
         
-//        CommunicationManager.callPostService(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    
-//                    let notificationData: [String: NSNumber] = [
-//                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
-//                        "requestCount": swiftyJsonVar["request"].numberValue
-//                    ]
-//                    
-//                    NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
-//                    
-//                    WebGetApprovedBooking()
-//                    
-//                }
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            print(error)
-//            
-//        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -115,7 +90,6 @@ extension WalletVC {
                Task {
                    await WebGetApprovedBooking()
                 }
-                
             }
         } catch {
             print(error.localizedDescription)
@@ -129,42 +103,7 @@ extension WalletVC {
         paramsDict["worker_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_shift_complete_by_worker.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                
-//                table_List.isHidden = false
-//                
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    
-//                    self.lbl_Earning.text = "\(USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) ?? "") \(swiftyJsonVar["total_earning"].number ?? 0)"
-//                    self.lbl_JobsCount.text = "\(swiftyJsonVar["total_job"].number ?? 0)"
-//                    
-//                    self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
-//                    self.table_List.backgroundView = UIView()
-//                    
-//                    self.table_List.reloadData()
-//                } else {
-//                    self.lbl_Earning.text = "0"
-//                    self.lbl_JobsCount.text = "0"
-//                    
-//                    self.arr_AllDriver = []
-//                    self.table_List.backgroundView = UIView()
-//                    self.table_List.reloadData()
-//                    Utility.noDataFound("No Transactions At The Moment", tableViewOt: self.table_List, parentViewController: self)
-//                    
-//                }
-//                self.hideProgressBar()
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_shift_complete_by_worker.url(), parameters: paramsDict, parentViewController: self)
             table_List.isHidden = false
@@ -226,11 +165,11 @@ extension WalletVC : UITableViewDataSource {
             strBr = "\(strTyp) Break : \(dic["break_time"].stringValue)"
         }
         
-        if strTyp == "Not Applicable" {
-            strBr = "Break Type : Not Applicable"
-        } else {
-            strBr = "\(strTyp) Break : \(dic["break_time"].stringValue)"
-        }
+//        if strTyp == "Not Applicable" {
+//            strBr = "Break Type : Not Applicable"
+//        } else {
+//            strBr = "\(strTyp) Break : \(dic["break_time"].stringValue)"
+//        }
         
         cell.lbl_ShiftTime.text = shiftTime
         cell.lbl_Address.text = "Time-In \(dic["clock_in_time"].stringValue) / Time-Out \(dic["clock_out_time"].stringValue)\n\n\(strBr)"

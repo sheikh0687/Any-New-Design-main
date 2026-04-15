@@ -143,37 +143,9 @@ extension ClientSigningDetailVC {
         paramImgDict["business_logo"] = imageBuisnesslogo
         
         print(paramImgDict)
-        
-//        CommunicationManager.uploadImagesAndData(apiUrl: Router.update_profile_client.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: BUSINESS_NAME)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_logo"].stringValue, forKey: BUSINESS_LOGO)
-//                    
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: OUTLET_NAME)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_logo"].stringValue, forKey: OUTLET_IMAGE)
-//                    
-//                    let vC = R.storyboard.main.registrationSuccessVC()!
-//                    vC.imageBuisnesslogo = self.imageBuisnesslogo
-//                    vC.strBusinessName = self.txt_BusinessName.text
-//                    self.navigationController?.pushViewController(vC, animated: true)
-//                } else {
-//                    let message = swiftyJsonVar["message"].stringValue
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+                
         do {
-            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.update_profile_client.url(), parameters: paramsDict, parentViewController: self)
+            let swiftyJsonVar = try await CommunicationManager.uploadImagesAndDataAsync(apiUrl: Router.update_profile_client.url(), params: (paramsDict as! [String : String]), imageParam: paramImgDict, videoParam: [:], parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
                 USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: BUSINESS_NAME)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["business_logo"].stringValue, forKey: BUSINESS_LOGO)

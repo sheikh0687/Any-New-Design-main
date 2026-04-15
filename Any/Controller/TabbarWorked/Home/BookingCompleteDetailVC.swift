@@ -34,6 +34,8 @@ class BookingCompleteDetailVC: UIViewController {
     var strlat:String! = ""
     var strlon:String! = ""
 
+    let currencySymbol = USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) as? String
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -53,8 +55,8 @@ class BookingCompleteDetailVC: UIViewController {
 
         lbl_Totall.text = dicCartDetail["set_shift"]["total_time"].stringValue
         lbl_TotalAnser.text = dicClinetDetail["total_working_hr_time"].stringValue
-        lbl_TotalCost.text = "\(USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) ?? "")\(dicClinetDetail["total_amount"].stringValue)"
-        lbl_Rate.text = "\(USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) ?? "")\(dicClinetDetail["shift_rate"].stringValue)"
+        lbl_TotalCost.text = "\(currencySymbol!)\(dicClinetDetail["total_amount"].stringValue)"
+        lbl_Rate.text = "\(currencySymbol!)\(dicClinetDetail["shift_rate"].stringValue)"
     }
     
     @IBAction func book(_ sender: Any) {

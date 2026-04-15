@@ -3,6 +3,7 @@ import UIKit
 import SwiftyJSON
 import SDWebImage
 import Cosmos
+import SwiftUI
 
 class BookingCellWorker:UITableViewCell {
     
@@ -54,6 +55,7 @@ class HomeVC: UIViewController {
     @IBOutlet weak var btn_Pending: UIButton!
     @IBOutlet weak var btn_Current: UIButton!
     @IBOutlet weak var table_List: UITableView!
+    @IBOutlet weak var offerView: UIView!
     
     var arr_AllCat:[JSON] = []
     var arr_AllCatColle:[JSON] = []
@@ -68,8 +70,7 @@ class HomeVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //        print(Utility.getCurrentTime24HOur())
-       Task {
+        Task {
            await GetProfile()
         }
         
@@ -88,6 +89,27 @@ class HomeVC: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(showSpinningWheel), name: NSNotification.Name(rawValue: "ReloadCount"), object: nil)
         
         self.table_List.register(UINib(nibName: "BookingCell", bundle: nil), forCellReuseIdentifier: "BookingCell")
+        
+        setupOfferView()
+    }
+    
+    func setupOfferView() {
+        
+        let hostingController = UIHostingController(rootView: ClientOfferView())
+        
+        addChild(hostingController)
+        
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        offerView.addSubview(hostingController.view)
+        
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: offerView.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: offerView.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: offerView.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: offerView.trailingAnchor)
+        ])
+        
+        hostingController.didMove(toParent: self)
     }
     
     @objc func goChat() {
@@ -200,46 +222,7 @@ extension HomeVC {
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                                        
-//                    let notificationData: [String: Any] = [
-//                        "chatCount": swiftyJsonVar["chat_count"].numberValue,
-//                        "requestCount": swiftyJsonVar["request"].numberValue,
-//                        "attendanceRate": swiftyJsonVar["attandance"].stringValue,
-//                        "review": swiftyJsonVar["average_rating"].stringValue,
-//                        "ratingCount": swiftyJsonVar["total_rating_count"].numberValue
-//                    ]
-//                    
-//                    NotificationCenter.default.post(
-//                        name: NSNotification.Name("badgeCount"),
-//                        object: "On Ride",
-//                        userInfo: notificationData
-//                    )
-//                    
-//                    if swiftyJsonVar["broadcast_booking"].numberValue != 0 {
-//                        lbl_Urgent.text = "\(swiftyJsonVar["broadcast_booking"].numberValue)"
-//                        view_Urgent.isHidden = false
-//                    } else {
-//                        lbl_Urgent.text = "0"
-//                        view_Urgent.isHidden = true
-//                    }
-//                    
-//                    WebGetApprovedBooking()
-//                    
-//                }
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            print(error)
-//            
-//        })
-//        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -252,7 +235,7 @@ extension HomeVC {
                     "ratingCount": swiftyJsonVar["total_rating_count"].numberValue
                 ]
                 
-                NotificationCenter.default.post(
+                NotificationCenter.default.post (
                     name: NSNotification.Name("badgeCount"),
                     object: "On Ride",
                     userInfo: notificationData
@@ -282,58 +265,7 @@ extension HomeVC {
         paramsDict["status"]  =   strStatus as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_set_shift_book.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                table_List.isHidden = false
-//                
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    
-//                    if swiftyJsonVar["pending_shift_count"].numberValue != 0 {
-//                        view_Count.isHidden = false
-//                        lbl_Count.text = "\(swiftyJsonVar["pending_shift_count"].numberValue)"
-//                    } else {
-//                        view_Count.isHidden = true
-//                    }
-//                    
-//                    self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
-//                    print(self.arr_AllCat.count)
-//                    self.table_List.backgroundView = UIView()
-//                    self.table_List.reloadData()
-//                    
-//                } else {
-//                    if swiftyJsonVar["pending_shift_count"].numberValue != 0 {
-//                        view_Count.isHidden = false
-//                        lbl_Count.text = "\(swiftyJsonVar["pending_shift_count"].numberValue)"
-//                    } else {
-//                        view_Count.isHidden = true
-//                    }
-//                    
-//                    if strStatus == "Accept" {
-//                        self.arr_AllDriver = []
-//                        self.table_List.backgroundView = UIView()
-//                        self.table_List.reloadData()
-//                        Utility.noDataFound("No Approved Bookings At The Moment", tableViewOt: self.table_List, parentViewController: self)
-//                    } else {
-//                        self.arr_AllDriver = []
-//                        self.table_List.backgroundView = UIView()
-//                        self.table_List.reloadData()
-//                        Utility.noDataFound("No Pending Bookings At The Moment", tableViewOt: self.table_List, parentViewController: self)
-//                    }
-//                    
-//                }
-//                
-//                self.hideProgressBar()
-//                
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+    
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_set_shift_book.url(), parameters: paramsDict, parentViewController: self)
             
@@ -388,30 +320,6 @@ extension HomeVC {
         
         print(paramDict)
         
-//        CommunicationManager.callPostService(apiUrl: Router.change_set_shift_status_worker_side.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.WebGetApprovedBooking()
-//                    
-//                    let shiftTime = "\(dics["set_shift_details"]["start_time"].stringValue) to \(dics["set_shift_details"]["end_time"].stringValue)"
-//                    
-//                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpRejectVC") as! PopUpRejectVC
-//                    objVC.str_Desc = "\(dics["client_details"]["business_name"].stringValue),  \(dics["address"].stringValue)\n\(dics["day_name"].stringValue), \(shiftTime)"
-//                    objVC.str_Head = "Your shift has been successfully cancelled in:"
-//                    objVC.modalPresentationStyle = .overCurrentContext
-//                    objVC.modalTransitionStyle = .crossDissolve
-//                    self.present(objVC, animated: false, completion: nil)
-//                } else {
-//                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        }, failureBlock: { (error : Error) in
-//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-//            self.hideProgressBar()
-//        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.change_set_shift_status_worker_side.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -444,21 +352,6 @@ extension HomeVC {
         paramsDict["device_id"]  =   USER_DEFAULT.value(forKey: IOS_TOKEN) as AnyObject
         
         print(paramsDict)
-//        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    let dic = swiftyJsonVar["result"]
-//                    kappDelegate.dicProdile = dic
-//                    if dic["login_check"].stringValue == "No" {
-//                        Logout()
-//                    }
-//                }
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self)
@@ -496,7 +389,7 @@ extension HomeVC : UITableViewDataSource {
         cell.lbl_HourRate.text = "Rate: \(dic["set_shift_details"]["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
         cell.lbl_ShiftTime.text = "Shift: \(dic["set_shift_details"]["start_time"].stringValue) to \(dic["set_shift_details"]["end_time"].stringValue)"
         
-        cell.lbl_Address.text = "Address: \(dic["address"].stringValue)"
+        cell.lbl_Address.text = "Address: \(dic["client_details"]["business_address"].stringValue)"
         
         if Router.BASE_IMAGE_URL != dic["client_details"]["business_logo"].stringValue {
             Utility.setImageWithSDWebImage(dic["client_details"]["business_logo"].stringValue, cell.logo_Img)
@@ -542,6 +435,7 @@ extension HomeVC : UITableViewDataSource {
                 let vC = R.storyboard.main.popUpBeforeBooking()!
                 let objClient = dic["client_details"].dictionaryValue
                 vC.strBookinName = "\(objClient["business_name"]?.stringValue ?? ""),\n\(objClient["business_address"]?.stringValue ?? "")\n\(dic["day_name"].stringValue) \(dic["start_time"].stringValue) \(dic["end_time"].stringValue)"
+                
                 vC.isFrom = "Withdraw"
                 
                 vC.cloBook = { [self] in

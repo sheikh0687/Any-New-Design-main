@@ -18,6 +18,8 @@ class CurrentShiftCell: UITableViewCell {
     
     @IBOutlet weak var btn_ThreeDot: UIButton!
     
+    var cloDots: (() -> Void)?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -27,5 +29,9 @@ class CurrentShiftCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    @IBAction func btn_Three(_ sender: UIButton) {
+        self.cloDots?()
     }
 }

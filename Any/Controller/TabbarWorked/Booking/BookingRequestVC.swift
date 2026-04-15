@@ -45,12 +45,13 @@ class BookingRequestVC: UIViewController {
     @IBOutlet weak var height_TableVw: NSLayoutConstraint!
     
     var dicClinetDetail:JSON!
+    var strFrom: String = ""
     
     var arr_List:[JSON] = []
     
-    var strDate:String! = ""
-    var strlat:String! = ""
-    var strlon:String! = ""
+    var strDate:String = ""
+    var strlat:String = ""
+    var strlon:String = ""
     
     let calendar = Calendar.current
     var arrWeekStartEnd:[String] = []
@@ -163,6 +164,14 @@ class BookingRequestVC: UIViewController {
         }
     }
     
+//    override func leftClick() {
+//        if strFrom == "Banner" {
+//            self.dismiss(animated: true)
+//        } else {
+//            self.navigationController?.popViewController(animated: true)
+//        }
+//    }
+
     func getDate(strDte:String) -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -216,27 +225,7 @@ extension BookingRequestVC {
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    if let jobiD = swiftyJsonVar["result"]["job_type_id"].string {
-        //                        self.strSessionJobiD = jobiD
-        //                        print(self.strSessionJobiD ?? "")
-        //                    }
-        //                } else {
-        //                    _ = swiftyJsonVar["result"].string
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -258,7 +247,7 @@ extension BookingRequestVC {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         
-        var arrClinId:[String] = []
+//        var arrClinId:[String] = []
         var arrDayName:[String] = []
         var arrDate:[String] = []
         
@@ -269,7 +258,7 @@ extension BookingRequestVC {
         dateFormatterAMPM.dateFormat = "yyyy-MM-dd"
         let dateAMPM: String = dateFormatterAMPM.string(from: date!)
         
-        arrClinId.append(dicClinetDetail["id"].stringValue)
+//        arrClinId.append(dicClinetDetail["id"].stringValue)
         arrDayName.append(Utility.getDateStringNew(withAMPM: strDate))
         arrDate.append(dateAMPM)
         
@@ -281,24 +270,6 @@ extension BookingRequestVC {
         paramsDict["shift_rate"]     =  shiftRate as AnyObject
         
         print(paramsDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.add_to_set_shift_cart.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                if(swiftyJsonVar["status"] == "1") {
-        //                    let cartId = swiftyJsonVar["cart_id"].int
-        //                    self.addBookingFinal(cartId ?? 0, autoShift: autoApproved, singleDate: singleDate, date: arrDate.joined(separator: ","))
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].stringValue
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_to_set_shift_cart.url(), parameters: paramsDict, parentViewController: self)
@@ -334,23 +305,7 @@ extension BookingRequestVC {
         paramDict["worker_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.get_shift_by_day_week_count.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            DispatchQueue.main.async { [self] in
-        //                let swiftyJsonVar = JSON(responseData)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.arrShiftCount = swiftyJsonVar["result"].arrayValue
-        //                    self.coll_date.reloadData()
-        //                } else {
-        //                    self.arrShiftCount = []
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //        }, failureBlock: { (error : Error) in
-        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-        //            self.hideProgressBar()
-        //        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_shift_by_day_week_count.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -384,31 +339,7 @@ extension BookingRequestVC {
         paramDict["day_name"]  =   Utility.getDateStringNew(withAMPM: strDate) as AnyObject
         
         print("paramDict\(paramDict)")
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.get_shift_by_day.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.arr_List  = swiftyJsonVar["result"].arrayValue
-        //                    self.nrcDocumentUpdated = swiftyJsonVar["nrc_document_uploaded"].stringValue
-        //                    self.chnageDataAccordingDate(doc: self.arr_List [0])
-        //
-        //                    self.tableViewShift.backgroundView = UIView()
-        //                    self.height_TableVw.constant = CGFloat(200 * self.arr_List.count)
-        //                    self.tableViewShift.reloadData()
-        //                } else {
-        //                    self.arr_List = []
-        //                    self.tableViewShift.backgroundView = UIView()
-        //                    self.tableViewShift.reloadData()
-        //                    Utility.noDataFound("No Shift Available", tableViewOt: self.tableViewShift, parentViewController: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //        }, failureBlock: { (error : Error) in
-        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-        //            self.hideProgressBar()
-        //        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_shift_by_day.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -442,50 +373,7 @@ extension BookingRequestVC {
         paramDict["date"]  =  "" as AnyObject
         
         print(paramDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.add_set_shift_book.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
-        //                    objVC.strFrom = "Summery"
-        //                    if autoShift == "Yes" {
-        //                        objVC.str_Head = ""
-        //                        objVC.str_Desc = "Your shift booking for \(singleDate) has been auto approved. Kindly be on time for your shift."
-        //                    } else {
-        //                        objVC.str_Head = "Your Booking Request Has Been Sent"
-        //                        objVC.str_Desc = "You will receive a notification once the unit manager has approved/declined your shift."
-        //                    }
-        //                    objVC.completion = {
-        //                        Switcher.updateRootVC()
-        //                    }
-        //
-        //                    objVC.modalPresentationStyle = .overCurrentContext
-        //                    objVC.modalTransitionStyle = .crossDissolve
-        //                    self.present(objVC, animated: false, completion: nil)
-        //                } else if (swiftyJsonVar["status"].stringValue == "2") {
-        //                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
-        //                    objVC.strFrom = "Summery"
-        //                    objVC.str_Head = "Booking status update"
-        //                    objVC.str_Desc = "Bookings for \(self.dicClinetDetail["business_name"].stringValue) on \(date) have been switched from Instant Approval to Pending Approval due to the client’s billing issue. Please wait a few hours for the approval notification. No action needed on your side for now."
-        //
-        //                    objVC.completion = {
-        //                        Switcher.updateRootVC()
-        //                    }
-        //
-        //                    objVC.modalPresentationStyle = .overCurrentContext
-        //                    objVC.modalTransitionStyle = .crossDissolve
-        //                    self.present(objVC, animated: false, completion: nil)
-        //                } else {
-        //                    Utility.showAlertMessage(withTitle: APPNAME, message: "Some went wrong", delegate: self, parentViewController: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //        }, failureBlock: { (error : Error) in
-        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-        //            self.hideProgressBar()
-        //        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_set_shift_book.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -536,21 +424,6 @@ extension BookingRequestVC {
         
         print(paramDict)
         
-        //        CommunicationManager.callPostService(apiUrl: Router.change_set_shift_status_worker_side.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.getDataShiftAvailble()
-        //                } else {
-        //                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //        }, failureBlock: { (error : Error) in
-        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-        //            self.hideProgressBar()
-        //        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.change_set_shift_status_worker_side.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -567,7 +440,7 @@ extension BookingRequestVC {
         hideProgressBar()
     }
     
-    func webWorkerUpdateDocc(workerDocc: UIImage) async {
+    func webWorkerUpdateDocc(nrcImg: UIImage?, docImg: UIImage?) async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
@@ -575,31 +448,11 @@ extension BookingRequestVC {
         print(paramDict)
         
         var paramImgDict: [String : UIImage] = [:]
-        paramImgDict["nrc_document"] = workerDocc
+        paramImgDict["nrc_document"] = nrcImg
+        paramImgDict["job_document"] = docImg
         
         print(paramImgDict)
-        
-        //        CommunicationManager.uploadImagesAndData(apiUrl: Router.worker_update_document.url(), params: (paramDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async { [self] in
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    Utility.showAlertWithAction(withTitle: "", message: "Your account is pending approval and you will receive notifications once you are authorized to book jobs.", delegate: self, parentViewController: self) { issy in
-        //                        Switcher.updateRootVC()
-        //                    }
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].stringValue
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.uploadImagesAndDataAsync(apiUrl: Router.worker_update_document.url(), params: (paramDict as! [String : String]), imageParam: paramImgDict, videoParam: [:], parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -658,6 +511,9 @@ extension BookingRequestVC: UICollectionViewDataSource, UICollectionViewDelegate
             switch statuss {
             case "Available":
                 cell.lbl_Three.isHidden = false
+                cell.lbl_Three.cornerRadius1 = 15
+                cell.lbl_Three.borderWidth1 = 1
+                cell.lbl_Three.borderColor1 = R.color.greeN()
                 cell.lbl_Three.text = dict["shift_count"].stringValue
                 cell.img_Checked.isHidden = true
             case "Accepted":
@@ -675,6 +531,8 @@ extension BookingRequestVC: UICollectionViewDataSource, UICollectionViewDelegate
             default:
                 cell.lbl_Three.isHidden = false
                 cell.lbl_Three.text = dict["shift_count"].stringValue
+                cell.lbl_Three.cornerRadius1 = 15
+                cell.lbl_Three.borderWidth1 = 1
                 cell.lbl_Three.borderColor1 = .gray
                 cell.img_Checked.isHidden = true
             }
@@ -811,84 +669,74 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
             }
         }
         
+        if dic["banner_available"].stringValue == "Yes" {
+            cell.view_Bg.backgroundColor = #colorLiteral(red: 0.7921568627, green: 0.968627451, blue: 1, alpha: 1)
+        }
+        
         cell.cloBook = { [self] in
-            if nrcDocumentUpdated == "Yes" {
-                if dic["document_requied"].stringValue == "Yes" {
-                    if strSessionJobiD == dic["job_type_id"].stringValue {
-                        let vC = R.storyboard.main.popUpBeforeBooking()!
+            
+            if dic["document_requied"].stringValue == "Yes" {
+                
+                if strSessionJobiD == dic["job_type_id"].stringValue {
+                    
+                    if nrcDocumentUpdated == "No" {
                         
+                        // Upload document screen
                         let objClient = dic["client_details"].dictionaryValue
-                        vC.strBookinName = "\(objClient["business_name"]?.stringValue ?? ""),\n\(objClient["business_address"]?.stringValue ?? "")\n\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
                         
-                        vC.strBookingDetail = "Job Type : \(dic["job_type"].stringValue)\nBreak : \(dic["break_type"].stringValue)\nMeals : \(dic["meals"].stringValue)"
-                        
-                        vC.strBookingNote = dic["note"].stringValue
-                        vC.strInstantApproval = dic["shift_autoapproval"].stringValue
-                        vC.isFrom = "Book"
-                        
-                        vC.cloBook = { [self] in
-                            let shiftId = dic["id"].stringValue
-                            let shiftRate = dic["shift_rate"].stringValue
-                           Task {
-                               await self.webAddToCartSubmit(shiftId, shiftRate, autoApproved: dic["shift_autoapproval"].stringValue, singleDate: dic["single_date"].stringValue, outletiD: dic["outlet_id"].stringValue)
+                        let swiftUIView = PopDocView(
+                            countryName: objClient["country_name"]?.stringValue ?? "",
+                            documentRequired: dic["document_requied"].stringValue
+                        ) { nrcImg, docImg in
+                            Task {
+                                await self.webWorkerUpdateDocc(nrcImg: nrcImg, docImg: docImg)
                             }
                         }
                         
-                        vC.modalTransitionStyle = .crossDissolve
-                        vC.modalPresentationStyle = .overFullScreen
-                        self.present(vC, animated: true)
+                        let hostingVC = UIHostingController(rootView: swiftUIView)
+                        hostingVC.modalPresentationStyle = .overFullScreen
+                        hostingVC.modalTransitionStyle = .crossDissolve
+                        hostingVC.view.backgroundColor = .clear
+                        
+                        self.present(hostingVC, animated: true)
+                        
                     } else {
-                        Utility.showAlertMessage(withTitle: APPNAME, message: "Please complete your profile to book.\n\n * Go to Profile, select the job type you’re applying for.\n * Some roles (Kitchen Assistant, Chef, Barista) require a one-time upload of NRIC and a valid Food Hygiene Certificate.\n\nOnce approved, you can book shifts for that job type.", delegate: self, parentViewController: self)
+                        self.showBookingPopup(dic)
                     }
                 } else {
-                    let vC = R.storyboard.main.popUpBeforeBooking()!
+                    Utility.showAlertMessage (
+                        withTitle: APPNAME,
+                        message: "Please complete your profile to book.\n\n * Go to Profile, select the job type you’re applying for.\n * Some roles (Kitchen Assistant, Chef, Barista) require a one-time upload of NRIC and a valid Food Hygiene Certificate.\n\nOnce approved, you can book shifts for that job type.",
+                        delegate: self,
+                        parentViewController: self
+                    )
+                }
+                
+            } else {
+                
+                if nrcDocumentUpdated == "No" {
                     
                     let objClient = dic["client_details"].dictionaryValue
-                    vC.strBookinName = "\(objClient["business_name"]?.stringValue ?? ""),\n\(objClient["business_address"]?.stringValue ?? "")\n\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
                     
-                    vC.strBookingDetail = "Job Type : \(dic["job_type"].stringValue)\nBreak : \(dic["break_type"].stringValue)\nMeals : \(dic["meals"].stringValue)"
-                    
-                    vC.strBookingNote = dic["note"].stringValue
-                    vC.strInstantApproval = dic["shift_autoapproval"].stringValue
-                    vC.isFrom = "Book"
-                    
-                    vC.cloBook = { [self] in
-                        let shiftId = dic["id"].stringValue
-                        let shiftRate = dic["shift_rate"].stringValue
-                       Task {
-                           await self.webAddToCartSubmit(shiftId, shiftRate, autoApproved: dic["shift_autoapproval"].stringValue, singleDate: dic["single_date"].stringValue, outletiD: dic["outlet_id"].stringValue)
+                    let swiftUIView = PopDocView(
+                        countryName: objClient["country_name"]?.stringValue ?? "",
+                        documentRequired: dic["document_requied"].stringValue
+                    ) { nrcImg, docImg in
+                        Task {
+                            await self.webWorkerUpdateDocc(nrcImg: nrcImg, docImg: docImg)
                         }
                     }
                     
-                    vC.modalTransitionStyle = .crossDissolve
-                    vC.modalPresentationStyle = .overFullScreen
-                    self.present(vC, animated: true)
+                    let hostingVC = UIHostingController(rootView: swiftUIView)
+                    hostingVC.modalPresentationStyle = .overFullScreen
+                    hostingVC.modalTransitionStyle = .crossDissolve
+                    hostingVC.view.backgroundColor = .clear
+                    
+                    self.present(hostingVC, animated: true)
+                    
+                } else {
+                    self.showBookingPopup(dic)
                 }
-            } else {
-//                let vC = R.storyboard.main.popNRIC()!
-//                vC.cloSubmit = { doccImg in
-//                   Task {
-//                       await self.webWorkerUpdateDocc(workerDocc: doccImg)
-//                    }
-//                }
-//                vC.modalTransitionStyle = .crossDissolve
-//                vC.modalPresentationStyle = .overFullScreen
-//                self.present(vC, animated: true)
-                
-                let objClient = dic["client_details"].dictionaryValue
-                let swiftUIView = PopDocView (
-                    countryName: objClient["country_name"]?.stringValue ?? "") { img in
-                        Task {
-                            await self.webWorkerUpdateDocc(workerDocc: img)
-                         }
-                    }
-                
-                let hostingVC = UIHostingController(rootView: swiftUIView)
-                hostingVC.modalPresentationStyle = .overFullScreen
-                hostingVC.modalTransitionStyle = .crossDissolve
-                hostingVC.view.backgroundColor = .clear
-                
-                self.present(hostingVC, animated: true)
             }
         }
         
@@ -920,5 +768,45 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableView.automaticDimension
+    }
+    
+    func showBookingPopup(_ dic: JSON) {
+        
+        let vC = R.storyboard.main.popUpBeforeBooking()!
+        
+        let objClient = dic["client_details"].dictionaryValue
+        
+        vC.strBookinName = "\(objClient["business_name"]?.stringValue ?? ""),\n\(objClient["business_address"]?.stringValue ?? "")\n\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
+        
+        vC.strBookingDetail = """
+        Job Type : \(dic["job_type"].stringValue)
+        Break : \(dic["break_type"].stringValue)
+        Meals : \(dic["meals"].stringValue)
+        """
+        
+        vC.strBookingNote = dic["note"].stringValue
+        vC.strInstantApproval = dic["shift_autoapproval"].stringValue
+        vC.isFrom = "Book"
+        
+        vC.cloBook = { [self] in
+            
+            let shiftId = dic["id"].stringValue
+            let shiftRate = dic["shift_rate"].stringValue
+            
+            Task {
+                await self.webAddToCartSubmit (
+                    shiftId,
+                    shiftRate,
+                    autoApproved: dic["shift_autoapproval"].stringValue,
+                    singleDate: dic["single_date"].stringValue,
+                    outletiD: dic["outlet_id"].stringValue
+                )
+            }
+        }
+        
+        vC.modalTransitionStyle = .crossDissolve
+        vC.modalPresentationStyle = .overFullScreen
+        
+        self.present(vC, animated: true)
     }
 }

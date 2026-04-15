@@ -89,29 +89,26 @@ class listAdminVC: UIViewController {
         hideProgressBar()
     }
     
-    func webDeletShift(strSt:String) {
+    func webDeletShift(strSt:String) async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["id"]  =   strSt as AnyObject
         paramDict["user_id"]  =   strSt as AnyObject
-        
-        CommunicationManager.callPostService(apiUrl: Router.delete_OutletAdmin_AuthrisedApprover.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    Task {
-                        await self.getDataGetChatList()
-                    }
-                } else {
-                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+                
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_OutletAdmin_AuthrisedApprover.url(), parameters: paramDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                Task {
+                    await self.getDataGetChatList()
                 }
-                self.hideProgressBar()
+            } else {
+                Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
             }
-        }, failureBlock: { (error : Error) in
+        } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-            self.hideProgressBar()
-        })
+        }
+        
+        self.hideProgressBar()
     }
     
 }
@@ -152,7 +149,9 @@ extension listAdminVC: UITableViewDataSource {
         drop.show()
         drop.bottomOffset = CGPoint(x: 0, y: 45)
         drop.selectionAction = { [unowned self] (index: Int, item: String) in
-            webDeletShift(strSt: dic["id"].stringValue)
+           Task {
+               await webDeletShift(strSt: dic["id"].stringValue)
+            }
         }
     }
 }

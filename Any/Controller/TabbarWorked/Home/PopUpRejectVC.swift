@@ -28,18 +28,11 @@ class PopUpRejectVC: UIViewController {
     }
     
     @IBAction func back(_ sender: Any) {
-     
         self.dismiss(animated: false, completion: nil)
-
-
     }
     
     @IBAction func one(_ sender: Any) {
-
         self.dismiss(animated: false, completion: nil)
-
     }
-    
-
 }
 

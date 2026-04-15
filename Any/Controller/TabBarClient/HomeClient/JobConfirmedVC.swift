@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class JobConfirmedVC: UIViewController {
 
@@ -29,7 +30,9 @@ class JobConfirmedVC: UIViewController {
     }
     
     @IBAction func btn_ViewJobPost(_ sender: UIButton) {
-        let vC = R.storyboard.main.currentShiftVC()!
-        self.navigationController?.pushViewController(vC, animated: true)
+        let swiftUIView = CurrentShiftView()
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        
+        self.navigationController?.pushViewController(hostingController, animated: true)
     }
 }

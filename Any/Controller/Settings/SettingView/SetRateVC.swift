@@ -136,40 +136,7 @@ extension SetRateVC {
         let paramsDict:[String:AnyObject] = [:]
         
         print(paramsDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.arr_Alljobs = swiftyJsonVar["result"].arrayValue
-        //                    if self.isComingFrom == "PublishJob" {
-        //                        if self.strJobId != "" {
-        //                            self.lbl_JobType.text = self.strJobTypeName
-        //                        } else {
-        //                            let firstJobType = self.arr_Alljobs[0]
-        //                            self.strJobId = firstJobType["id"].stringValue
-        //                            self.lbl_JobType.text = firstJobType["name"].stringValue
-        //                        }
-        //                    } else {
-        //                        let firstJobType = self.arr_Alljobs[0]
-        //                        self.strJobId = firstJobType["id"].stringValue
-        //                        self.lbl_JobType.text = firstJobType["name"].stringValue
-        //                    }
-        //                    print(self.arr_Alljobs.count)
-        //                    self.WebGetWeeklyRate()
-        //                } else {
-        //                    let message = swiftyJsonVar["result"].string
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //            
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -209,44 +176,7 @@ extension SetRateVC {
         paramsDict["job_type_id"] =   strJobId as AnyObject
         
         print(paramsDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.get_client_weekly_rate.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            
-        //            DispatchQueue.main.async { [self] in
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.dicJONS = swiftyJsonVar
-        //                    
-        //                    self.minRate = Int(self.dicJONS["min_day_rate"].stringValue)!
-        //                    //                    self.dayRate = Int(self.dicJONS["ticked_day_rate"].stringValue)!
-        //                    self.urgentRate = Int(self.dicJONS["urgent_rate"].stringValue)!
-        //                    
-        //                    self.lbl_MinimumRate.text =  "\(currencySymbol)\(self.minRate!)/h"
-        //                    
-        //                    self.lbl_UrgentRateIs.text = "\(currencySymbol)\(self.urgentRate!)/h"
-        //                    
-        //                    self.arr_AllWeekRate = swiftyJsonVar["result"].arrayValue
-        //
-        //                    self.arr_AllDayRate = self.arr_AllWeekRate.map({$0["rate"].stringValue})
-        //                    self.arr_CheckDayStatus = self.arr_AllWeekRate.map({$0["check_status"].stringValue})
-        //                    
-        //                    self.weeklyCollectionHeight.constant = CGFloat(self.arr_AllWeekRate.count * 40)
-        //                    print(self.weeklyCollectionHeight.constant)
-        //                    self.weeklyRateCollectionVw.reloadData()
-        //                    
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].string
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //            
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_client_weekly_rate.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -287,33 +217,6 @@ extension SetRateVC {
         
         print(paramsDict)
         
-        //        CommunicationManager.callPostService(apiUrl: Router.get_client_date_rate.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            
-        //            DispatchQueue.main.async { [self] in
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.arr_AllSpecificRate = swiftyJsonVar["result"].arrayValue
-        //                    self.specificDateCollectionHeight.constant = CGFloat(self.arr_AllSpecificRate.count * 40)
-        //                    self.arr_DateRate = self.arr_AllSpecificRate.map({$0["rate"].stringValue})
-        //                    self.arr_AllCustomDate = self.arr_AllSpecificRate.map({$0["date"].stringValue})
-        //                    
-        //                    self.specificDateCollectionVw.reloadData()
-        //                    self.specificDateCollectionVw.isHidden = false
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].string
-        //                    print(message ?? "")
-        //                    self.arr_AllSpecificRate = []
-        //                    self.specificDateCollectionVw.isHidden = true
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //            
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_client_date_rate.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -351,29 +254,6 @@ extension SetRateVC {
         
         print(paramsDict)
         
-        //        CommunicationManager.callPostService(apiUrl: Router.add_client_weekly_rate.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    if self.arr_AllSpecificRate.count > 0 {
-        //                        self.WebUpdateDateShifts()
-        //                    } else {
-        //                        self.navigationController?.popViewController(animated: true)
-        //                    }
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].string
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //            
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_client_weekly_rate.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -405,25 +285,6 @@ extension SetRateVC {
         
         print(paramsDict)
         
-        //        CommunicationManager.callPostService(apiUrl: Router.update_client_date_rate.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.navigationController?.popViewController(animated: true)
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].string
-        //                    print(message ?? "")
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //            
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.update_client_date_rate.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -445,26 +306,7 @@ extension SetRateVC {
         paramsDict["id"]  =  dateiD as AnyObject
         
         print(paramsDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.delete_client_date_rate.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.WebGetDateRate()
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].string
-        //                    print(message ?? "")
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //            
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
+            
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_client_date_rate.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {

@@ -247,6 +247,7 @@ extension LoginVC {
         if (isValid == false) {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: errorMessage, on: self)
         }
+        
         return isValid
     }
     
@@ -260,28 +261,6 @@ extension LoginVC {
         let paramsDict:[String:AnyObject] = [:]
         
         print(paramsDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.get_country_list.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.arr_CountryList = swiftyJsonVar["result"].arrayValue
-        //                    self.btn_CountryListOt.setTitle(self.arr_CountryList[0]["name"].stringValue, for: .normal)
-        //                    self.strCountryName = self.arr_CountryList[0]["name"].stringValue
-        //                    self.strCountryiD = self.arr_CountryList[0]["id"].stringValue
-        //                    print(self.arr_CountryList.count)
-        //                } else {
-        //                    let message = swiftyJsonVar["result"].string
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
         
         do {
             let response = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_country_list.url(), parameters: paramsDict, parentViewController: self)
@@ -313,47 +292,7 @@ extension LoginVC {
         paramsDict["type"]     =   strType as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.logIn.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"] == "1") {
-//                    print(swiftyJsonVar)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["id"].stringValue, forKey: USERID)
-//                    USER_DEFAULT.set(swiftyJsonVar["status"].stringValue, forKey: STATUS)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["type"].stringValue, forKey: USER_TYPE)
-//                    USER_DEFAULT.set("\(swiftyJsonVar["result"]["first_name"].stringValue) \(swiftyJsonVar["result"]["last_name"].stringValue)", forKey: USER_NAME)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["request_payment_type"].stringValue, forKey: PAYMENT_TYPE)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["customer_id"].stringValue, forKey: CUSTOMERID)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["card_id"].stringValue, forKey: CARDID)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["email"].stringValue, forKey: USEREMAIL)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["mobile"].stringValue, forKey: USERMOBILE)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["first_name"].stringValue, forKey: USERFIRSTNAME)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["last_name"].stringValue, forKey: USERLASTNAME)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["country_id"].stringValue, forKey: COUNTRYID)
-//                    
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["currency_symbol"].stringValue, forKey: CURRENCY_SYMBOL)
-//                    
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["id"].stringValue, forKey: CLIENTID)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: BUSINESS_NAME)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_logo"].stringValue, forKey: BUSINESS_LOGO)
-//                    
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: OUTLET_NAME)
-//                    USER_DEFAULT.set(swiftyJsonVar["result"]["business_logo"].stringValue, forKey: OUTLET_IMAGE)
-//                    
-//                    Switcher.updateRootVC()
-//                } else {
-//                    let message = swiftyJsonVar["message"].stringValue
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.logIn.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"] == "1") {
@@ -404,40 +343,10 @@ extension LoginVC {
         paramsDict["mobile_with_code"]     =  strCCode + self.txt_SignupMobile.text! as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.uploadImagesAndData(apiUrl: Router.verify_number.url(), params: (paramsDict as! [String : String]) , imageParam: [:], videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    strOtp = swiftyJsonVar["result"]["code"].stringValue
-//                    print("+" + strCCode + txt_SignupMobile.text!)
-//                    collectSignupData()
-//                    let vC = R.storyboard.main.otpVC()!
-//                    vC.strMobileWithCode = ("+" + strCCode + txt_SignupMobile.text!)
-//                    vC.strMobileNumber = txt_SignupMobile.text!
-//                    vC.strType = self.strType
-//                    vC.strCode = strCCode
-//                    let code = swiftyJsonVar["result"]["code"].numberValue
-//                    let optionalCode = swiftyJsonVar["result"]["optional_otp"].numberValue
-//                    print("Verification Code: \(code)")
-//                    USER_DEFAULT.set(code, forKey: VERIFICATION_CODE)
-//                    USER_DEFAULT.set(optionalCode, forKey: OPTIONAL_VERIFICATION_CODE)
-//                    self.navigationController?.pushViewController(vC, animated: true)
-//                } else {
-//                    let message = swiftyJsonVar["message"].stringValue
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.verify_number.url(), parameters: paramsDict, parentViewController: self)
+            
             if(swiftyJsonVar["status"].stringValue == "1") {
                 strOtp = swiftyJsonVar["result"]["code"].stringValue
                 print("+" + strCCode + txt_SignupMobile.text!)
@@ -483,7 +392,6 @@ extension LoginVC {
         paramSignupDict["bank_name"] = "" as AnyObject
         paramSignupDict["country_name"] = self.strCountryName as AnyObject
         paramSignupDict["country_id"] = self.strCountryiD as AnyObject
-        
         print(paramSignupDict)
     }
 }

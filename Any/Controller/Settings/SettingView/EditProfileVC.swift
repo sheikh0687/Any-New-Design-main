@@ -14,7 +14,7 @@ import SDWebImage
 
 class EditProfileVC: UIViewController  {
     
-    @IBOutlet weak var img_Berista: UIImageView!
+    @IBOutlet weak var btn_Img_Berista: UIButton!
     @IBOutlet weak var view_Basrita: UIView!
     @IBOutlet weak var view_Nrc: UIView!
     @IBOutlet weak var view_jobType: UIView!
@@ -23,9 +23,9 @@ class EditProfileVC: UIViewController  {
     @IBOutlet weak var view_Pr: UIView!
     @IBOutlet weak var view_Buismesslogo: UIView!
     @IBOutlet weak var btn_Jobtype: UIButton!
-    @IBOutlet weak var img_Nrc: UIImageView!
-    @IBOutlet weak var img_Profile: UIImageView!
-    @IBOutlet weak var img_Buinsesslogo: UIImageView!
+    @IBOutlet weak var btn_Img_Nrc: UIButton!
+    @IBOutlet weak var btn_Img_Profile: UIButton!
+    @IBOutlet weak var btn_Img_Buinsesslogo: UIButton!
     @IBOutlet weak var btn_Upload: UIButton!
     @IBOutlet weak var text_BusName: SloyTextField!
     @IBOutlet weak var text_Une: SloyTextField!
@@ -43,17 +43,21 @@ class EditProfileVC: UIViewController  {
     @IBOutlet weak var textPayNowNumber: UILabel!
     
     var countryList = CountryList()
-    var imageBuisnesslogo:UIImage? = nil
+//    var imageBuisnesslogo:UIImage? = nil
     //    var profileImg: UIImage? = nil
     var strCCode:String! = "65"
     var drop = DropDown()
     var arr_AllCat:[JSON] = []
     var strType:String! = ""
-    var imgBarista:UIImage? = nil
     var strJobId:String! = "1"
     var strJobTypeName:String! = "F&B"
     var addressLat:String = ""
     var addressLon:String = ""
+    
+    var img_Nrc: UIImage? = nil
+    var imgBarista:UIImage? = nil
+    var img_Profile: UIImage? = nil
+    var img_Buinsesslogo: UIImage? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -98,23 +102,36 @@ class EditProfileVC: UIViewController  {
                 USER_DEFAULT.set(businessname, forKey: BUSINESS_NAME)
                 
                 let businessLogoURL = profile?["business_logo"].string ?? ""
-                if businessLogoURL.isEmpty || businessLogoURL == Router.BASE_IMAGE_URL {
-                    img_Buinsesslogo.image = UIImage(named: "placeholder1")
+                if  businessLogoURL == Router.BASE_IMAGE_URL {
+//                    img_Buinsesslogo.image = UIImage(named: "placeholder1")
                 } else {
-                    img_Buinsesslogo.sd_setImage(
-                        with: URL(string: businessLogoURL),
-                        placeholderImage: UIImage(named: "placeholder1")
-                    )
+//                    img_Buinsesslogo.sd_setImage (
+//                        with: URL(string: businessLogoURL),
+//                        placeholderImage: UIImage(named: "placeholder1")
+//                    )
+                    
+                    Utility.downloadImageBySDWebImage(businessLogoURL) { image, error in
+                        if image != nil {
+                            self.btn_Img_Buinsesslogo.setImage(image, for: .normal)
+                            self.img_Buinsesslogo = image
+                        } else {
+                            self.btn_Img_Buinsesslogo.setImage(R.image.profile_Pla(), for: .normal)
+                        }
+                    }
                 }
                 
                 let profileImageURL = profile?["image"].string ?? ""
-                if profileImageURL.isEmpty || profileImageURL == Router.BASE_IMAGE_URL {
-                    img_Profile.image = UIImage(named: "placeholder1")
+                if  profileImageURL == Router.BASE_IMAGE_URL {
+//                    img_Profile.image = UIImage(named: "placeholder1")
                 } else {
-                    img_Profile.sd_setImage(
-                        with: URL(string: profileImageURL),
-                        placeholderImage: UIImage(named: "placeholder1")
-                    )
+                    Utility.downloadImageBySDWebImage(profileImageURL) { image, error in
+                        if image != nil {
+                            self.btn_Img_Profile.setImage(image, for: .normal)
+                            self.img_Profile = image
+                        } else {
+                            self.btn_Img_Profile.setImage(R.image.profile_Pla(), for: .normal)
+                        }
+                    }
                 }
                 
                 self.textbuinseeAddre.isUserInteractionEnabled = true
@@ -131,6 +148,7 @@ class EditProfileVC: UIViewController  {
                 
                 let profile = kappDelegate.dic_Profile
                 
+//                print(img_Nrc.image!)
                 // MARK: - Safe Text Assignments
                 text_First?.text        = profile?["first_name"].string ?? ""
                 text_Last?.text         = profile?["last_name"].string ?? ""
@@ -162,35 +180,50 @@ class EditProfileVC: UIViewController  {
                 
                 // Profile Image
                 let profileImageURL = profile?["image"].string ?? ""
-                if profileImageURL.isEmpty || profileImageURL == Router.BASE_IMAGE_URL {
-                    img_Profile.image = UIImage(named: "placeholder1")
+                if profileImageURL == Router.BASE_IMAGE_URL {
+//                    img_Profile.image = UIImage(named: "placeholder1")
+                    print("No image found!")
                 } else {
-                    img_Profile.sd_setImage(
-                        with: URL(string: profileImageURL),
-                        placeholderImage: UIImage(named: "placeholder1")
-                    )
+                    Utility.downloadImageBySDWebImage(profileImageURL) { image, error in
+                        if image != nil {
+                            self.btn_Img_Profile.setImage(image, for: .normal)
+                            self.img_Profile = image
+                        } else {
+                            self.btn_Img_Profile.setImage(R.image.upload_image(), for: .normal)
+                        }
+                    }
                 }
                 
                 // Job Document Image
                 let jobDocURL = profile?["job_document"].string ?? ""
-                if jobDocURL.isEmpty || jobDocURL == Router.BASE_IMAGE_URL {
-                    img_Berista.image = UIImage(named: "upload_image")
+                if jobDocURL == Router.BASE_IMAGE_URL {
+//                    img_Berista.image = UIImage(named: "upload_image")
+                    print("No image found!")
                 } else {
-                    img_Berista.sd_setImage(
-                        with: URL(string: jobDocURL),
-                        placeholderImage: UIImage(named: "upload_image")
-                    )
+                    Utility.downloadImageBySDWebImage(jobDocURL) { image, error in
+                        if image != nil {
+                            self.btn_Img_Berista.setImage(image, for: .normal)
+                            self.imgBarista = image
+                        } else {
+                            self.btn_Img_Berista.setImage(R.image.upload_image(), for: .normal)
+                        }
+                    }
                 }
                 
                 // NRC Document Image
                 let nrcDocURL = profile?["nrc_document"].string ?? ""
-                if nrcDocURL.isEmpty || nrcDocURL == Router.BASE_IMAGE_URL {
-                    img_Nrc.image = UIImage(named: "upload_image")
+                if nrcDocURL == Router.BASE_IMAGE_URL {
+//                    img_Nrc.image = UIImage(named: "upload_image")
+                    print("No image found!")
                 } else {
-                    img_Nrc.sd_setImage(
-                        with: URL(string: nrcDocURL),
-                        placeholderImage: UIImage(named: "upload_image")
-                    )
+                    Utility.downloadImageBySDWebImage(nrcDocURL) { image, error in
+                        if image != nil {
+                            self.btn_Img_Nrc.setImage(image, for: .normal)
+                            self.img_Nrc = image
+                        } else {
+                            self.btn_Img_Nrc.setImage(R.image.upload_image(), for: .normal)
+                        }
+                    }
                 }
             }
             
@@ -222,8 +255,7 @@ class EditProfileVC: UIViewController  {
         }
     }
     
-    @objc func addPicker()
-    {
+    @objc func addPicker() {
         let vC = kStoryboardMain.instantiateViewController(withIdentifier: "AddressPickerVC") as! AddressPickerVC
         vC.locationPickedBlock = { [weak self] cordinationVal, latVal, lonVal, addressVal in
             guard let self = self else { return }
@@ -232,7 +264,6 @@ class EditProfileVC: UIViewController  {
             self.addressLon = String(lonVal)
         }
         self.present(vC, animated: true, completion: nil)
-        
     }
     
     override func rightClick() {
@@ -270,7 +301,8 @@ class EditProfileVC: UIViewController  {
         if Utility.isUserLogin() {
             CameraHandler.sharedInstance.showActionSheet(vc: self, sender: sender)
             CameraHandler.sharedInstance.imagePickedBlock = { [self] (image) in
-                img_Profile.image = image
+                img_Profile = image
+                btn_Img_Profile.setImage(image, for: .normal)
             }
         } else {
             self.alert(alertmessage: "Please create an account to use this feature.")
@@ -280,15 +312,16 @@ class EditProfileVC: UIViewController  {
     @IBAction func nrcImage(_ sender: Any) {
         CameraHandler.sharedInstance.showActionSheet(vc: self)
         CameraHandler.sharedInstance.imagePickedBlock = { [self] (image) in
-            img_Nrc.image = image
+            img_Nrc = image
+            btn_Img_Nrc.setImage(image, for: .normal)
         }
     }
     
     @IBAction func beristaImage(_ sender: Any) {
         CameraHandler.sharedInstance.showActionSheet(vc: self)
         CameraHandler.sharedInstance.imagePickedBlock = { [self] (image) in
-            img_Berista.image = image
             imgBarista = image
+            btn_Img_Berista.setImage(image, for: .normal)
         }
     }
     
@@ -296,8 +329,8 @@ class EditProfileVC: UIViewController  {
         if Utility.isUserLogin() {
             CameraHandler.sharedInstance.showActionSheet(vc: self)
             CameraHandler.sharedInstance.imagePickedBlock = { [self] (image) in
-                img_Buinsesslogo.image = image
-                imageBuisnesslogo = image
+                img_Buinsesslogo = image
+                btn_Img_Buinsesslogo.setImage(image, for: .normal)
             }
         } else {
             self.alert(alertmessage: "Please create an account to use this feature.")
@@ -335,7 +368,6 @@ class EditProfileVC: UIViewController  {
         }
     }
 }
-
 
 // MARK: - Validation
 extension EditProfileVC {
@@ -409,27 +441,7 @@ extension EditProfileVC {
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["country_id"]  =   USER_DEFAULT.value(forKey: COUNTRYID) as AnyObject
         
-        //        CommunicationManager.callPostService(apiUrl: Router.get_country_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async { [self] in
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    let obj = swiftyJsonVar["result"]
-        //                    print(obj["client_document"].stringValue)
-        //                    self.text_Une.placeholder = obj["client_document"].stringValue
-        //                    self.lbl_DoxText.text = obj["worker_document"].stringValue
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].stringValue
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
+        print(paramsDict)
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_country_details.url(), parameters: paramsDict, parentViewController: self)
@@ -454,24 +466,6 @@ extension EditProfileVC {
         let paramsDict:[String:AnyObject] = [:]
         
         print(paramsDict)
-        //        CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.arr_AllCat = swiftyJsonVar["result"].arrayValue
-        //                } else {
-        //                    let message = swiftyJsonVar["result"].string
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self)
@@ -511,34 +505,11 @@ extension EditProfileVC {
         print(paramsDict)
         
         var paramImgDict: [String : UIImage] = [:]
-        paramImgDict["business_logo"] = img_Buinsesslogo.image
-        paramImgDict["image"] = img_Profile.image
+        paramImgDict["business_logo"] = img_Buinsesslogo
+        paramImgDict["image"] = img_Profile
         
         print(paramImgDict)
-        
-        //        CommunicationManager.uploadImagesAndData(apiUrl: Router.update_profile_client.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async { [self] in
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    USER_DEFAULT.set("\(self.text_First.text!) \(self.text_Last.text!)", forKey: USER_NAME)
-        //                    USER_DEFAULT.set(swiftyJsonVar["result"]["request_payment_type"].stringValue, forKey: PAYMENT_TYPE)
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Your Profile Updated Successfully", on: self)
-        //                    Switcher.updateRootVC()
-        //
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].stringValue
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.uploadImagesAndDataAsync(apiUrl: Router.update_profile_client.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -585,31 +556,11 @@ extension EditProfileVC {
         print(paramsDict)
         
         var paramImgDict: [String : UIImage] = [:]
-        paramImgDict["nrc_document"] = img_Nrc.image
-        paramImgDict["image"] = img_Profile.image
-        paramImgDict["job_document"] = img_Berista.image
+        paramImgDict["nrc_document"] = img_Nrc
+        paramImgDict["image"] = img_Profile
+        paramImgDict["job_document"] = imgBarista
         
         print(paramImgDict)
-        
-        //        CommunicationManager.uploadImagesAndData(apiUrl: Router.update_profile_worker.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async { [self] in
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    USER_DEFAULT.set("\(self.text_First.text!) \(self.text_Last.text!)", forKey: USER_NAME)
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Your Profile Updated Successfully", on: self)
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].stringValue
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
         
         do {
             let swiftyJsonVar = try await CommunicationManager.uploadImagesAndDataAsync(apiUrl: Router.update_profile_worker.url(), params: (paramsDict as! [String : String]) , imageParam: paramImgDict, videoParam: [:], parentViewController: self)
@@ -629,7 +580,6 @@ extension EditProfileVC {
 }
 
 extension EditProfileVC:CountryListDelegate {
-    
     func selectedCountry(country: Country) {
         strCCode = "\(country.phoneExtension)"
         btn_Cou.setTitle("\(country.countryCode) +\(strCCode!)", for: .normal)

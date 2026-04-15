@@ -27,7 +27,7 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
     
     var dicRequestDetail:JSON!
     
-    var arr_List:[JSON] = []
+//    var arr_List:[JSON] = []
     var arr_Break:[String] = []
     
     var strCartId:String! = ""
@@ -50,12 +50,11 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
         getWorkerCurrentLocation()
     }
     
-    func getWorkerCurrentLocation()
-    {
+    func getWorkerCurrentLocation() {
         AccurateLocationManager.shared.requestAccurateLocation { workerLocation in
 
             guard let workerLocation = workerLocation else {
-                GlobalConstant.showAlertMessage(
+                GlobalConstant.showAlertMessage (
                     withOkButtonAndTitle: "Location Error",
                     andMessage: "Unable to fetch your current location. Please enable GPS.",
                     on: self
@@ -108,13 +107,10 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
             objVC.userName = (dicRequestDetail["client_details"]["first_name"].stringValue) + " " + (dicRequestDetail["client_details"]["last_name"].stringValue)
             objVC.strReasonID = dicRequestDetail["client_details"]["id"].stringValue
             self.navigationController?.pushViewController(objVC, animated: true)
-            
         } else if text == "Retry"  {
-            
            Task {
                await WebAddClockIn(strType: "IN")
             }
-            
         } else if text == "CheckOut"  {
             
            Task {
@@ -131,7 +127,7 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
     func checkWorkerDistanceFromClient(completion: @escaping (Bool) -> Void) {
         
         guard let workerLocation = self.workerLocation else {
-            GlobalConstant.showAlertMessage(
+            GlobalConstant.showAlertMessage (
                 withOkButtonAndTitle: "Location Missing",
                 andMessage: "Still fetching your GPS location. Please wait a moment.",
                 on: self
@@ -140,11 +136,13 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
             return
         }
 
-        print("📍 Worker Location:", workerLocation.coordinate)
+        print( "📍 Worker Location:", workerLocation.coordinate )
+        print(Double(self.strlat) ?? 0.0)
+        print(Double(self.strlon) ?? 0.0)
         
         guard let clientLat = Double(self.strlat),
               let clientLon = Double(self.strlon) else {
-            completion(false)
+            completion(true)
             return
         }
 
@@ -159,7 +157,7 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
             let status = self.dicRequestDetail["working_status"].stringValue
             let action = (status == "Pending") ? "clock-in" : "clock-out"
 
-            GlobalConstant.showAlertMessage(
+            GlobalConstant.showAlertMessage (
                 withOkButtonAndTitle: "Too Far",
                 andMessage: "Unable to \(action). You are outside the allowed location radius. Enable location services if they are off, then try again.",
                 on: self
@@ -170,8 +168,7 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
     }
     
     //MARK: API
-    
-    func WebAddClockIn(strType:String) async {
+    func WebAddClockIn(strType: String) async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         
@@ -185,46 +182,7 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
         paramsDict["lon"] = kappDelegate.CURRENT_LON as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.add_clock_in_time.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                
-//                print(swiftyJsonVar)
-//                
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    if swiftyJsonVar["result"]["working_status"].stringValue == "Clock-Out" {
-//                        let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "BookingCompleteDetailVC") as! BookingCompleteDetailVC
-//                        objVC.dicCartDetail = dicRequestDetail
-//                        objVC.dicClinetDetail = swiftyJsonVar["result"]
-//                        self.navigationController?.pushViewController(objVC, animated: true)
-//                    } else if swiftyJsonVar["result"]["working_status"].stringValue == "Clock-In" {
-//                        self.navigationController?.popViewController(animated: true)
-//                    } else  {
-//                        WebGetBookingDetail()
-//                    }
-//                } else {
-//                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopClockInVC") as! PopClockInVC
-//                    objVC.str_Head = "Clock-in Unsuccessful"
-//                    objVC.str_Desc = swiftyJsonVar["message"].stringValue
-//                    objVC.str_Sub_Desc = dicRequestDetail["address"].stringValue
-//                    objVC.delegate = self
-//                    objVC.str_One = "Retry, Clock-in"
-//                    objVC.str_Two = "Message"
-//                    objVC.modalPresentationStyle = .overCurrentContext
-//                    objVC.modalTransitionStyle = .crossDissolve
-//                    self.present(objVC, animated: false, completion: nil)
-//                }
-//                self.hideProgressBar()
-//                
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_clock_in_time.url(), parameters: paramsDict, parentViewController: self)
                 if(swiftyJsonVar["status"].stringValue == "1") {
@@ -268,29 +226,7 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
         paramsDict["cart_id"]  =   strCartId as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_set_shift_cart_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    
-//                    dicRequestDetail = swiftyJsonVar["result"]
-//                    getDataShiftAvailble()
-//                    
-//                }
-//                
-//                self.hideProgressBar()
-//                
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_set_shift_cart_details.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -348,7 +284,6 @@ class BookingDetailVC: UIViewController, FooTwoViewControllerDelegate {
         
         collectionViewShift.reloadData()
     }
-    
 }
 
 extension BookingDetailVC: UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,UICollectionViewDelegate {
@@ -377,7 +312,6 @@ extension BookingDetailVC: UICollectionViewDataSource,UICollectionViewDelegateFl
             
         } else if dicRequestDetail["break_time"].stringValue == "1 hour" && indexPath.row == 2 {
             cell.lbl_Break.backgroundColor = UIColor.init(named: THEME_COLOR_NAME)
-            
         }
         
         return cell
@@ -442,7 +376,7 @@ extension BookingDetailVC: UICollectionViewDataSource,UICollectionViewDelegateFl
                     objVC.modalTransitionStyle = .crossDissolve
                     self.present(objVC, animated: false, completion: nil)
                 }
-
+                
             } else {
                 let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUPNoBreakVC") as! PopUPNoBreakVC
                 objVC.strHead = "Start \(dicRequestDetail["set_shift"]["shift_break_time"].stringValue) Break?"

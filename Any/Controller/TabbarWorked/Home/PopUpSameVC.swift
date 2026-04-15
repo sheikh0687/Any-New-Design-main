@@ -30,34 +30,24 @@ class PopUpSameVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-      
         lbl_Head.text = str_Head
         lbl_DEsc.text = str_Desc
         lbl_Sub_DEsc.text = str_Sub_Desc
-
-
     }
     
     @IBAction func back(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
-        
     }
     
     @IBAction func one(_ sender: Any) {
-
         delegate?.myVCDidFinish(text: strFrom)
         self.dismiss(animated: false, completion: nil)
-
-
     }
     
     @IBAction func two(_ sender: Any) {
         delegate?.myVCDidFinish(text: strFrom)
         self.dismiss(animated: false, completion: nil)
-
     }
-    
-
 }
 
 

@@ -7,287 +7,236 @@
 
 import Foundation
 import SwiftyJSON
+import DropDown
 
+@MainActor
 final class ClientJobViewModel {
+    
+    // MARK: - Bindings
+    var onNotificationUpdated: ((Int) -> Void)?
+    var onWeeklyReportUpdated: (() -> Void)?
+    var onManpowerUpdated: (() -> Void)?
+    var onUpcomingShiftUpdated: (() -> Void)?
+    var onOutletUpdated: (() -> Void)?
+    var onError: ((String) -> Void)?
+    var onLoading: ((Bool) -> Void)?
 
-    // MARK: - Exposed state (for VC)
-    private(set) var manpower: [JSON] = []
-    private(set) var weeklyJobTypes: [JSON] = []
-    private(set) var upcomingShifts: [JSON] = []
-    private(set) var outlets: [JSON] = []
-
-    var weekRanges: [(start: Date, end: Date)] = []
-    var currentWeekIndex: Int = 0
-
-    var weeklyReqCount: Int = 0
-    var dailyReqCount: Int = 0
-    var jobTypeAndDescription: String = ""
-
-    // Callbacks
-    var didUpdateUI: (() -> Void)?
-    var didShowError: ((String) -> Void)?
-    var isLoadingChanged: ((Bool) -> Void)?
+    // MARK: - Data Sources
+    private(set) var arrayForJobTypes: [JSON] = []
+    private(set) var arrayManPowerReq: [JSON] = []
+    private(set) var arrayForUpcomingShift: [JSON] = []
+    private(set) var arrayOfOutlet: [JSON] = []
 
     private let calendar = Calendar.current
+    private var arrWeekStartToEnd: [String] = []
+    private var arrDateStart: [Date] = []
+    private var arrDateEnd: [Date] = []
+    
+    var currentWeek: Int = 0
+    var arrWeekDays: [Date] = []
+    var arrWeekName:[String] = ["MON","TUE","WED","THU","FRI","SAT","SUN"]
+    
+    init() {
+        generateWeeks()
+    }
+}
 
-    // MARK: - Public API
-
-    func configureWeeks() {
-        weekRanges.removeAll()
-
-        let lastDay = calendar.date(byAdding: .day, value: 100, to: Date())!
+extension ClientJobViewModel {
+    
+    private func generateWeeks() {
+        let lastDay = Calendar.current.date(byAdding: .day, value: 100, to: Date())!
         var currentDate = Date()
-
-        let df = DateFormatter()
-        df.dateFormat = "ccc"
-        let dayOfWeek = df.string(from: currentDate)
-
-        let hour = calendar.component(.hour, from: currentDate)
-        if hour >= 0 && hour < 6 {
-            currentDate = calendar.date(byAdding: .hour, value: 8, to: currentDate)!
-        }
-
+        
         while currentDate < lastDay {
-            let start: Date
-            let end: Date
-
-            if dayOfWeek == "Mon" {
-                start = currentDate
-            } else {
-                start = currentDate.previous(.monday)
-            }
-
-            if dayOfWeek == "Sun" {
-                end = currentDate
-            } else {
-                end = currentDate.next(.sunday)
-            }
-
-            weekRanges.append((start: start, end: end))
+            let start = currentDate.previous(.monday).formatted()
+            let end = currentDate.next(.sunday).formatted()
+            
+            arrWeekStartToEnd.append("\(start),\(end)")
+            arrDateStart.append(Utility.getDate(strDte: start)!)
+            arrDateEnd.append(Utility.getDate(strDte: end)!)
+            
             currentDate = calendar.date(byAdding: .weekOfYear, value: 1, to: currentDate)!
         }
+        
+        loadCurrentWeek()
     }
-
-    func weekDatesForCurrentWeek() -> [Date] {
-        guard !weekRanges.isEmpty else { return [] }
-        let range = weekRanges[currentWeekIndex]
-        var days: [Date] = []
-        var d = range.start
-        while d <= range.end {
-            days.append(d)
-            d = calendar.date(byAdding: .day, value: 1, to: d)!
+    
+    func loadCurrentWeek() {
+        arrWeekDays.removeAll()
+        var date = arrDateStart[currentWeek]
+        
+        while date <= arrDateEnd[currentWeek] {
+            arrWeekDays.append(date)
+            date = calendar.date(byAdding: .day, value: 1, to: date)!
         }
-        return days
     }
-
-    func loadInitialData(parentVC: UIViewController) {
-        configureWeeks()
-        fetchOutlets(parentVC: parentVC)
-        fetchNotificationCount(parentVC: parentVC)
-        fetchManpower(parentVC: parentVC)
+    
+    func nextWeek() {
+        currentWeek += 1
+        loadCurrentWeek()
     }
-
-    func goToPreviousWeek(parentVC: UIViewController) {
-        guard currentWeekIndex > 0 else { return }
-        currentWeekIndex -= 1
-        fetchWeeklyReport(parentVC: parentVC)
-        didUpdateUI?()
+    
+    func previousWeek() {
+        guard currentWeek > 0 else { return }
+        currentWeek -= 1
+        loadCurrentWeek()
     }
+}
 
-    func goToNextWeek(parentVC: UIViewController) {
-        guard currentWeekIndex + 1 < weekRanges.count else { return }
-        currentWeekIndex += 1
-        fetchWeeklyReport(parentVC: parentVC)
-        didUpdateUI?()
-    }
-
-    func didSelectOutlet(index: Int, parentVC: UIViewController) {
-        guard index < outlets.count else { return }
-        let outlet = outlets[index]
-        USER_DEFAULT.set(outlet["id"].stringValue, forKey: CLIENTID)
-        USER_DEFAULT.set(outlet["business_name"].stringValue, forKey: OUTLET_NAME)
-        USER_DEFAULT.set(outlet["business_logo"].stringValue, forKey: OUTLET_IMAGE)
-        fetchManpower(parentVC: parentVC)
-        fetchUpcomingShifts(parentVC: parentVC)
-        didUpdateUI?()
-    }
-
-    // MARK: - Networking
-
-    private func setLoading(_ value: Bool) {
-        DispatchQueue.main.async { self.isLoadingChanged?(value) }
-    }
-
-    private func fetchNotificationCount(parentVC: UIViewController) {
-        var params: [String: Any] = [:]
-        params["user_id"] = USER_DEFAULT.value(forKey: USERID) as Any
-
-        CommunicationManager.callPostService(
-            apiUrl: Router.get_notification_count.url(),
-            parameters: params,
-            parentViewController: parentVC
-        ) { response, _ in
-            let json = JSON(response)
-            guard json["status"].stringValue == "1" else { return }
-
-            let notificationData: [String: NSNumber] = [
-                "chatCount": json["chat_count"].numberValue,
-                "requestCount": json["request"].numberValue
-            ]
-            NotificationCenter.default.post(
-                name: NSNotification.Name("badgeCount"),
-                object: "On Ride",
-                userInfo: notificationData
+extension ClientJobViewModel {
+    
+    func getNotificationCount(vC: UIViewController) async {
+        
+        var params: [String: AnyObject] = [:]
+        params["user_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
+        
+        do {
+            let json = try await CommunicationManager.callPostServiceAsync(
+                apiUrl: Router.get_notification_count.url(),
+                parameters: params,
+                parentViewController: vC
             )
-
-            DispatchQueue.main.async {
-                NotificationCenter.default.post (
-                    name: NSNotification.Name("ReloadCount"),
-                    object: nil
-                )
+            
+            if json["status"].stringValue == "1" {
+                let requestCount = json["request"].intValue
+                onNotificationUpdated?(requestCount)
             }
-
-            self.fetchWeeklyReport(parentVC: parentVC)
-        } failureBlock: { error in
-            self.didShowError?(error.localizedDescription)
+            
+        } catch {
+            onError?(error.localizedDescription)
         }
     }
-
-    func fetchWeeklyReport(parentVC: UIViewController) {
-        guard !weekRanges.isEmpty else { return }
-        setLoading(true)
-
-        let range = weekRanges[currentWeekIndex]
-        let start = range.start.formatted()
-        let end = range.end.formatted()
-
-        var params: [String: Any] = [:]
-        params["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as Any
-        params["start_date"] = start
-        params["end_date"] = end
-
-        CommunicationManager.callPostService(
-            apiUrl: Router.get_set_shift_book_client_side.url(),
-            parameters: params,
-            parentViewController: parentVC
-        ) { response, _ in
-            self.setLoading(false)
-            let json = JSON(response)
+    
+    func getWeeklyReportList(vC: UIViewController) async {
+        
+        var params: [String: AnyObject] = [:]
+        params["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
+        
+        let strDat = arrWeekStartToEnd[currentWeek]
+        let arr = strDat.components(separatedBy: ",")
+        print(strDat)
+        params["start_date"]  =  arr[0] as AnyObject
+        params["end_date"]  =   arr[1] as AnyObject
+        
+        do {
+            let json = try await CommunicationManager.callPostServiceAsync (
+                apiUrl: Router.get_set_shift_book_client_side.url(),
+                parameters: params,
+                parentViewController: vC
+            )
+            
             if json["status"].stringValue == "1" {
-                self.weeklyJobTypes = json["result"].arrayValue
+                arrayForJobTypes = json["result"].arrayValue
             } else {
-                self.weeklyJobTypes = []
+                arrayForJobTypes = []
             }
-            self.didUpdateUI?()
-        } failureBlock: { error in
-            self.setLoading(false)
-            self.didShowError?(error.localizedDescription)
+            
+            onWeeklyReportUpdated?()
+            
+        } catch {
+            onError?(error.localizedDescription)
         }
     }
 
-    func fetchManpower(parentVC: UIViewController) {
-        setLoading(true)
-        var params: [String: Any] = [:]
-        params["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as Any
-        params["today_date"] = Utility.getCurrentShortDateNew()
-        params["today_day_name"] = Utility.getCurrentDay()
 
-        CommunicationManager.callPostService(
-            apiUrl: Router.get_client_shift_by_date.url(),
-            parameters: params,
-            parentViewController: parentVC
-        ) { response, _ in
-            self.setLoading(false)
-            let json = JSON(response)
+    func getManpowerJobRequests(vC: UIViewController) async {
+        
+        var params: [String: AnyObject] = [:]
+        params["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
+        params["today_date"] = Utility.getCurrentShortDateNew() as AnyObject
+        params["today_day_name"] = Utility.getCurrentDay() as AnyObject
+        
+        do {
+            let json = try await CommunicationManager.callPostServiceAsync(
+                apiUrl: Router.get_client_shift_by_date.url(),
+                parameters: params,
+                parentViewController: vC
+            )
+            
             if json["status"].stringValue == "1" {
-                let result = json["result"]
-                self.manpower = result["worker_details"].arrayValue
-                self.jobTypeAndDescription =
-                    "\(result["shift_name"].stringValue)\n\(result["shift_description"].stringValue)"
-
-                self.weeklyReqCount = json["pending_shift_count"].intValue
-                self.dailyReqCount = json["today_pending_shift_count"].intValue
+                arrayManPowerReq = json["result"]["worker_details"].arrayValue
             } else {
-                self.manpower = []
-                self.weeklyReqCount = 0
-                self.dailyReqCount = 0
-                self.jobTypeAndDescription = ""
+                arrayManPowerReq = []
             }
-            self.didUpdateUI?()
-        } failureBlock: { error in
-            self.setLoading(false)
-            self.didShowError?(error.localizedDescription)
+            
+            onManpowerUpdated?()
+            
+        } catch {
+            onError?(error.localizedDescription)
         }
     }
-
-    func fetchUpcomingShifts(parentVC: UIViewController) {
-        setLoading(true)
-        var params: [String: Any] = [:]
-        params["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as Any
-
-        CommunicationManager.callPostService(
-            apiUrl: Router.get_shift_by_10day_count.url(),
-            parameters: params,
-            parentViewController: parentVC
-        ) { response, _ in
-            self.setLoading(false)
-            let json = JSON(response)
+    
+    func getUpcomingShifts(vC: UIViewController) async {
+        
+        var params: [String: AnyObject] = [:]
+        params["user_id"] = USER_DEFAULT.value(forKey: CLIENTID) as AnyObject
+        
+        do {
+            let json = try await CommunicationManager.callPostServiceAsync (
+                apiUrl: Router.get_shift_by_10day_count.url(),
+                parameters: params,
+                parentViewController: vC
+            )
+            
             if json["status"].stringValue == "1" {
-                self.upcomingShifts = json["result"].arrayValue
+                arrayForUpcomingShift = json["result"].arrayValue
             } else {
-                self.upcomingShifts = []
+                arrayForUpcomingShift = []
             }
-            self.didUpdateUI?()
-        } failureBlock: { error in
-            self.setLoading(false)
-            self.didShowError?(error.localizedDescription)
+            
+            onUpcomingShiftUpdated?()
+            
+        } catch {
+            onError?(error.localizedDescription)
         }
     }
 
-    func fetchOutlets(parentVC: UIViewController) {
-        setLoading(true)
-        var params: [String: Any] = [:]
-        params["client_id"] = USER_DEFAULT.value(forKey: USERID) as Any
-
-        CommunicationManager.callPostService(
-            apiUrl: Router.get_Outlet.url(),
-            parameters: params,
-            parentViewController: parentVC
-        ) { response, _ in
-            self.setLoading(false)
-            let json = JSON(response)
+    func getOutlets(vC: UIViewController) async {
+        
+        onLoading?(true)
+        
+        var params: [String: AnyObject] = [:]
+        params["client_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
+        
+        do {
+            let json = try await CommunicationManager.callPostServiceAsync(
+                apiUrl: Router.get_Outlet.url(),
+                parameters: params,
+                parentViewController: vC
+            )
+            
             if json["status"].stringValue == "1" {
-                self.outlets = json["result"].arrayValue
-
-                let defaultOutlet: JSON = [
-                    "id": USER_DEFAULT.value(forKey: USERID) as? String ?? "",
-                    "business_name": USER_DEFAULT.value(forKey: BUSINESS_NAME) as? String ?? "My Business",
-                    "business_logo": USER_DEFAULT.value(forKey: BUSINESS_LOGO) as? String ?? ""
-                ]
-                if self.outlets.first?["id"].stringValue != defaultOutlet["id"].stringValue {
-                    self.outlets.insert(defaultOutlet, at: 0)
+                arrayOfOutlet = json["result"].arrayValue
+            } else {
+                arrayOfOutlet = []
+            }
+            
+            onOutletUpdated?()
+            
+        } catch {
+            onError?(error.localizedDescription)
+        }
+        
+        onLoading?(false)
+    }
+    
+    func calculateUpcomingTableHeight() -> CGFloat {
+        var total = 0
+        
+        for val in arrayForUpcomingShift {
+            let shiftCount = val["shift_details"].count
+            
+            if shiftCount > 0 {
+                if val["shift_details"]["worker_details"].count > 0 {
+                    total += 60 + (shiftCount * 310)
+                } else {
+                    total += 60 + (shiftCount * 220)
                 }
             } else {
-                self.outlets = []
-            }
-            self.didUpdateUI?()
-        } failureBlock: { error in
-            self.setLoading(false)
-            self.didShowError?(error.localizedDescription)
-        }
-    }
-
-    // Helper used by VC to compute upcoming table height
-    func upcomingTableHeight(rowHeader: Int = 60, rowHeight: Int = 190) -> CGFloat {
-        var total = 0
-        for val in upcomingShifts {
-            if val["shift_details"].count > 0 {
-                let c = val["shift_details"].count
-                total += rowHeader + c * rowHeight
-            } else {
-                total += rowHeader
+                total += 60
             }
         }
+        
         return CGFloat(total)
     }
 }

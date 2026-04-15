@@ -60,6 +60,7 @@ class PublishJobVC: UIViewController {
     var arrayOfDays: [String] = []
     
     var isFrom:String = ""
+    var isOutletSelected: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,9 +70,6 @@ class PublishJobVC: UIViewController {
         print(self.arrayWorkerTime.count)
         print(USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? "")
         print(USER_DEFAULT.value(forKey: CLIENTID) as? String ?? "")
-        self.lbl_OutletName.text = USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? ""
-        self.strOutletiD = USER_DEFAULT.value(forKey: CLIENTID) as? String ?? ""
-        self.strOutletName = USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? ""
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -94,6 +92,15 @@ class PublishJobVC: UIViewController {
         Task {
            await WebGetOutlet()
         }
+        
+        if !isOutletSelected {
+            self.lbl_OutletName.text = USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? ""
+            self.strOutletiD = USER_DEFAULT.value(forKey: CLIENTID) as? String ?? ""
+            self.strOutletName = USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? ""
+        } else {
+            print("Outlet is selected!")
+            self.isOutletSelected = false
+        }
     }
     
     @IBAction func btn_OutletName(_ sender: UIButton) {
@@ -104,6 +111,7 @@ class PublishJobVC: UIViewController {
             self.lbl_OutletName.text = outletName
             self.strOutletName = outletName
             self.strOutletiD = outletiD
+            self.isOutletSelected = true
         }
         self.navigationController?.pushViewController(vC, animated: true)
     }

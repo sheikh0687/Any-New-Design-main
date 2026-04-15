@@ -58,9 +58,7 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                Task {
                    await WebRejectBooking(strCard: "Accept")
                 }
-                
             }
-            
             
         } else if text == "Reject" {
            Task {
@@ -78,12 +76,9 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                 
             }
         } else if text == "Confirm" {
-            //     WebRejectBooking(strCard: "1")
-            
            Task {
                await self.WebGetApprovedBooking()
             }
-            
         }
     }
     
@@ -93,49 +88,18 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
         
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
-        paramsDict["client_id"]  =   dicCrent["client_details"]["id"].stringValue as AnyObject
+        paramsDict["client_id"]  =   dicCrent["outlet_id"].stringValue as AnyObject
         paramsDict["shift_id"]  =   dicCrent["id"].stringValue as AnyObject
         paramsDict["day_name"]  =   dicCrent["day_name"].stringValue as AnyObject
         paramsDict["date"]  =   dicCrent["date"].stringValue as AnyObject
         
-        showProgressBar()
+        print(paramsDict)
         
-//        CommunicationManager.callPostService(apiUrl: Router.add_to_set_shift_cart_broadcast.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    
-//                    if strCard == "Accept" {
-//                        let sdsd = kappDelegate.dicCrent["start_time"].stringValue
-//                        
-//                        let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpBookingConfirmVC") as! PopUpBookingConfirmVC
-//                        objVC.str_Desc = "Your shift will start at (\(sdsd)) today at this location:"
-//                        objVC.str_Sub_Desc = "\(kappDelegate.dicCrent["client_details"]["business_name"].stringValue), \(kappDelegate.dicCrent["address"].stringValue)\n\n\(kCurrency)\(kappDelegate.dicCrent["shift_rate"].stringValue)/Hour"
-//                        objVC.str_Sub_Desc2 = "\(kappDelegate.dicCrent["job_type"].stringValue)\n\(kappDelegate.dicCrent["note"].stringValue)"
-//                        objVC.delegate = self
-//                        objVC.modalPresentationStyle = .overCurrentContext
-//                        objVC.modalTransitionStyle = .crossDissolve
-//                        self.present(objVC, animated: false, completion: nil)
-//                        
-//                    } else  {
-//                        self.WebGetApprovedBooking()
-//                    }
-//                } else {
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: swiftyJsonVar["message"].stringValue, on: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
+        showProgressBar()
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_to_set_shift_cart_broadcast.url(), parameters: paramsDict, parentViewController: self)
+            
             if(swiftyJsonVar["status"].stringValue == "1") {
                 
                 if strCard == "Accept" {
@@ -158,6 +122,7 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
             } else {
                 GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: swiftyJsonVar["message"].stringValue, on: self)
             }
+            
         } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         }
@@ -174,33 +139,6 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
         
         print(paramsDict)
         
-        //        CommunicationManager.callPostService(apiUrl: Router.get_broadcast_shift.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async { [self] in
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //
-        //                table_List.isHidden = false
-        //
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
-        //                    self.table_List.backgroundView = UIView()
-        //                    self.table_List.reloadData()
-        //                } else {
-        //                    self.arr_AllDriver = []
-        //                    self.table_List.backgroundView = UIView()
-        //                    self.table_List.reloadData()
-        //                    Utility.noDataFound("No Requests At The Moment", tableViewOt: self.table_List, parentViewController: self)
-        //                }
-        //
-        //                self.hideProgressBar()
-        //            }
-        //
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_broadcast_shift.url(), parameters: paramsDict, parentViewController: self)
             table_List.isHidden = false
@@ -215,7 +153,6 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                 self.table_List.reloadData()
                 Utility.noDataFound("No Requests At The Moment", tableViewOt: self.table_List, parentViewController: self)
             }
-            
         } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         }
@@ -229,34 +166,6 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
         paramDict["worker_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramDict["shift_id"]  =   strSt as AnyObject
         
-//        CommunicationManager.callPostService(apiUrl: Router.shift_rejected_by_worker.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                   Task {
-//                       await self.WebGetApprovedBooking()
-//                    }
-//                    
-//                    let shiftTime = "\(dicCrent["start_time"].stringValue) to \(dicCrent["end_time"].stringValue)"
-//                    
-//                    let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpRejectVC") as! PopUpRejectVC
-//                    objVC.str_Desc = "\(dicCrent["client_details"]["business_name"].stringValue),  \(dicCrent["address"].stringValue)\n\(dicCrent["day_name"].stringValue), \(shiftTime)"
-//                    objVC.str_Head = "Your shift has been successfully cancelled in:"
-//                    objVC.modalPresentationStyle = .overCurrentContext
-//                    objVC.modalTransitionStyle = .crossDissolve
-//                    self.present(objVC, animated: false, completion: nil)
-//                    
-//                } else {
-//                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        }, failureBlock: { (error : Error) in
-//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-//            self.hideProgressBar()
-//        })
-//        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.shift_rejected_by_worker.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -279,7 +188,6 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
         } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
         }
-        
         hideProgressBar()
     }
 }
@@ -325,6 +233,8 @@ extension SameDayRequestVC : UITableViewDataSource {
         dicCrent = dic
         kappDelegate.dicCrent = dic
         
+        print(dicCrent!)
+        
         let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpSameVC") as! PopUpSameVC
         objVC.str_Head = "\(dic["client_details"]["business_name"].stringValue), \(dic["address"].stringValue)\n\n\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
         
@@ -340,6 +250,7 @@ extension SameDayRequestVC : UITableViewDataSource {
     @objc func clcidReject(but:UIButton)  {
         let dic = arr_AllDriver[but.tag]
         dicCrent = dic
+        
         let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpSameVC") as! PopUpSameVC
         objVC.str_Head = "\(dic["client_details"]["business_name"].stringValue), \(dic["address"].stringValue)\n\n\(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue)/Hour"
         

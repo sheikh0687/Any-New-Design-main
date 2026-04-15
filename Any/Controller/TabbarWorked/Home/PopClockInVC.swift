@@ -58,7 +58,6 @@ class PopClockInVC: UIViewController {
         } else if strFrom == "CheckOut" {
             delegate?.myVCDidFinish(text: "CheckOut")
             self.dismiss(animated: false, completion: nil)
-            
         } else {
             self.dismiss(animated: false, completion: nil)
         }

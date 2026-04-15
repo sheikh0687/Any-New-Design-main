@@ -144,17 +144,14 @@ class AppDelegate: UIResponder,  UIApplicationDelegate, MessagingDelegate {
     }
 }
 
-extension AppDelegate:LocationManagerDelegate {
+extension AppDelegate: LocationManagerDelegate {
     
     func tracingLocation(currentLocation: CLLocation) {
         coordinate2 = currentLocation
-        _ = coordinate1.distance(from: coordinate2) // result is in meters
-        //  if distanceInMeters > 0 {
+        _ = coordinate1.distance(from: coordinate2)
         CURRENT_LAT = String(currentLocation.coordinate.latitude)
         CURRENT_LON = String(currentLocation.coordinate.longitude)
         coordinate1 = currentLocation
-        //  }
-        
     }
     
     func tracingLocationDidFailWithError(error: NSError) {
@@ -163,7 +160,6 @@ extension AppDelegate:LocationManagerDelegate {
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
-    
     
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
@@ -179,7 +175,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             print("Sound key is missing.")
         }
         
-        completionHandler([.alert, .sound])
+        completionHandler([.banner, .sound])
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter,
@@ -189,7 +185,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let userInfo = response.notification.request.content.userInfo
         print(userInfo)
         if let info = userInfo as? Dictionary<String, AnyObject> {
-//            let alert1 = info["aps"]!["alert"] as! Dictionary<String, AnyObject>
             let title = userInfo["title"]  ?? ""
             hanleNotification(info: info, strStatus: title as! String, strFrom: "Back")
         }
@@ -200,7 +195,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // Directly use the info dictionary since it already contains the necessary data
         print(info)
         if let apsInfoMessage = info["message"] as? String {
-//            let notiTitle = apsInfoMessage["noti_title"] as? String ?? "No Title"
+            //            let notiTitle = apsInfoMessage["noti_title"] as? String ?? "No Title"
             print(apsInfoMessage)
             let notiAlert = info["noti_alert"] as? String ?? "No Alert"
             let notiKey = info["message"]?["noti_key"] as? String ?? "No Key"
@@ -234,7 +229,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             }
         }
     }
-        
+    
     func goChatVC() {
         let visibleVC = UIApplication.topViewController()!
         visibleVC.tabBarController?.selectedIndex = 1
@@ -246,8 +241,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let vc = Mainboard.instantiateViewController(withIdentifier: "UserChat") as! UserChat
         visibleVC?.navigationController?.pushViewController(vc, animated: true)
     }
-    
 }
+
 extension UIViewController {
     func topmostViewController() -> UIViewController {
         

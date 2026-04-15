@@ -48,7 +48,7 @@ enum Router: String {
     case get_notification_count
     case add_to_set_shift_cart_broadcast
     case shift_rejected_by_worker
-    case get_days_List
+    case get_next_seven_date_list
     case delete_set_shift_cart
     case get_client_shift_by_date
     case get_client_date_rate
@@ -247,7 +247,7 @@ enum Router: String {
         case .add_employee_rating_review:
             return Router.oAuthRoute(path: "add_employee_rating_review?")
             
-        case .get_days_List:
+        case .get_next_seven_date_list:
             return Router.oAuthRoute(path: "get_next_seven_date_list?")
             
         case .save_CardStripe:

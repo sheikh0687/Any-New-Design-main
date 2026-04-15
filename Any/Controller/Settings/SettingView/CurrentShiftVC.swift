@@ -22,12 +22,15 @@ class CurrentShiftVC: UIViewController {
     var strDate:String! = ""
     var strlat:String! = ""
     var strlon:String! = ""
+    
+    let refreshControl = UIRefreshControl()
     var drop = DropDown()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.table_list.register(UINib(nibName: "CurrentShiftCell", bundle: nil), forCellReuseIdentifier: "CurrentShiftCell")
-        // Do any additional setup after loading the view.
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        table_list.refreshControl = refreshControl
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,6 +49,13 @@ class CurrentShiftVC: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
+    }
+    
+    @objc func refreshData() {
+        Task {
+            await getDataGetList()
+            refreshControl.endRefreshing()
+        }
     }
     
     @IBAction func switchClos(_ sender: Any) {
@@ -91,32 +101,6 @@ class CurrentShiftVC: UIViewController {
         paramsDict["device_id"]  =   USER_DEFAULT.value(forKey: IOS_TOKEN) as AnyObject
         
         print(paramsDict)
-        //        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async { [self] in
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    let dic = swiftyJsonVar["result"]
-        //                    kappDelegate.dicProdile = dic
-        //                    if kappDelegate.dicProdile["booking_status"].stringValue == "Close" {
-        //                        btn_Switch.setOn(true, animated: true)
-        //                    } else {
-        //                        btn_Switch.setOn(false, animated: true)
-        //                    }
-        //
-        //                    if kappDelegate.dicProdile["shift_autoapproval"].stringValue == "No" {
-        //                        btn_SwicthAutoApprove.setOn(false, animated: true)
-        //                    } else {
-        //                        btn_SwicthAutoApprove.setOn(true, animated: true)
-        //                    }
-        //                }
-        //            }
-        //
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self)
@@ -148,21 +132,7 @@ class CurrentShiftVC: UIViewController {
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramDict["booking_status"]  =   strType as AnyObject
-        
-//        CommunicationManager.callPostService(apiUrl: Router.update_booking_status_profile.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.GetProfile()
-//                }
-//                self.hideProgressBar()
-//            }
-//        }, failureBlock: { (error : Error) in
-//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-//            self.hideProgressBar()
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.update_booking_status_profile.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -185,24 +155,7 @@ class CurrentShiftVC: UIViewController {
         paramDict["shift_autoapproval"]  =   strType as AnyObject
         
         print(paramDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.set_shift_autoapproval_status.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.GetProfile()
-//                } else {
-//                    self.GetProfile()
-//                    self.alert(alertmessage: swiftyJsonVar["message"].stringValue)
-//                }
-//                self.hideProgressBar()
-//            }
-//        }, failureBlock: { (error : Error) in
-//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-//            self.hideProgressBar()
-//        })
-        
+            
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.set_shift_autoapproval_status.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -230,28 +183,7 @@ class CurrentShiftVC: UIViewController {
         paramDict["shift_type"]  =   "Normal" as AnyObject
         
         print(paramDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_my_set_shift.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.arr_List  = swiftyJsonVar["result"].arrayValue
-//                    self.table_list.backgroundView = UIView()
-//                    self.table_list.reloadData()
-//                } else {
-//                    self.arr_List = []
-//                    self.table_list.backgroundView = UIView()
-//                    self.table_list.reloadData()
-//                    Utility.noDataFound("No Shifts At The Moment", tableViewOt: self.table_list, parentViewController: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        }, failureBlock: { (error : Error) in
-//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-//            self.hideProgressBar()
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_my_set_shift.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -278,23 +210,7 @@ class CurrentShiftVC: UIViewController {
         paramDict["id"]  =   strSt as AnyObject
         
         print(paramDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.delete_my_shifts.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.getDataGetList()
-//                } else {
-//                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        }, failureBlock: { (error : Error) in
-//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-//            self.hideProgressBar()
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_my_shifts.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -302,7 +218,9 @@ class CurrentShiftVC: UIViewController {
                    await self.getDataGetList()
                 }
             } else {
-                Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
+                print("Something went wrong")
+//                await self.getDataGetList()
+//                Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
             }
         } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
@@ -343,22 +261,60 @@ extension CurrentShiftVC: UITableViewDataSource {
         cell.lbl_JobType.text = (dic["job_type"].stringValue)
         cell.lbl_OUtletName.text = (dic["business_name"].stringValue)
         
+//        cell.cloDots = { [weak self] in
+//            self?.showMenu(for: indexPath, button: cell.btn_ThreeDot)
+//        }
+  
         cell.btn_ThreeDot.tag = indexPath.row
         cell.btn_ThreeDot.addTarget(self, action: #selector(clcidelete), for: .touchUpInside)
-        
+
         return cell
     }
     
-    
     @objc func clcidelete(but:UIButton)  {
-        
         let dic = arr_List[but.tag]
-        
-        let updateAction = UIAction (
-            title: "Update"
-        ) { [weak self] _ in
+        drop.anchorView = but
+        drop.dataSource =  ["Update","Delete"]
+        drop.show()
+        drop.bottomOffset = CGPoint(x: 0, y: 45)
+        drop.selectionAction = { [unowned self] (index: Int, item: String) in
+
+            if index == 0 {
+                let swiftUIView = CurrentShiftAlertView(popFor: "Update") { confirmed in
+                    if confirmed {
+                        let vc = R.storyboard.main.updateJobPublishVC()!
+                        vc.shift_iD = dic["id"].stringValue
+                        vc.strOutletiD = dic["outlet_id"].stringValue
+                        vc.strOutletName = dic["business_name"].stringValue
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    }
+                }
+                self.presentSwiftUIAlert(swiftUIView)
+            } else {
+//               Task {
+//                   await webDeletShift(strSt: dic["id"].stringValue)
+//                }
+                let swiftUIView = CurrentShiftAlertView(popFor: "Delete") { confirmed in
+                    if confirmed {
+                        Task {
+                            print(dic["id"].stringValue)
+                            await self.webDeletShift(strSt: dic["id"].stringValue)
+                        }
+                    }
+                }
+                self.presentSwiftUIAlert(swiftUIView)
+            }
+        }
+    }
+    
+    func showMenu(for indexPath: IndexPath, button: UIButton) {
+
+        let dic = arr_List[indexPath.row]
+        print(dic)
+
+        let updateAction = UIAction(title: "Update") { [weak self] _ in
             guard let self else { return }
-            
+
             let swiftUIView = CurrentShiftAlertView(popFor: "Update") { confirmed in
                 if confirmed {
                     let vc = R.storyboard.main.updateJobPublishVC()!
@@ -368,42 +324,98 @@ extension CurrentShiftVC: UITableViewDataSource {
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
             }
-            
-            let hostingVC = UIHostingController(rootView: swiftUIView)
-            hostingVC.modalPresentationStyle = .overFullScreen
-            hostingVC.modalTransitionStyle = .crossDissolve
-            hostingVC.view.backgroundColor = .clear
-            
-            self.present(hostingVC, animated: true)
+
+            self.presentSwiftUIAlert(swiftUIView)
         }
-        
-        let deleteAction = UIAction (
-            title: "Delete",
-            attributes: .destructive
-        ) { [weak self] _ in
+
+        let deleteAction = UIAction(title: "Delete", attributes: .destructive) { [weak self] _ in
             guard let self else { return }
-            
+
             let swiftUIView = CurrentShiftAlertView(popFor: "Delete") { confirmed in
                 if confirmed {
-                   Task {
-                       await self.webDeletShift(strSt: dic["id"].stringValue)
+                    Task {
+                        print(dic["id"].stringValue)
+                        await self.webDeletShift(strSt: dic["id"].stringValue)
                     }
                 }
             }
-            
-            let hostingVC = UIHostingController(rootView: swiftUIView)
-            hostingVC.modalPresentationStyle = .overFullScreen
-            hostingVC.modalTransitionStyle = .crossDissolve
-            hostingVC.view.backgroundColor = .clear
-            
-            self.present(hostingVC, animated: true)
+
+            self.presentSwiftUIAlert(swiftUIView)
         }
-        
+
         let menu = UIMenu(title: "", children: [deleteAction, updateAction])
-        
-        but.menu = menu
-        but.showsMenuAsPrimaryAction = true
+
+        button.menu = menu
+        button.showsMenuAsPrimaryAction = true
     }
+    
+    func presentSwiftUIAlert(_ view: some View) {
+
+        let hostingVC = UIHostingController(rootView: view)
+        hostingVC.modalPresentationStyle = .overFullScreen
+        hostingVC.modalTransitionStyle = .crossDissolve
+        hostingVC.view.backgroundColor = .clear
+
+        present(hostingVC, animated: true)
+    }
+    
+//    @objc func clcidelete(but:UIButton)  {
+//        
+//        let dic = arr_List[but.tag]
+//        print(dic)
+//        
+//        let updateAction = UIAction (
+//            title: "Update"
+//        ) { [weak self] _ in
+//            guard let self else { return }
+//            
+//            let swiftUIView = CurrentShiftAlertView(popFor: "Update") { confirmed in
+//                if confirmed {
+//                    let vc = R.storyboard.main.updateJobPublishVC()!
+//                    vc.shift_iD = dic["id"].stringValue
+//                    vc.strOutletiD = dic["outlet_id"].stringValue
+//                    vc.strOutletName = dic["business_name"].stringValue
+//                    self.navigationController?.pushViewController(vc, animated: true)
+//                }
+//            }
+//            
+//            let hostingVC = UIHostingController(rootView: swiftUIView)
+//            hostingVC.modalPresentationStyle = .overFullScreen
+//            hostingVC.modalTransitionStyle = .crossDissolve
+//            hostingVC.view.backgroundColor = .clear
+//            
+//            self.present(hostingVC, animated: true)
+//        }
+//        
+//        let deleteAction = UIAction (
+//            title: "Delete",
+//            attributes: .destructive
+//        ) { [weak self] _ in
+//            guard let self else { return }
+//            
+//            let swiftUIView = CurrentShiftAlertView(popFor: "Delete") { confirmed in
+//                if confirmed {
+//                   Task {
+//                       print(dic["id"].stringValue)
+//                       await self.webDeletShift(strSt: dic["id"].stringValue)
+//                    }
+//                }
+//            }
+//            
+//            let hostingVC = UIHostingController(rootView: swiftUIView)
+//            hostingVC.modalPresentationStyle = .overFullScreen
+//            hostingVC.modalTransitionStyle = .crossDissolve
+//            hostingVC.view.backgroundColor = .clear
+//            
+//            self.present(hostingVC, animated: true)
+//        }
+//        
+//        let menu = UIMenu(title: "", children: [deleteAction, updateAction])
+//        
+//        but.menu = menu
+//        but.showsMenuAsPrimaryAction = true
+//    }
+    
 }
 
 extension CurrentShiftVC: UITableViewDelegate {

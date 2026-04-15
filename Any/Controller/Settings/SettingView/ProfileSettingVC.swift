@@ -79,8 +79,10 @@ class ProfileSettingVC: UIViewController{
     
     @IBAction func btn_CurrentShift(_ sender: UIButton)
     {
-        let vC = kStoryboardMain.instantiateViewController(withIdentifier: "CurrentShiftVC") as! CurrentShiftVC
-        self.navigationController?.pushViewController(vC, animated: true)
+        let swiftUIView = CurrentShiftView()
+        let hostingController = UIHostingController(rootView: swiftUIView)
+        
+        self.navigationController?.pushViewController(hostingController, animated: true)
     }
     
     @IBAction func btn_Rates(_ sender: UIButton)
@@ -215,30 +217,6 @@ extension ProfileSettingVC {
         
         print(paramsDict)
         
-//        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    kappDelegate.dic_Profile = swiftyJsonVar["result"]
-//                    let deleteStatus = swiftyJsonVar["result"]["delete_account_button_status"].stringValue
-//                    if deleteStatus == "Yes" {
-//                        self.btn_DeleteAccountOt.isHidden = false
-//                    } else {
-//                        self.btn_DeleteAccountOt.isHidden = true
-//                    }
-//                } else {
-//                    print(swiftyJsonVar["result"].string ?? "")
-//                }
-//                self.hideProgressBar()
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -265,29 +243,6 @@ extension ProfileSettingVC {
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.delete_Account.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    UserDefaults.standard.removeObject(forKey: USER_TYPE)
-//                    UserDefaults.standard.removeObject(forKey: STATUS)
-//                    UserDefaults.standard.removeObject(forKey: CUSTOMERID)
-//                    UserDefaults.standard.removeObject(forKey: CARDID)
-//                    UserDefaults.standard.synchronize()
-//                    Switcher.updateRootVC()
-//                } else {
-//                    print(swiftyJsonVar["result"].string ?? "")
-//                }
-//                self.hideProgressBar()
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_Account.url(), parameters: paramsDict, parentViewController: self)

@@ -17,7 +17,9 @@ class UserTabBar: UITabBarController {
         UITabBar.appearance().unselectedItemTintColor = .white
         UITabBar.appearance().barTintColor = UIColor(named: THEME_COLOR_NAME)
         if Utility.isUserLogin() {
-            GetProfile()
+           Task {
+               await GetProfile()
+            }
         }
     }
     
@@ -47,34 +49,28 @@ class UserTabBar: UITabBarController {
         }
     }
     
-    func GetProfile() {
+    func GetProfile() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.dic_Profile = swiftyJsonVar["result"]
-                    kappDelegate.dic_Profile = swiftyJsonVar["result"]
-                    self.firstName = "\(self.dic_Profile?["first_name"].stringValue ?? "" )"
-                    self.updateTabBarTitles()
-                    //                    self.imgProfile.sd_setImage(with: URL.init(string: (self.dic_Profile?["image"].stringValue)!), placeholderImage: UIImage.init(named: "placeholder1"), options: SDWebImageOptions(rawValue: 1), completed: nil)
-                } else {
-                    let message = swiftyJsonVar["result"].string
-                }
-                self.hideProgressBar()
+                
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.dic_Profile = swiftyJsonVar["result"]
+                kappDelegate.dic_Profile = swiftyJsonVar["result"]
+                self.firstName = "\(self.dic_Profile?["first_name"].stringValue ?? "" )"
+                self.updateTabBarTitles()
+            } else {
+                let message = swiftyJsonVar["result"].string
             }
-            
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        hideProgressBar()
     }
     
     private func makeCircularImage(_ image: UIImage?, size: CGSize) -> UIImage? {

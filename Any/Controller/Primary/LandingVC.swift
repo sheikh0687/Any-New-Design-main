@@ -22,9 +22,9 @@ class LandingVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
-
     }
     
     @IBAction func Login(_ sender: Any) {
@@ -35,7 +35,6 @@ class LandingVC: UIViewController {
     @IBAction func btnGetStarted(_ sender: UIButton) {
         let vc = Mainboard.instantiateViewController(withIdentifier: "LoginTypeVC") as! LoginTypeVC
         self.navigationController?.pushViewController(vc, animated: false)
-
     }
 }
 
@@ -44,12 +43,12 @@ extension LandingVC: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 4
     }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "LandingCell", for: indexPath) as! LandingCell
         cell.img.image = UIImage.init(named: arr_Image[indexPath.row])
         cell.lbl_title.text = arr_Name[indexPath.row]
         cell.lbl_Detail.text = arr_Descr[indexPath.row]
-     
         return cell
     }
 }
@@ -65,10 +64,10 @@ extension LandingVC: UICollectionViewDelegateFlowLayout {
 extension LandingVC: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        
         self.pageControl.currentPage = indexPath.row
     }
 }
+
 class CustomPageControl: UIPageControl {
 
 @IBInspectable var currentPageImage: UIImage?

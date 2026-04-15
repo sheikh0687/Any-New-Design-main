@@ -17,11 +17,7 @@ class ForgotPasswordVC: UIViewController {
     @IBOutlet weak var text_Mobile: UITextField!
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        //   strCCode = PhoneHelper.getCountryCode()
-        //        btn_Cou.setTitle("+\(strCCode!)", for: .normal)
-        //        countryList.delegate = self
-        
+        super.viewDidLoad()        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -32,8 +28,8 @@ class ForgotPasswordVC: UIViewController {
     
     @IBAction func btnLogin(_ sender: UIButton) {
         if isValidInput() {
-           Task {
-               await CheckEmailStatus()
+            Task {
+                await CheckEmailStatus()
             }
         }
     }
@@ -104,11 +100,9 @@ class ForgotPasswordVC: UIViewController {
                 let message = swiftyJsonVar["result"].stringValue
                 GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
             }
-            
         } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         }
-        
         hideProgressBar()
     }
 }

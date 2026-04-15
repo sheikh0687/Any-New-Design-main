@@ -22,10 +22,10 @@ class PaymentVC: UIViewController {
     @IBOutlet var listerExpiryDate: MaskedTextFieldDelegate!
     @IBOutlet weak var lbl_CardPayment: UILabel!
     
-    var amount = 0.0
-    var planId = ""
-    var requestId = ""
-    var providerId = ""
+//    var amount = 0.0
+//    var planId = ""
+//    var requestId = ""
+//    var providerId = ""
     
     var customer_Id = ""
     
@@ -67,26 +67,7 @@ class PaymentVC: UIViewController {
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.create_Customer.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    print("Save Customer id!!")
-//                    self.customer_Id = swiftyJsonVar["result"]["customer_id"].stringValue
-//                } else {
-//                    let message = swiftyJsonVar["result"].string
-//                    print(message ?? "")
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.create_Customer.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -103,8 +84,7 @@ class PaymentVC: UIViewController {
         hideProgressBar()
     }
     
-    func configureListener()
-    {
+    func configureListener() {
         listnerCardNum.affinityCalculationStrategy = .prefix
         listnerCardNum.affineFormats = ["[0000] [0000] [0000] [0000]"]
         
@@ -112,8 +92,7 @@ class PaymentVC: UIViewController {
         listerExpiryDate.affineFormats = ["[00]/[00]"]
     }
     
-    func cardValidation()
-    {
+    func cardValidation() {
         let cardParams = STPCardParams()
         
         // Split the expiration date to extract Month & Year
@@ -142,8 +121,7 @@ class PaymentVC: UIViewController {
         }
     }
     
-    func generateToken(_ cardParams: STPCardParams)
-    {
+    func generateToken(_ cardParams: STPCardParams) {
         STPAPIClient.shared.createToken(withCard: cardParams) { (token: STPToken?, error: Error?) in
             guard let token = token, error == nil else {
                 Utility.showAlertWithAction(withTitle: "Any", message: "Something went wrong", delegate: nil, parentViewController: self, completionHandler: { (boool) in
@@ -151,20 +129,27 @@ class PaymentVC: UIViewController {
                 return
             }
             print(token.tokenId)
-            self.save_Cards(token.tokenId)
+            Task {
+               await self.save_Cards(token.tokenId)
+            }
         }
     }
     
-    func save_Cards(_ token: String) {
+    func save_Cards(_ token: String) async {
         
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramsDict["customer_id"]  =  customer_Id as AnyObject
         paramsDict["tok_visa"]  =  token as AnyObject
         print(paramsDict)
+        
         showProgressBar()
-        Api.shared.add_Card(self, paramsDict) { response in
+        
+        do {
+            let response = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.save_CardStripe.url(), parameters: paramsDict, parentViewController: self)
             self.parseDataSaveCard(apiResponse: response)
+        } catch {
+            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         }
     }
     
@@ -186,8 +171,7 @@ class PaymentVC: UIViewController {
         }
     }
     
-    @IBAction func btnSubmit(_ sender: UIButton)
-    {
+    @IBAction func btnSubmit(_ sender: UIButton) {
         self.cardValidation()
     }
 }

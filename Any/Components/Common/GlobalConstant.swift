@@ -168,6 +168,7 @@ class GlobalConstant: NSObject {
         let passwordTest = NSPredicate(format: "SELF MATCHES %@", "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$")
         return passwordTest.evaluate(with: password)
     }
+    
     class func isValidEmail(_ testStr:String) -> Bool {
         // print("validate calendar: \(testStr)")
         let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
@@ -175,6 +176,7 @@ class GlobalConstant: NSObject {
         let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
         return emailTest.evaluate(with: testStr)
     }
+    
     class func verifyUrl (_ urlString: String?) -> Bool {
         //Check for nil
         if let urlString = urlString {

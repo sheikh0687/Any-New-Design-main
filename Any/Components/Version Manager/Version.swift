@@ -45,6 +45,7 @@ class VersionManager {
             } catch {
                 print("Failed to parse JSON: \(error.localizedDescription)")
             }
+            
         }.resume()
     }
     
@@ -67,4 +68,5 @@ class VersionManager {
             rootVC.present(alert, animated: true, completion: nil)
         }
     }
+    
 }

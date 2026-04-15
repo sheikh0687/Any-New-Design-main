@@ -127,28 +127,9 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         paramsDict["user_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_days_List.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.arr_AllDates = swiftyJsonVar["result"].arrayValue
-//                    print(self.arr_AllDates.count)
-//                } else {
-//                    let message = swiftyJsonVar["result"].string
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+
         do {
-            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_days_List.url(), parameters: paramsDict, parentViewController: self)
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_next_seven_date_list.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
                 self.arr_AllDates = swiftyJsonVar["result"].arrayValue
                 print(self.arr_AllDates.count)
@@ -180,7 +161,7 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
             formatter.locale = .current
             formatter.dateFormat = "yyyy-MM-dd"
             self.strDateOnly = formatter.date(from: strContainDate)
-           Task {
+            Task {
               await getClientList(strJobiD: "", strJobName: "")
             }
         }
@@ -205,7 +186,7 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramDict["lat"]  =   strlat as AnyObject
-        paramDict["lon"]  =   strlon as AnyObject
+        paramDict["lat"]  =   strlon as AnyObject
         paramDict["finddate"]  =   strDate as AnyObject
         paramDict["day_name"]  =   strDay as AnyObject
         paramDict["cat_id"]  =   "0" as AnyObject
@@ -214,31 +195,6 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         paramDict["job_type_name"] = strJobName as AnyObject
         
         print(paramDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_client_list.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    let resultArr = swiftyJsonVar["result"].arrayValue
-//                    
-//                    self.arr_List = resultArr
-//                    self.arr_FilterList = resultArr
-//                    
-//                    self.clientList_TableVw.backgroundView = UIView()
-//                    self.clientList_TableVw.reloadData()
-//                } else {
-//                    self.arr_List = []
-//                    self.arr_FilterList = []
-//                    self.clientList_TableVw.backgroundView = UIView()
-//                    self.clientList_TableVw.reloadData()
-//                    Utility.noDataFound("No Bookings At The Moment", tableViewOt: self.clientList_TableVw, parentViewController: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        }, failureBlock: { (error : Error) in
-//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-//            self.hideProgressBar()
-//        })
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_client_list.url(), parameters: paramDict, parentViewController: self)
@@ -264,58 +220,103 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         hideProgressBar()
     }
     
+//    func getAddressFromLatLon(pdblLatitude: String, withLongitude pdblLongitude: String) {
+//        
+//        var center : CLLocationCoordinate2D = CLLocationCoordinate2D()
+//        
+//        let lat: Double = Double("\(pdblLatitude)")!
+//        //21.228124
+//        let lon: Double = Double("\(pdblLongitude)")!
+//        //72.833770
+//        let ceo: CLGeocoder = CLGeocoder()
+//        center.latitude = lat
+//        center.longitude = lon
+//        
+//        let loc: CLLocation = CLLocation(latitude:center.latitude, longitude: center.longitude)
+//        
+//        
+//        ceo.reverseGeocodeLocation(loc, completionHandler:
+//                                    { [self](placemarks, error) in
+//            if (error != nil)
+//            {
+//                print("reverse geodcode fail: \(error!.localizedDescription)")
+//            }
+//            let pm = placemarks! as [CLPlacemark]
+//            
+//            if pm.count > 0 {
+//                let pm = placemarks![0]
+//                print(pm.country as Any)
+//                print(pm.locality as Any)
+//                print(pm.subLocality as Any)
+//                print(pm.thoroughfare as Any)
+//                print(pm.postalCode as Any)
+//                print(pm.subThoroughfare as Any)
+//                var addressString : String = ""
+//                if pm.subLocality != nil {
+//                    addressString = addressString + pm.subLocality! + ", "
+//                }
+//                if pm.thoroughfare != nil {
+//                    addressString = addressString + pm.thoroughfare! + ", "
+//                }
+//                if pm.locality != nil {
+//                    addressString = addressString + pm.locality! + ", "
+//                }
+//                if pm.country != nil {
+//                    addressString = addressString + pm.country! + ", "
+//                }
+//                if pm.postalCode != nil {
+//                    addressString = addressString + pm.postalCode! + " "
+//                }
+//                
+//                textSerach.text = addressString
+//                print(addressString)
+//            }
+//        })
+//    }
+    
     func getAddressFromLatLon(pdblLatitude: String, withLongitude pdblLongitude: String) {
         
-        var center : CLLocationCoordinate2D = CLLocationCoordinate2D()
-        
-        let lat: Double = Double("\(pdblLatitude)")!
-        //21.228124
-        let lon: Double = Double("\(pdblLongitude)")!
-        //72.833770
-        let ceo: CLGeocoder = CLGeocoder()
-        center.latitude = lat
-        center.longitude = lon
-        
-        let loc: CLLocation = CLLocation(latitude:center.latitude, longitude: center.longitude)
-        
-        
-        ceo.reverseGeocodeLocation(loc, completionHandler:
-                                    { [self](placemarks, error) in
-            if (error != nil)
-            {
-                print("reverse geodcode fail: \(error!.localizedDescription)")
-            }
-            let pm = placemarks! as [CLPlacemark]
+        // 1️⃣ Safely convert coordinates
+        guard let lat = Double(pdblLatitude),
+              let lon = Double(pdblLongitude) else {
+            print("Invalid coordinates")
+            return
+        }
+
+        let location = CLLocation(latitude: lat, longitude: lon)
+        let geocoder = CLGeocoder()
+
+        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
             
-            if pm.count > 0 {
-                let pm = placemarks![0]
-                print(pm.country as Any)
-                print(pm.locality as Any)
-                print(pm.subLocality as Any)
-                print(pm.thoroughfare as Any)
-                print(pm.postalCode as Any)
-                print(pm.subThoroughfare as Any)
-                var addressString : String = ""
-                if pm.subLocality != nil {
-                    addressString = addressString + pm.subLocality! + ", "
-                }
-                if pm.thoroughfare != nil {
-                    addressString = addressString + pm.thoroughfare! + ", "
-                }
-                if pm.locality != nil {
-                    addressString = addressString + pm.locality! + ", "
-                }
-                if pm.country != nil {
-                    addressString = addressString + pm.country! + ", "
-                }
-                if pm.postalCode != nil {
-                    addressString = addressString + pm.postalCode! + " "
-                }
-                
-                textSerach.text = addressString
-                print(addressString)
+            // 2️⃣ Handle error FIRST
+            if let error = error {
+                print("Reverse geocode failed:", error.localizedDescription)
+                return
             }
-        })
+            
+            // 3️⃣ Safely unwrap placemark
+            guard let placemark = placemarks?.first else {
+                print("No placemark found")
+                return
+            }
+
+            // 4️⃣ Build address safely
+            var addressParts: [String] = []
+
+            if let subLocality = placemark.subLocality { addressParts.append(subLocality) }
+            if let street = placemark.thoroughfare { addressParts.append(street) }
+            if let city = placemark.locality { addressParts.append(city) }
+            if let country = placemark.country { addressParts.append(country) }
+            if let postal = placemark.postalCode { addressParts.append(postal) }
+
+            let addressString = addressParts.joined(separator: ", ")
+
+            DispatchQueue.main.async {
+                self?.textSerach.text = addressString
+            }
+
+            print("Address:", addressString)
+        }
     }
     
     func getLikeUnlike(strClientiD:String) async {
@@ -326,20 +327,7 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
         paramDict["client_id"]  =   strClientiD as AnyObject
         
         print("Do print the \(paramDict)")
-        
-//        CommunicationManager.callPostService(apiUrl: Router.like_unlike.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.getClientList(strJobiD: "", strJobName: "")
-//                }
-//                self.hideProgressBar()
-//            }
-//        }, failureBlock: { (error : Error) in
-//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-//            self.hideProgressBar()
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.like_unlike.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -455,6 +443,7 @@ extension NewBookingVC : UITableViewDelegate {
                 
                 let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "BookingRequestVC") as! BookingRequestVC
                 objVC.dicClinetDetail = dic
+                print(dic)
                 if strDateOnly != nil {
                     objVC.strDateOnly = strDateOnly
                 } else {

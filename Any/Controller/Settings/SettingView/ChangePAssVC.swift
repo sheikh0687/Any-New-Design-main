@@ -67,26 +67,6 @@ class ChangePAssVC: UIViewController {
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramsDict["old_password"]     =   self.text_CurrentPa.text! as AnyObject
 
-//        CommunicationManager.callPostService(apiUrl: Router.change_password.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"] == "1") {
-//                    
-//                    self.perform(#selector(goBackD), with: self, afterDelay: 1.0)
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: "Password Changed", on: self)
-//                    
-//                } else {
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: swiftyJsonVar["message"].stringValue, on: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.change_password.url(), parameters: paramsDict,  parentViewController: self)
             if(swiftyJsonVar["status"] == "1") {
@@ -104,7 +84,7 @@ class ChangePAssVC: UIViewController {
         hideProgressBar()
     }
     
-    @objc func goBackD()  {
+    @objc func goBackD() {
         Switcher.updateRootVC()
     }
 }

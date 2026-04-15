@@ -50,40 +50,6 @@ extension SaveCardVC {
         
         print(paramsDict)
         
-//        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    let obj = swiftyJsonVar["result"]
-//                    
-//                    let customerId = obj["customer_id"].stringValue
-//                    
-//                    guard !customerId.isEmpty else {
-//                        print("Customer ID is empty.")
-//                        self.hideProgressBar()
-//                        Utility.noDataFound("No Saved Cards At The Moment", tableViewOt: self.saved_CardTableVw, parentViewController: self)
-//                        return
-//                    }
-//                    
-//                    self.customer_Id = obj["customer_id"].stringValue
-//                    //                    self.card_Id = obj["card_id"].stringValue
-//                    
-//                    USER_DEFAULT.set(customerId, forKey: CUSTOMERID)
-//                    //                    USER_DEFAULT.set(cardId, forKey: CARDID)
-//                    
-//                    self.WebGetSavedCard()
-//                } else {
-//                    print(swiftyJsonVar["result"].string ?? "Unknown error")
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -134,30 +100,6 @@ extension SaveCardVC {
         
         print(paramsDict)
         
-//        CommunicationManager.callPostService(apiUrl: Router.retrieve_all_card_stripe.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    print(swiftyJsonVar["result"])
-//                    self.arr_AllCards  = swiftyJsonVar["result"]["data"].arrayValue
-//                    print(self.arr_AllCards.count)
-//                    self.btn_AddNewCard.isHidden = true
-//                    self.saved_CardTableVw.backgroundView = UIView()
-//                    self.saved_CardTableVw.reloadData()
-//                } else {
-//                    self.arr_AllCards = []
-//                    self.btn_AddNewCard.isHidden = false
-//                    self.saved_CardTableVw.backgroundView = UIView()
-//                    self.saved_CardTableVw.reloadData()
-//                }
-//                self.hideProgressBar()
-//            }
-//        }, failureBlock: { (error : Error) in
-//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-//            self.hideProgressBar()
-//        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.retrieve_all_card_stripe.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -180,16 +122,19 @@ extension SaveCardVC {
         hideProgressBar()
     }
     
-    func delete_SavedCard(cardId: String) {
+    func delete_SavedCard(cardId: String) async {
         var dict: [String : Any] = [:]
         dict["user_id"]     = USER_DEFAULT.value(forKey: USERID)
         dict["card_id"]     = cardId
         dict["customer_id"] = customer_Id
         
         print(dict)
-        
-        Api.shared.delete_SavedCard(self, dict) { responseData in
-            self.parseDataSaveCard(apiResponse: responseData)
+                
+        do {
+            let response = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_SaveCard.url(), parameters: dict, parentViewController: self)
+            self.parseDataSaveCard(apiResponse: response)
+        } catch {
+            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
         }
     }
     
@@ -226,7 +171,9 @@ extension SaveCardVC: UITableViewDataSource, UITableViewDelegate {
         cell.lbl_Card.text = "\(obj["brand"].stringValue)  **** **** **** \(obj["last4"].stringValue)"
         
         cell.cloDelete = { () in
-            self.delete_SavedCard(cardId: obj["id"].stringValue)
+           Task {
+               await self.delete_SavedCard(cardId: obj["id"].stringValue)
+            }
         }
         
         cell.cloChoose = { () in

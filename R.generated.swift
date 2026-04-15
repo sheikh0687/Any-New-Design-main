@@ -221,7 +221,7 @@ struct _R {
     var walletdrawable: RswiftResources.DataResource { .init(name: "walletdrawable", path: [], bundle: bundle, onDemandResourceTags: nil) }
   }
 
-  /// This `_R.color` struct is generated, and contains static references to 10 colors.
+  /// This `_R.color` struct is generated, and contains static references to 12 colors.
   struct color {
     let bundle: Foundation.Bundle
 
@@ -254,9 +254,15 @@ struct _R {
 
     /// Color `WHITE`.
     var whitE: RswiftResources.ColorResource { .init(name: "WHITE", path: [], bundle: bundle) }
+
+    /// Color `offerdark`.
+    var offerdark: RswiftResources.ColorResource { .init(name: "offerdark", path: [], bundle: bundle) }
+
+    /// Color `offerlight`.
+    var offerlight: RswiftResources.ColorResource { .init(name: "offerlight", path: [], bundle: bundle) }
   }
 
-  /// This `_R.image` struct is generated, and contains static references to 344 images.
+  /// This `_R.image` struct is generated, and contains static references to 345 images.
   struct image {
     let bundle: Foundation.Bundle
 
@@ -346,6 +352,9 @@ struct _R {
 
     /// Image `List View`.
     var listView: RswiftResources.ImageResource { .init(name: "List View", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
+
+    /// Image `Offer`.
+    var offer: RswiftResources.ImageResource { .init(name: "Offer", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
 
     /// Image `Password`.
     var password: RswiftResources.ImageResource { .init(name: "Password", path: [], bundle: bundle, locale: nil, onDemandResourceTags: nil) }
@@ -1664,7 +1673,6 @@ struct _R {
         if UIKit.UIImage(named: "outletadmin", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'outletadmin' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "pin", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'pin' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "pin (1) 1", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'pin (1) 1' is used in storyboard 'Main', but couldn't be loaded.") }
-        if UIKit.UIImage(named: "placeholder", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'placeholder' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "plus", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'plus' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "plus circle 1", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'plus circle 1' is used in storyboard 'Main', but couldn't be loaded.") }
         if UIKit.UIImage(named: "plus1", in: bundle, compatibleWith: nil) == nil { throw RswiftResources.ValidationError("[R.swift] Image named 'plus1' is used in storyboard 'Main', but couldn't be loaded.") }

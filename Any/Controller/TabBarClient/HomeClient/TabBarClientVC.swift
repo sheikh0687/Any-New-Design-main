@@ -44,32 +44,26 @@ class TabBarClientVC: UITabBarController {
         }
     }
     
-    func GetProfile() {
+    func GetProfile() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-        CommunicationManager.callPostService(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async {
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    self.dic_Profile = swiftyJsonVar["result"]
-                    self.updateTabBarTitles()
-                } else {
-                    let message = swiftyJsonVar["result"].string
-                }
-                self.hideProgressBar()
+                
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_profile.url(), parameters: paramsDict, parentViewController: self)
+            if(swiftyJsonVar["status"].stringValue == "1") {
+                self.dic_Profile = swiftyJsonVar["result"]
+                self.updateTabBarTitles()
+            } else {
+                let message = swiftyJsonVar["result"].string
             }
-            
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
+        } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
+        }
+        
+        self.hideProgressBar()
     }
     
     private func makeCircularImage(_ image: UIImage?, size: CGSize) -> UIImage? {

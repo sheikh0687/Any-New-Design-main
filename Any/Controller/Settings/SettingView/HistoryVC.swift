@@ -17,9 +17,11 @@ class HistoryVC: UIViewController {
     @IBOutlet weak var table_List: UITableView!
     
     var arr_AllHistory:[JSON] = []
-
+    let currrencySymbol = USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) as? String
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -39,51 +41,20 @@ class HistoryVC: UIViewController {
 
 //MARK: API
 extension HistoryVC {
-    
     func WebGetApprovedBooking() async {
         showProgressBar()
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["client_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
 
         print(paramsDict)
-        
-        CommunicationManager.callPostService(apiUrl: Router.get_shift_complete_by_client.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-            
-            DispatchQueue.main.async { [self] in
-                let swiftyJsonVar = JSON(responseData)
-                print(swiftyJsonVar)
                 
-                table_List.isHidden = false
-                
-                if(swiftyJsonVar["status"].stringValue == "1") {
-                    
-                    self.lbl_Earning.text = "\(kCurrency) \(swiftyJsonVar["total_earning"].number ?? 0)"
-                    self.lbl_JobsCount.text = "\(swiftyJsonVar["total_job"].number ?? 0)"
-                    self.table_List.backgroundView = UIView()
-                    
-                    self.arr_AllHistory = swiftyJsonVar["result"].arrayValue
-                    self.table_List.reloadData()
-                } else {
-                    self.arr_AllHistory = []
-                    self.table_List.backgroundView = UIView()
-                    self.table_List.reloadData()
-                    Utility.noDataFound("No Transactions At The Moment", tableViewOt: self.table_List, parentViewController: self)
-                }
-                self.hideProgressBar()
-            }
-            
-        },failureBlock: { (error : Error) in
-            self.hideProgressBar()
-            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_shift_complete_by_client.url(), parameters: paramsDict, parentViewController: self)
             table_List.isHidden = false
             
             if(swiftyJsonVar["status"].stringValue == "1") {
                 
-                self.lbl_Earning.text = "\(kCurrency) \(swiftyJsonVar["total_earning"].number ?? 0)"
+                self.lbl_Earning.text = "\(currrencySymbol!) \(swiftyJsonVar["total_earning"].number ?? 0)"
                 self.lbl_JobsCount.text = "\(swiftyJsonVar["total_job"].number ?? 0)"
                 self.table_List.backgroundView = UIView()
                 
@@ -102,7 +73,6 @@ extension HistoryVC {
         
         hideProgressBar()
     }
-    
 }
 
 extension HistoryVC : UITableViewDataSource {
@@ -133,14 +103,12 @@ extension HistoryVC : UITableViewDataSource {
             strBr = "Break Type : Not Aplicable"
         } else {
             strBr = "\(strTyp) Break : \(dic["break_time"].stringValue)"
-
         }
         
         if strTyp == "Not Applicable" {
             strBr = "Break Type : Not Applicable"
         } else {
             strBr = "\(strTyp) Break : \(dic["break_time"].stringValue)"
-
         }
 
         if dic["rating_review_status"].stringValue == "Yes" {

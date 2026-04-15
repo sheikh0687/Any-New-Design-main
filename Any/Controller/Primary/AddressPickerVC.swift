@@ -95,36 +95,6 @@ class AddressPickerVC: UIViewController {
         }
     }
     
-//    func checkLocationPermission(on viewController: UIViewController) -> Bool {
-//        var checkNetwork: Bool = false
-//        let status = CLLocationManager.authorizationStatus()
-//
-//        // If location services are turned off completely
-//        if !CLLocationManager.locationServicesEnabled() {
-//            checkNetwork = false
-//        }
-//
-//        switch status {
-//        case .notDetermined:
-//            // You can request permission here if needed
-//            CLLocationManager().requestWhenInUseAuthorization()
-//            checkNetwork = true
-//
-//        case .restricted, .denied:
-//            // User has denied permission → Show alert to go to Settings
-//            checkNetwork = false
-//
-//        case .authorizedAlways, .authorizedWhenInUse:
-//            // All good — proceed with location fetching
-//            print("✅ Location access granted")
-//            checkNetwork = true
-//
-//        @unknown default:
-//            break
-//        }
-//        
-//        return checkNetwork
-//    }
     
     func showLocationDisabledAlert(on viewController: UIViewController) {
         let alertController = UIAlertController(

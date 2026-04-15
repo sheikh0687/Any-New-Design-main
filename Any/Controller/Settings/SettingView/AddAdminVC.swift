@@ -60,25 +60,7 @@ class AddAdminVC: UIViewController {
         paramsDict["type"]     =   strType as AnyObject
         
         print(paramsDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.add_OutletAdmin_AuthrisedApprover.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"] == "1") {
-        //                    self.navigationController?.popViewController(animated: true)
-        //                } else {
-        //                    let message = swiftyJsonVar["message"].stringValue
-        //                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //        },failureBlock: { (error : Error) in
-        //            self.hideProgressBar()
-        //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        //        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_OutletAdmin_AuthrisedApprover.url(), parameters: paramsDict,  parentViewController: self)
             if(swiftyJsonVar["status"] == "1") {

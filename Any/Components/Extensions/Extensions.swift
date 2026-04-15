@@ -496,6 +496,7 @@ extension Date {
           return gregorian.date(byAdding: .day, value: 7, to: sunday)
       }
 }
+
 extension Date {
 
   static func today() -> Date {

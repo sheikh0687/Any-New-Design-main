@@ -19,10 +19,6 @@ class TermsAndCondVC: UIViewController {
         
         self.navigationController?.navigationBar.isHidden = false
         
-        //        setNavigationBarItem(LeftTitle: "", LeftImage: "menu", CenterTitle: kappDelegate.strTitle, CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: NAAV_BG_COLOR, BackgroundImage: "", TextColor: WHITE_COLOR, TintColor: WHITE_COLOR, Menu: "")
-        //        lbl_About.text = ""
-        //        CheckEmailStatus()
-        
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: strTitle, CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
         
         let webView = WKWebView(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: self.view.frame.size.height))
@@ -42,29 +38,6 @@ class TermsAndCondVC: UIViewController {
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_user_page.url(), parameters: paramsDict,  parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"] == "1") {
-//                    let dicAll = swiftyJsonVar["result"]
-//                    
-//                    if kappDelegate.strTitle == "Terms and Conditions" {
-//                        strDesc = dicAll["term_sp"].stringValue
-//                        lbl_About.attributedText = strDesc.htmlToAttributedString
-//                    } else {
-//                        strDesc = dicAll["privacy_sp"].stringValue
-//                        lbl_About.attributedText = strDesc.htmlToAttributedString
-//                    }
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_user_page.url(), parameters: paramsDict,  parentViewController: self)
