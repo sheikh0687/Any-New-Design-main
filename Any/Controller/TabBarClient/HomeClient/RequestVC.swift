@@ -399,17 +399,21 @@ extension RequestVC : UITableViewDataSource {
                 
         let presentApprovalPopUp: (String) -> Void = { navigateType in
             let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpSimpleVC") as! PopUpSimpleVC
+            
             objVC.str_Head = "Shift Approved"
             objVC.str_Desc = "You have approved this shift\n\nThe service provider selected has been notified of your approval"
             objVC.str_Desc1 = ""
             objVC.is_Navigate = navigateType
+            
             objVC.completion = {
                Task {
                    await self.WebGetApprovedBooking()
                 }
             }
+            
             objVC.modalPresentationStyle = .overCurrentContext
             objVC.modalTransitionStyle = .crossDissolve
+            
             self.present(objVC, animated: false, completion: nil)
         }
         
@@ -427,33 +431,43 @@ extension RequestVC : UITableViewDataSource {
         } else {
             if card_Id == "" {
                 let vc = kStoryboardMain.instantiateViewController(withIdentifier: "SaveCardVC") as! SaveCardVC
+                
                 vc.cloCardDetail = { (cardId, customerId) in
                     let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpApprovalVC") as! PopUpApprovalVC
+                    
                     objVC.dicM = dic
                     objVC.card_Id = cardId
                     objVC.customer_Id = customerId
+                    
                     objVC.completion = {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             presentApprovalPopUp("SaveCard")
                         }
                     }
+                    
                     objVC.modalPresentationStyle = .overCurrentContext
                     objVC.modalTransitionStyle = .crossDissolve
+                    
                     self.present(objVC, animated: false, completion: nil)
                 }
+                
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpApprovalVC") as! PopUpApprovalVC
+                
                 objVC.dicM = dic
                 objVC.customer_Id = self.customer_Id ?? ""
                 objVC.card_Id = self.card_Id ?? ""
+                
                 objVC.completion = {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         presentApprovalPopUp("CustomerAndCard")
                     }
                 }
+                
                 objVC.modalPresentationStyle = .overCurrentContext
                 objVC.modalTransitionStyle = .crossDissolve
+                
                 self.present(objVC, animated: false, completion: nil)
             }
         }

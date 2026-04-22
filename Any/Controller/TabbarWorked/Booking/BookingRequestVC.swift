@@ -378,7 +378,9 @@ extension BookingRequestVC {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_set_shift_book.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
                 let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
+                
                 objVC.strFrom = "Summery"
+                
                 if autoShift == "Yes" {
                     objVC.str_Head = ""
                     objVC.str_Desc = "Your shift booking for \(singleDate) has been auto approved. Kindly be on time for your shift."
@@ -386,6 +388,7 @@ extension BookingRequestVC {
                     objVC.str_Head = "Your Booking Request Has Been Sent"
                     objVC.str_Desc = "You will receive a notification once the unit manager has approved/declined your shift."
                 }
+                
                 objVC.completion = {
                     Switcher.updateRootVC()
                 }

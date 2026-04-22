@@ -104,7 +104,6 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                 
                 if strCard == "Accept" {
                     let sdsd = kappDelegate.dicCrent["start_time"].stringValue
-                    
                     let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpBookingConfirmVC") as! PopUpBookingConfirmVC
                     objVC.str_Desc = "Your shift will start at (\(sdsd)) today at this location:"
                     objVC.str_Sub_Desc = "\(kappDelegate.dicCrent["client_details"]["business_name"].stringValue), \(kappDelegate.dicCrent["address"].stringValue)\n\n\(kappDelegate.dicCrent["currency_symbol"].stringValue)\(kappDelegate.dicCrent["shift_rate"].stringValue)/Hour"
@@ -113,8 +112,7 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                     objVC.modalPresentationStyle = .overCurrentContext
                     objVC.modalTransitionStyle = .crossDissolve
                     self.present(objVC, animated: false, completion: nil)
-                    
-                } else  {
+                } else {
                    Task {
                        await self.WebGetApprovedBooking()
                     }
@@ -122,7 +120,6 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
             } else {
                 GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: swiftyJsonVar["message"].stringValue, on: self)
             }
-            
         } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         }

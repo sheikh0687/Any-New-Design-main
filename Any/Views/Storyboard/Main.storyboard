@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="smJ-8W-EOe">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="smJ-8W-EOe">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -19,6 +19,9 @@
         </array>
         <array key="Roboto-Bold.ttf">
             <string>Roboto-Bold</string>
+        </array>
+        <array key="Roboto-Medium.ttf">
+            <string>Roboto-Medium</string>
         </array>
         <array key="cairo_regular.ttf">
             <string>Cairo-Regular</string>
@@ -73,6 +76,7 @@
                     <tabBarItem key="tabBarItem" title="My Booking" image="Booking" id="n6A-bX-xqR"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="ZKO-8y-s9M">
+                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -91,6 +95,7 @@
                     <tabBarItem key="tabBarItem" title="Wallet" image="waller1" id="NH7-p2-Nnv"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="etS-q2-dk1">
+                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -109,6 +114,7 @@
                     <tabBarItem key="tabBarItem" title="Find a Job" image="Search" id="1pa-ky-QXk"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="DsF-yq-XUs">
+                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -1662,7 +1668,7 @@
             <objects>
                 <viewController storyboardIdentifier="EditProfileVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="2t0-8L-ehq" customClass="EditProfileVC" customModule="Any" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="6e1-d4-6VS">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TaS-hW-ZG3">
@@ -4007,6 +4013,7 @@ Taken</string>
                     <tabBarItem key="tabBarItem" title="My Jobs" image="Booking" id="Auq-iu-xIP"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="shq-Rq-FJF">
+                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -4030,7 +4037,7 @@ Taken</string>
                                 <rect key="frame" x="0.0" y="190" width="414" height="589"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="swt-Cf-hBE">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1192"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1214"/>
                                         <subviews>
                                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lOs-v6-uwj">
                                                 <rect key="frame" x="30" y="20" width="354" height="90"/>
@@ -4210,10 +4217,10 @@ Taken</string>
                                                 </userDefinedRuntimeAttributes>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="gXs-qk-z5L">
-                                                <rect key="frame" x="10" y="205" width="394" height="967"/>
+                                                <rect key="frame" x="10" y="205" width="394" height="989"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="MgO-kc-dhQ">
-                                                        <rect key="frame" x="0.0" y="0.0" width="394" height="566.5"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="394" height="588.5"/>
                                                         <subviews>
                                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="wVp-G3-ueu">
                                                                 <rect key="frame" x="0.0" y="0.0" width="394" height="70"/>
@@ -4243,7 +4250,7 @@ Taken</string>
                                                                 </subviews>
                                                             </stackView>
                                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="9xL-QP-WHp">
-                                                                <rect key="frame" x="0.0" y="90" width="394" height="26.5"/>
+                                                                <rect key="frame" x="0.0" y="90" width="394" height="48.5"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Today's Requirement" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7M3-NT-atW">
                                                                         <rect key="frame" x="0.0" y="0.0" width="394" height="22"/>
@@ -4251,14 +4258,14 @@ Taken</string>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3F7-ME-6OX">
-                                                                        <rect key="frame" x="0.0" y="24" width="394" height="0.0"/>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="F&amp;B" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3F7-ME-6OX">
+                                                                        <rect key="frame" x="0.0" y="24" width="394" height="22"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="16"/>
                                                                         <color key="textColor" name="DARK_GREY"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <tableView hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="kRs-xc-Gz9">
-                                                                        <rect key="frame" x="0.0" y="25" width="394" height="110"/>
+                                                                        <rect key="frame" x="0.0" y="47" width="394" height="110"/>
                                                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="height" constant="110" id="9EL-gC-7FE"/>
@@ -4269,7 +4276,7 @@ Taken</string>
                                                                         </connections>
                                                                     </tableView>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IfF-tx-Qdf">
-                                                                        <rect key="frame" x="0.0" y="26" width="394" height="0.5"/>
+                                                                        <rect key="frame" x="0.0" y="48" width="394" height="0.5"/>
                                                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="height" constant="0.5" id="wrc-xg-YYa"/>
@@ -4281,7 +4288,7 @@ Taken</string>
                                                                 </subviews>
                                                             </stackView>
                                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Bjw-wx-I0O">
-                                                                <rect key="frame" x="0.0" y="136.5" width="394" height="180"/>
+                                                                <rect key="frame" x="0.0" y="158.5" width="394" height="180"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Today's Manpower" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b3W-5M-Du0">
                                                                         <rect key="frame" x="0.0" y="0.0" width="394" height="22"/>
@@ -4303,7 +4310,7 @@ Taken</string>
                                                                 </subviews>
                                                             </stackView>
                                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Imi-fm-cuO">
-                                                                <rect key="frame" x="0.0" y="336.5" width="394" height="230"/>
+                                                                <rect key="frame" x="0.0" y="358.5" width="394" height="230"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Upcoming Shifts" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C3S-vK-Mv0">
                                                                         <rect key="frame" x="0.0" y="0.0" width="394" height="22"/>
@@ -4327,7 +4334,7 @@ Taken</string>
                                                         </subviews>
                                                     </stackView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="Frm-9i-EWj">
-                                                        <rect key="frame" x="0.0" y="586.5" width="394" height="380.5"/>
+                                                        <rect key="frame" x="0.0" y="608.5" width="394" height="380.5"/>
                                                         <subviews>
                                                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F4B-j0-N6o">
                                                                 <rect key="frame" x="0.0" y="0.0" width="394" height="140"/>
@@ -4539,6 +4546,7 @@ Taken</string>
                     <tabBarItem key="tabBarItem" title="Post A Job" image="plus1" id="kHm-58-hXP"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="X4b-T0-PXc">
+                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -4556,6 +4564,7 @@ Taken</string>
                 <navigationController id="LYu-uY-64k" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Urgent" image="Search" id="dCe-Le-L0S"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="18z-87-Jst">
+                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -5468,6 +5477,7 @@ Taken</string>
                     <tabBarItem key="tabBarItem" title="Requests" image="Req" selectedImage="Req1" id="zuT-h3-twb"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Qc1-Ku-k6E">
+                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -11253,6 +11263,7 @@ Taken</string>
                     <tabBarItem key="tabBarItem" title="Profile" id="kyB-63-JXD"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="4SX-lh-LVP">
+                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -12160,7 +12171,7 @@ Taken</string>
             <objects>
                 <viewController storyboardIdentifier="PublishJobVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bd7-dG-qxJ" customClass="PublishJobVC" customModule="Any" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="W7R-t6-bNb">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="1000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cea-6t-pjn">
@@ -13763,7 +13774,7 @@ Taken</string>
             <objects>
                 <viewController storyboardIdentifier="UpdateJobPublishVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="kdR-4b-fdk" customClass="UpdateJobPublishVC" customModule="Any" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="jx8-M9-5bx">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="1000"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Idc-Ju-UNI">
@@ -15438,6 +15449,7 @@ Taken</string>
                     <tabBarItem key="tabBarItem" title="Wishlist" image="unfav24" id="PvM-oH-YRa"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="3jS-sI-djq">
+                        <rect key="frame" x="0.0" y="96" width="414" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -16301,7 +16313,7 @@ Taken</string>
         <image name="visa" width="512" height="512"/>
         <image name="waller1" width="19" height="19"/>
         <image name="wallet-filled-money-tool 1" width="150" height="150"/>
-        <image name="wallet_ic" width="128" height="128"/>
+        <image name="wallet_ic" width="60" height="60"/>
         <namedColor name="BG_COLOR">
             <color red="0.792156862745098" green="0.96862745098039216" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

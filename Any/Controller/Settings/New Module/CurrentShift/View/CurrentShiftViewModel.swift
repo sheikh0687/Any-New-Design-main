@@ -100,8 +100,10 @@ class CurrentShiftViewModel: ObservableObject {
         params["user_id"]            = USER_DEFAULT.value(forKey: USERID) as AnyObject
         params["shift_autoapproval"] = (enabled ? "Yes" : "No") as AnyObject
  
+        print(params)
+        
         do {
-            let json = try await CommunicationManager.callPostServiceAsync(
+            let json = try await CommunicationManager.callPostServiceAsync (
                 apiUrl: Router.set_shift_autoapproval_status.url(),
                 parameters: params,
                 parentViewController: nil
