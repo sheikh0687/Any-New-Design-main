@@ -92,32 +92,6 @@ class ClientSigningDetailVC: UIViewController {
 }
 
 extension ClientSigningDetailVC {
-    
-//    func GetClientInstruction() {
-//        showProgressBar()
-//        var paramsDict:[String:AnyObject] = [:]
-//        paramsDict["country_id"]  =   USER_DEFAULT.value(forKey: COUNTRYID) as AnyObject
-//        
-//        CommunicationManager.callPostService(apiUrl: Router.get_country_details.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    let obj = swiftyJsonVar["result"]
-//                    self.txt_RegisterNumber.placeholder = obj["client_document"].stringValue
-//                } else {
-//                    let message = swiftyJsonVar["message"].stringValue
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-//    }
         
     func WebUpdateClientProfile() async {
         showProgressBar()

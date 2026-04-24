@@ -117,6 +117,15 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                        await self.WebGetApprovedBooking()
                     }
                 }
+            }
+            else if (swiftyJsonVar["status"].stringValue == "2") {
+                let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpVC") as! PopUpVC
+                objVC.strFrom = "Summery"
+                objVC.str_Head = "Booking status update"
+                objVC.str_Desc = "Bookings for \(kappDelegate.dicCrent["client_details"]["business_name"].stringValue) on \(dicCrent["date"].stringValue) have been switched from Instant Approval to Pending Approval due to the client’s billing issue. Please wait a few hours for the approval notification. No action needed on your side for now."
+                 objVC.modalPresentationStyle = .overCurrentContext
+                objVC.modalTransitionStyle = .crossDissolve
+                self.present(objVC, animated: false, completion: nil)
             } else {
                 GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: swiftyJsonVar["message"].stringValue, on: self)
             }

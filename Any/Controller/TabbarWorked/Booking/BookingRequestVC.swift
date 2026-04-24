@@ -197,7 +197,6 @@ class BookingRequestVC: UIViewController {
                await getDataGetList()
             }
         }
-        
     }
     
     @IBAction func next(_ sender: Any) {
@@ -401,12 +400,7 @@ extension BookingRequestVC {
                 objVC.strFrom = "Summery"
                 objVC.str_Head = "Booking status update"
                 objVC.str_Desc = "Bookings for \(self.dicClinetDetail["business_name"].stringValue) on \(date) have been switched from Instant Approval to Pending Approval due to the client’s billing issue. Please wait a few hours for the approval notification. No action needed on your side for now."
-                
-                objVC.completion = {
-                    Switcher.updateRootVC()
-                }
-                
-                objVC.modalPresentationStyle = .overCurrentContext
+                 objVC.modalPresentationStyle = .overCurrentContext
                 objVC.modalTransitionStyle = .crossDissolve
                 self.present(objVC, animated: false, completion: nil)
             } else {
@@ -687,7 +681,7 @@ extension BookingRequestVC: UITableViewDataSource, UITableViewDelegate {
                         // Upload document screen
                         let objClient = dic["client_details"].dictionaryValue
                         
-                        let swiftUIView = PopDocView(
+                        let swiftUIView = PopDocView (
                             countryName: objClient["country_name"]?.stringValue ?? "",
                             documentRequired: dic["document_requied"].stringValue
                         ) { nrcImg, docImg in

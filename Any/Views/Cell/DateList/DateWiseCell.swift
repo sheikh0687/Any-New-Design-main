@@ -39,7 +39,9 @@ extension DateWiseCell: UICollectionViewDataSource,UICollectionViewDelegateFlowL
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DateCollectionCell", for: indexPath) as! DateCollectionCell
+        
         let dic = arr_DateWiseList[indexPath.row]
+        
         cell.lbl_NumberCount.text = "\(dic["accept_shift_count"].numberValue)"
         cell.lbl_NumberCount.clipsToBounds = true
         cell.lbl_NumberCount.cornerRadius1 = 18

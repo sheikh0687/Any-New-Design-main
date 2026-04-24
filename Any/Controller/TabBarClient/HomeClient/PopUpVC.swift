@@ -67,7 +67,6 @@ class PopUpVC: UIViewController {
         if strFrom == "Summery" {
             if let completion = completion {
                 completion()
-                
             }
             self.dismiss(animated: false, completion: nil)
             
