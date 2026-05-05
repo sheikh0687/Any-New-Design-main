@@ -115,36 +115,6 @@ extension SelectAllJobTypesVC {
         
         print(paramsDict)
         
-//        CommunicationManager.callPostService(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.arrayOfOutletName = swiftyJsonVar["result"].arrayValue
-//                    
-//                    let defaultOutlet: JSON = [
-//                        "id": USER_DEFAULT.value(forKey: USERID) as? String ?? "",
-//                        "business_name": USER_DEFAULT.value(forKey: BUSINESS_NAME) as? String ?? "My Business",
-//                        "business_logo": USER_DEFAULT.value(forKey: BUSINESS_LOGO) as? String ?? ""
-//                    ]
-//                    
-//                    // Only insert if not already present
-//                    if self.arrayOfOutletName.first?["id"].stringValue != defaultOutlet["id"].stringValue {
-//                        self.arrayOfOutletName.insert(defaultOutlet, at: 0)
-//                    }
-//                    
-//                    self.jobTypes_TableVw.reloadData()
-//                } else {
-//                    print("Something Went Wrong")
-//                }
-//                self.hideProgressBar()
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -177,28 +147,7 @@ extension SelectAllJobTypesVC {
         let paramsDict:[String:AnyObject] = [:]
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.arrayOfJobType = swiftyJsonVar["result"].arrayValue
-//                    self.jobTableHeight.constant = CGFloat(self.arrayOfJobType.count * 40)
-//                    print(self.arrayOfJobType.count)
-//                    self.jobTypes_TableVw.reloadData()
-//                } else {
-//                    let message = swiftyJsonVar["result"].string
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -223,30 +172,6 @@ extension SelectAllJobTypesVC {
         paramsDict["user_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_client_weekly_rate.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.arrayOfWeekDays = swiftyJsonVar["result"].arrayValue
-//                    self.arr_DaysName = self.arrayOfWeekDays.map({$0["day_name"].stringValue})
-//                    
-//                    print(self.arrayOfWeekDays.count)
-//                    self.jobTableHeight.constant = CGFloat(self.arrayOfWeekDays.count * 40)
-//                    
-//                    self.jobTypes_TableVw.reloadData()
-//                } else {
-//                    let message = swiftyJsonVar["result"].string
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
         
         do {
             let swiftyJsonVar = try await  CommunicationManager.callPostServiceAsync(apiUrl: Router.get_client_weekly_rate.url(), parameters: paramsDict, parentViewController: self)

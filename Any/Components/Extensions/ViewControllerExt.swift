@@ -125,19 +125,23 @@ extension UIViewController {
             alpha: CGFloat(1.0)
         )
     }
+    
     var topbarHeight1: CGFloat {
         return UIApplication.shared.statusBarFrame.size.height +
         self.view.safeAreaInsets.top
     }
+    
     var topbarHeight: CGFloat {
         return UIApplication.shared.statusBarFrame.size.height +
         self.navigationController!.navigationBar.frame.size.height
     }
+    
     func showProgressBar() {
         SVProgressHUD.setBackgroundColor(UIColor.init(named: "THEME_COLOR")!)
         SVProgressHUD.setForegroundColor(UIColor.white)
         SVProgressHUD.show()
     }
+    
     func hideProgressBar() {
         SVProgressHUD.dismiss()
     }

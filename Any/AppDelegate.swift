@@ -185,8 +185,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let userInfo = response.notification.request.content.userInfo
         print(userInfo)
         if let info = userInfo as? Dictionary<String, AnyObject> {
-            let title = userInfo["title"]  ?? ""
-            hanleNotification(info: info, strStatus: title as! String, strFrom: "Back")
+            let title = userInfo["title"] as? String ?? ""
+            hanleNotification(info: info, strStatus: title, strFrom: "Back")
         }
         completionHandler()
     }

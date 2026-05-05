@@ -9,7 +9,7 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class AddressPickerVC: UIViewController {
+class AddressPickerVC: UIViewController, CLLocationManagerDelegate {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var txtSearchLocation: UITextView!
@@ -28,6 +28,8 @@ class AddressPickerVC: UIViewController {
     
     var locationPickedBlock: ((CLLocationCoordinate2D, Double, Double, String) -> Void)?
     
+    var locationManager: CLLocationManager?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -40,24 +42,7 @@ class AddressPickerVC: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if checkLocationPermission(on: self) {
-            self.searchCompleter.delegate = self
-            self.txtSearchLocation.textColor = .lightGray
-            Utility.showCurrentLocation(mapView, self)
-            Utility.getLocationByCoordinates(location: kappDelegate.coordinate2) { (address, display_address) in
-                self.txtSearchLocation.text = address
-                self.location_cordinate = kappDelegate.coordinate2.coordinate
-                self.lat = kappDelegate.coordinate2.coordinate.latitude
-                self.lon = kappDelegate.coordinate2.coordinate.longitude
-                self.address = address
-                self.setSearchLocation()
-            }
-            let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(addAnnotationOnLongPress(gesture:)))
-            longPressGesture.minimumPressDuration = 1.0
-            self.mapView.addGestureRecognizer(longPressGesture)
-        } else {
-            showLocationDisabledAlert(on: self)
-        }
+        startLocationFlowIfNeeded()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -65,36 +50,51 @@ class AddressPickerVC: UIViewController {
         self.navigationController?.navigationBar.isHidden = true
     }
     
-    func checkLocationPermission(on viewController: UIViewController) -> Bool {
-        let manager = CLLocationManager()
-        // 1. Is system location enabled?
+    func startLocationFlowIfNeeded() {
+        locationManager = CLLocationManager()
+        locationManager?.delegate = self
         guard CLLocationManager.locationServicesEnabled() else {
-            showLocationDisabledAlert(on: viewController)
-            return false
+            showLocationDisabledAlert(on: self)
+            return
         }
-        // 2. What's this app's authorization status?
         let status: CLAuthorizationStatus
         if #available(iOS 14.0, *) {
-            status = manager.authorizationStatus
+            status = locationManager!.authorizationStatus
         } else {
             status = CLLocationManager.authorizationStatus()
         }
         switch status {
         case .notDetermined:
-            manager.requestWhenInUseAuthorization()
-            return true
+            locationManager?.requestWhenInUseAuthorization()
         case .restricted, .denied:
-            showLocationDisabledAlert(on: viewController)
-            return false
+            showLocationDisabledAlert(on: self)
         case .authorizedAlways, .authorizedWhenInUse:
-            print("✅ Location access granted")
-            return true
+            setupLocationUI()
         @unknown default:
-            showLocationDisabledAlert(on: viewController)
-            return false
+            showLocationDisabledAlert(on: self)
         }
     }
     
+    func setupLocationUI() {
+        self.searchCompleter.delegate = self
+        self.txtSearchLocation.textColor = .lightGray
+        Utility.showCurrentLocation(mapView, self)
+        Utility.getLocationByCoordinates(location: kappDelegate.coordinate2) { (address, display_address) in
+            self.txtSearchLocation.text = address
+            self.location_cordinate = kappDelegate.coordinate2.coordinate
+            self.lat = kappDelegate.coordinate2.coordinate.latitude
+            self.lon = kappDelegate.coordinate2.coordinate.longitude
+            self.address = address
+            self.setSearchLocation()
+        }
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.addAnnotationOnLongPress(gesture:)))
+        longPressGesture.minimumPressDuration = 1.0
+        self.mapView.addGestureRecognizer(longPressGesture)
+    }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        startLocationFlowIfNeeded()
+    }
     
     func showLocationDisabledAlert(on viewController: UIViewController) {
         let alertController = UIAlertController(

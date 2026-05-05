@@ -291,8 +291,6 @@ class PublishJobVC: UIViewController {
                     arrayWorkerTime.removeLast()
                 }
             }
-            //            }
-            
         } else {
             // Check
             sender.isSelected = true
@@ -318,11 +316,8 @@ class PublishJobVC: UIViewController {
             print(self.arrayEndTime)
         }
         
-        // Update UI
-        //        self.workerShiftVw.isHidden = (arrayWorkerShiftTime.count <= 1)
         self.worker_TableHeight.constant = CGFloat(arrayWorkerTime.count * 85)
         self.worker_TableVw.reloadData()
-        
     }
     
     @IBAction func btn_PublishJob(_ sender: UIButton) {
@@ -482,24 +477,7 @@ extension PublishJobVC {
         paramsDict["client_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
         
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.outletView.isHidden = false
-//                } else {
-//                    self.outletView.isHidden = true
-//                }
-//                self.hideProgressBar()
-//            }
-//            
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -514,8 +492,7 @@ extension PublishJobVC {
         self.hideProgressBar()
     }
     
-    func collectParamJobPost()
-    {
+    func collectParamJobPost() {
         paramJobPostDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramJobPostDict["job_type"]     =  strJobTypeName  as AnyObject
         paramJobPostDict["job_type_id"]     =  strJobId  as AnyObject

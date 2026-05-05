@@ -73,7 +73,6 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
                 objVC.userName = (kappDelegate.dicCrent["client_details"]["first_name"].stringValue) + " " + (kappDelegate.dicCrent["client_details"]["last_name"].stringValue)
                 objVC.strReasonID = kappDelegate.dicCrent["client_details"]["id"].stringValue
                 self.navigationController?.pushViewController(objVC, animated: true)
-                
             }
         } else if text == "Confirm" {
            Task {
@@ -101,7 +100,6 @@ class SameDayRequestVC: UIViewController, FooTwoViewControllerDelegate {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_to_set_shift_cart_broadcast.url(), parameters: paramsDict, parentViewController: self)
             
             if(swiftyJsonVar["status"].stringValue == "1") {
-                
                 if strCard == "Accept" {
                     let sdsd = kappDelegate.dicCrent["start_time"].stringValue
                     let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpBookingConfirmVC") as! PopUpBookingConfirmVC

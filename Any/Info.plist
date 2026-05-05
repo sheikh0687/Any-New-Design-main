@@ -27,5 +27,9 @@
 	<string>Any requires constant access to your phone’s location to notify to user.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Any requires constant access to your phone’s location to notify to user.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Any requires access to the camera to upload business logo.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Any requires access to the photo library to upload business logo.</string>
 </dict>
 </plist>

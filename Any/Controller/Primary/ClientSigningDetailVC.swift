@@ -27,8 +27,17 @@ class ClientSigningDetailVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.txt_MobileNumber.text = self.strMobileNum
-        btn_Cou.setTitle("+\(strCode)", for: .normal)
+        if strMobileNum == "" {
+            let fullNumber = USER_DEFAULT.value(forKey: USERMOBILE) as! String
+            let countryCode = String(fullNumber.prefix(2))
+            let uMobile = String(fullNumber.dropFirst(2))
+            
+            self.txt_MobileNumber.text = uMobile
+            btn_Cou.setTitle("+\(countryCode)", for: .normal)
+        } else {
+            self.txt_MobileNumber.text = self.strMobileNum
+            btn_Cou.setTitle("+\(strCode)", for: .normal)
+        }
         self.txt_BusinessAddress.isUserInteractionEnabled = true
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(addPicker))
         txt_BusinessAddress.addGestureRecognizer(tapGesture)

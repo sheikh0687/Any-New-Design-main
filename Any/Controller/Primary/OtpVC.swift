@@ -70,7 +70,7 @@ extension OtpVC {
                 USER_DEFAULT.set(swiftyJsonVar["result"]["id"].stringValue, forKey: CLIENTID)
                 USER_DEFAULT.set(swiftyJsonVar["status"].stringValue, forKey: STATUS)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["email"].stringValue, forKey: USEREMAIL)
-                USER_DEFAULT.set(swiftyJsonVar["result"]["mobile"].stringValue, forKey: USERMOBILE)
+                USER_DEFAULT.set(swiftyJsonVar["result"]["mobile_with_code"].stringValue, forKey: USERMOBILE)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["first_name"].stringValue, forKey: USERFIRSTNAME)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["last_name"].stringValue, forKey: USERLASTNAME)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["request_payment_type"].stringValue, forKey: PAYMENT_TYPE)

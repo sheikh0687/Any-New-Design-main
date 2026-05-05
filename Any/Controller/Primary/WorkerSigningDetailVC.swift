@@ -93,6 +93,7 @@ class WorkerSigningDetailVC: UIViewController {
     func isValidInput() -> Bool {
         var isValid : Bool = true;
         var errorMessage : String = ""
+        
         if workerProfile == nil {
             isValid = false
             errorMessage = "Please Select Profile Image"
@@ -189,7 +190,6 @@ extension WorkerSigningDetailVC {
         } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
         }
-        
         hideProgressBar()
     }
 }

@@ -305,7 +305,7 @@ extension LoginVC {
                 USER_DEFAULT.set(swiftyJsonVar["result"]["customer_id"].stringValue, forKey: CUSTOMERID)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["card_id"].stringValue, forKey: CARDID)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["email"].stringValue, forKey: USEREMAIL)
-                USER_DEFAULT.set(swiftyJsonVar["result"]["mobile"].stringValue, forKey: USERMOBILE)
+                USER_DEFAULT.set(swiftyJsonVar["result"]["mobile_with_code"].stringValue, forKey: USERMOBILE)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["first_name"].stringValue, forKey: USERFIRSTNAME)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["last_name"].stringValue, forKey: USERLASTNAME)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["country_id"].stringValue, forKey: COUNTRYID)
