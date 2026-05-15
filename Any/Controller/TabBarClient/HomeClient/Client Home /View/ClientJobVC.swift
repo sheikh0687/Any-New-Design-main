@@ -8,6 +8,7 @@
 import UIKit
 import SwiftyJSON
 import DropDown
+import SwiftUI
 
 class ClientJobVC: UIViewController {
     
@@ -41,6 +42,7 @@ class ClientJobVC: UIViewController {
     @IBOutlet weak var outletImage: UIImageView!
     @IBOutlet weak var outletMainView: UIView!
     @IBOutlet weak var lbl_SelectOutlet: UILabel!
+    @IBOutlet weak var offerView: UIView!
     
     let calendar = Calendar.current
     var arrWeekStartToEnd:[String] = []
@@ -133,6 +135,8 @@ class ClientJobVC: UIViewController {
         Utility.setImageWithSDWebImage(outletImg, self.outletImage)
         
         dropDownCustomCell()
+        
+        setupOfferView()
     }
     
     func fullDayNameAndDate() {
@@ -183,6 +187,25 @@ class ClientJobVC: UIViewController {
     @objc func goProfile() {
         let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "ProfileSettingVC") as! ProfileSettingVC
         self.navigationController?.pushViewController(objVC, animated: true)
+    }
+    
+    func setupOfferView() {
+        
+        let hostingController = UIHostingController(rootView: ClientOfferView())
+        
+        addChild(hostingController)
+        
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        offerView.addSubview(hostingController.view)
+        
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: offerView.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: offerView.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: offerView.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: offerView.trailingAnchor)
+        ])
+        
+        hostingController.didMove(toParent: self)
     }
     
     func dropDownCustomCell() {
@@ -382,9 +405,13 @@ extension ClientJobVC {
         do {
             let resSwiftyJson = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_client_shift_by_date.url(), parameters: paramDict, parentViewController: self)
             if (resSwiftyJson["status"].stringValue == "1") {
+                
                 self.manpower_TableVw.isHidden = false
+                
                 self.arrayManPowerReq = resSwiftyJson["result"]["worker_details"].arrayValue
+                
                 self.lbl_JobTypeAndDescription.text = "\(resSwiftyJson["result"]["shift_name"].stringValue)\n\(resSwiftyJson["result"]["shift_description"].stringValue)"
+                
                 print(self.arrayManPowerReq.count)
                 
                 if resSwiftyJson["pending_shift_count"].numberValue != 0 {
@@ -572,7 +599,7 @@ extension ClientJobVC: UITableViewDataSource, UITableViewDelegate {
             if Router.BASE_IMAGE_URL != obj["image"].stringValue {
                 Utility.setImageWithSDWebImage(obj["image"].stringValue, cell.worker_Img)
             } else {
-                cell.worker_Img.image = R.image.profile_c()
+                cell.worker_Img.image = R.image.placeholder1()
             }
             
             return cell

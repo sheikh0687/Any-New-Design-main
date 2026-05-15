@@ -75,6 +75,7 @@
 		B7366BFA2ED998BD0075E352 /* OutletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7366BF82ED998BD0075E352 /* OutletCell.swift */; };
 		B7366BFB2ED998BD0075E352 /* OutletCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B7366BF92ED998BD0075E352 /* OutletCell.xib */; };
 		B749941E2F07E9A200E1426D /* ClientJobViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B749941D2F07E9A200E1426D /* ClientJobViewModel.swift */; };
+		B74E8DD42FB737480041B93B /* ClientBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B74E8DD32FB737480041B93B /* ClientBanner.swift */; };
 		B75531C62F34753E0044F7C9 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75531C52F34753E0044F7C9 /* R.generated.swift */; };
 		B755F9522F7D26C9001FD80B /* OfferDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = B755F9512F7D26C9001FD80B /* OfferDetail.swift */; };
 		B75D561C2F8FADE800DA12D0 /* CurrentShiftView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75D561B2F8FADE800DA12D0 /* CurrentShiftView.swift */; };
@@ -243,6 +244,7 @@
 		B7366BF82ED998BD0075E352 /* OutletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutletCell.swift; sourceTree = "<group>"; };
 		B7366BF92ED998BD0075E352 /* OutletCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OutletCell.xib; sourceTree = "<group>"; };
 		B749941D2F07E9A200E1426D /* ClientJobViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientJobViewModel.swift; sourceTree = "<group>"; };
+		B74E8DD32FB737480041B93B /* ClientBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientBanner.swift; sourceTree = "<group>"; };
 		B75531C52F34753E0044F7C9 /* R.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = "<group>"; };
 		B755F9512F7D26C9001FD80B /* OfferDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferDetail.swift; sourceTree = "<group>"; };
 		B75D561B2F8FADE800DA12D0 /* CurrentShiftView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentShiftView.swift; sourceTree = "<group>"; };
@@ -767,6 +769,7 @@
 			isa = PBXGroup;
 			children = (
 				B7A41BA82F7D10E8004E27B3 /* OfferModel.swift */,
+				B74E8DD32FB737480041B93B /* ClientBanner.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1247,6 +1250,7 @@
 				CF1FB3DE2E9691870096F91B /* UserRatingCell.swift in Sources */,
 				CFDBE7A02CBFA8420011D338 /* RegistrationSuccessVC.swift in Sources */,
 				047B22E72A0BC1D700AC3DA7 /* DatePickerDialog.swift in Sources */,
+				B74E8DD42FB737480041B93B /* ClientBanner.swift in Sources */,
 				CFA654DC2D3BB3C800A7E86B /* UpdateJobPublishVC.swift in Sources */,
 				CFD247812BD14904005270B7 /* SaveCardVC.swift in Sources */,
 				044036382A2B77580094ED62 /* SetRateVC.swift in Sources */,
@@ -1486,7 +1490,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.7;
+				MARKETING_VERSION = 3.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1534,7 +1538,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.7;
+				MARKETING_VERSION = 3.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -599,9 +599,9 @@
 			<key>profile</key>
 			<dict>
 				<key>UUID</key>
-				<string>260dc552-721c-43b0-840e-7fc423e5f21b</string>
+				<string>4e2b9718-93a2-475b-b99d-a059a6a2c8fd</string>
 				<key>dateExpires</key>
-				<string>25/11/26</string>
+				<string>15/05/27</string>
 				<key>name</key>
 				<string>iOS Team Provisioning Profile: com.rapidzz.AnyApp</string>
 			</dict>
@@ -613,7 +613,7 @@
 				<string>Anytime Work Pte. Ltd.</string>
 			</dict>
 			<key>versionNumber</key>
-			<string>2.87</string>
+			<string>3.8</string>
 		</dict>
 	</array>
 </dict>

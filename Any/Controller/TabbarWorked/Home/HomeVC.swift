@@ -70,6 +70,7 @@ class HomeVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         Task {
            await GetProfile()
         }
@@ -225,6 +226,7 @@ extension HomeVC {
                 
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self)
+            
             if(swiftyJsonVar["status"].stringValue == "1") {
                 
                 let notificationData: [String: Any] = [

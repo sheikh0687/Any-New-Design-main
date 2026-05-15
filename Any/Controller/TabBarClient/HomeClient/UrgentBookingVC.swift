@@ -90,12 +90,16 @@ class UrgentBookingVC: UIViewController {
 extension UrgentBookingVC {
     
     func GetNotificationCount() async {
+        
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
+        
         print(paramsDict)
-                
+        
         do {
+           
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_notification_count.url(), parameters: paramsDict, parentViewController: self)
+            
             if(swiftyJsonVar["status"].stringValue == "1") {
                 
                 let notificationData: [String: NSNumber] = [
@@ -105,8 +109,8 @@ extension UrgentBookingVC {
                 
                 NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
                 
-               Task {
-                  await getUrgentBookingList()
+                Task {
+                    await getUrgentBookingList()
                 }
                 
             }
@@ -114,16 +118,15 @@ extension UrgentBookingVC {
             print(error)
         }
     }
-
     
     func getUrgentBookingList() async {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramDict["shift_type"]  =   "Broadcast" as AnyObject
-
+        
         print(paramDict)
-
+        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_my_set_shift.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -148,12 +151,12 @@ extension UrgentBookingVC {
         showProgressBar()
         var paramDict : [String:AnyObject] = [:]
         paramDict["id"]  =   strSt as AnyObject
-                
+        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_my_shifts.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
-               Task {
-                   await self.getUrgentBookingList()
+                Task {
+                    await self.getUrgentBookingList()
                 }
             } else {
                 Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)

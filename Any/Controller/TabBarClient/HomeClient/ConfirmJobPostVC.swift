@@ -50,30 +50,6 @@ extension ConfirmJobPostVC {
         
         print(paramDict)
         
-//        CommunicationManager.callPostService(apiUrl: Router.get_worker_list_by_jobtype.url(), parameters: paramDict,  parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"] == "1") {
-//                    print("Fetched Successfully")
-//                    self.array_WorkerList = swiftyJsonVar["result"].arrayValue
-//                    print(self.array_WorkerList.count)
-//                    self.worker_TableVw.backgroundView = UIView()
-//                    self.worker_TableVw.reloadData()
-//                } else {
-//                    self.array_WorkerList = []
-//                    self.worker_TableVw.backgroundView = UIView()
-//                    self.worker_TableVw.reloadData()
-//                    Utility.noDataFound("No Workers At The Moment", tableViewOt: self.worker_TableVw, parentViewController: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_worker_list_by_jobtype.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"] == "1") {
@@ -97,29 +73,7 @@ extension ConfirmJobPostVC {
         paramJobPostDict["previous_worker_id"] = arrayOfPreviousWorker.joined(separator: ",") as AnyObject
         
         print(paramJobPostDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.set_shift.url(), parameters: paramJobPostDict,  parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"] == "1") {
-//                    let vC = R.storyboard.main.jobConfirmedVC()!
-//                    self.navigationController?.pushViewController(vC, animated: true)
-//                } else {
-//                    let message = swiftyJsonVar["message"].stringValue
-//                    GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            //            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//            let vC = R.storyboard.main.jobConfirmedVC()!
-//            self.navigationController?.pushViewController(vC, animated: true)
-//            
-//        })
-        
+
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.set_shift.url(), parameters: paramJobPostDict, parentViewController: self)
             if(swiftyJsonVar["status"] == "1") {

@@ -1017,9 +1017,6 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="180" id="sZx-Uv-aYh"/>
                                 </constraints>
-                                <connections>
-                                    <segue destination="BcN-Yb-lHz" kind="embed" id="OJy-VI-ZyU"/>
-                                </connections>
                             </containerView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Glg-My-Qp1"/>
@@ -4037,7 +4034,7 @@ Taken</string>
                                 <rect key="frame" x="0.0" y="190" width="414" height="589"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="swt-Cf-hBE">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1214"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="1414"/>
                                         <subviews>
                                             <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lOs-v6-uwj">
                                                 <rect key="frame" x="30" y="20" width="354" height="90"/>
@@ -4116,8 +4113,14 @@ Taken</string>
                                                     </userDefinedRuntimeAttribute>
                                                 </userDefinedRuntimeAttributes>
                                             </view>
+                                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gR1-w6-lK0">
+                                                <rect key="frame" x="10" y="130" width="394" height="180"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="180" id="ZGi-Pt-IOs"/>
+                                                </constraints>
+                                            </containerView>
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="wRR-PD-M24">
-                                                <rect key="frame" x="60" y="130" width="294" height="45"/>
+                                                <rect key="frame" x="60" y="330" width="294" height="45"/>
                                                 <subviews>
                                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="me2-pL-aD4">
                                                         <rect key="frame" x="0.0" y="0.0" width="147" height="45"/>
@@ -4217,7 +4220,7 @@ Taken</string>
                                                 </userDefinedRuntimeAttributes>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="gXs-qk-z5L">
-                                                <rect key="frame" x="10" y="205" width="394" height="989"/>
+                                                <rect key="frame" x="10" y="405" width="394" height="989"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="MgO-kc-dhQ">
                                                         <rect key="frame" x="0.0" y="0.0" width="394" height="588.5"/>
@@ -4483,10 +4486,13 @@ Taken</string>
                                             <constraint firstItem="lOs-v6-uwj" firstAttribute="leading" secondItem="swt-Cf-hBE" secondAttribute="leading" constant="30" id="Fx0-u5-G78"/>
                                             <constraint firstItem="lOs-v6-uwj" firstAttribute="top" secondItem="swt-Cf-hBE" secondAttribute="top" constant="20" id="I7i-6p-hUe"/>
                                             <constraint firstItem="wRR-PD-M24" firstAttribute="leading" secondItem="swt-Cf-hBE" secondAttribute="leading" constant="60" id="J5x-6P-uRR"/>
+                                            <constraint firstItem="gR1-w6-lK0" firstAttribute="leading" secondItem="swt-Cf-hBE" secondAttribute="leading" constant="10" id="NwQ-0o-4oL"/>
                                             <constraint firstAttribute="trailing" secondItem="gXs-qk-z5L" secondAttribute="trailing" constant="10" id="OTt-3j-69b"/>
                                             <constraint firstAttribute="trailing" secondItem="lOs-v6-uwj" secondAttribute="trailing" constant="30" id="SEF-qz-wO7"/>
+                                            <constraint firstItem="wRR-PD-M24" firstAttribute="top" secondItem="gR1-w6-lK0" secondAttribute="bottom" constant="20" id="UK3-PC-G8z"/>
                                             <constraint firstItem="gXs-qk-z5L" firstAttribute="top" secondItem="wRR-PD-M24" secondAttribute="bottom" constant="30" id="Z9a-CH-uvm"/>
-                                            <constraint firstItem="wRR-PD-M24" firstAttribute="top" secondItem="lOs-v6-uwj" secondAttribute="bottom" constant="20" id="eaH-MA-bJq"/>
+                                            <constraint firstItem="gR1-w6-lK0" firstAttribute="top" secondItem="lOs-v6-uwj" secondAttribute="bottom" constant="20" id="ffm-K4-iV1"/>
+                                            <constraint firstAttribute="trailing" secondItem="gR1-w6-lK0" secondAttribute="trailing" constant="10" id="qpS-Ea-vdr"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -4529,6 +4535,7 @@ Taken</string>
                         <outlet property="lbl_SelectOutlet" destination="Sjx-h0-QdF" id="jqW-S9-feM"/>
                         <outlet property="lbl_WeeklyReqCount" destination="7pc-fg-NzH" id="5uY-O5-4cK"/>
                         <outlet property="manpower_TableVw" destination="vIl-0e-MLe" id="sFc-yv-KFe"/>
+                        <outlet property="offerView" destination="gR1-w6-lK0" id="v1H-Jm-Kj2"/>
                         <outlet property="outletImage" destination="bte-dE-5uS" id="0Kf-OG-veE"/>
                         <outlet property="outletMainView" destination="lOs-v6-uwj" id="cXl-JA-bcr"/>
                         <outlet property="upcomingShiftTableVw" destination="XxF-kL-VHp" id="axm-e4-8s8"/>
@@ -14742,7 +14749,7 @@ Taken</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fZe-fO-yon" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="19100" y="7789"/>
+            <point key="canvasLocation" x="19112" y="7793"/>
         </scene>
         <!--Pop Up Before Booking-->
         <scene sceneID="Zx0-1W-JTc">
@@ -16232,21 +16239,6 @@ Taken</string>
             </objects>
             <point key="canvasLocation" x="19375" y="1365"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="yov-bI-qB4">
-            <objects>
-                <viewController id="BcN-Yb-lHz" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="WM7-qE-l5E">
-                        <rect key="frame" x="0.0" y="0.0" width="394" height="180"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="ujz-PO-MW4"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ExJ-bR-xcr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="14380" y="3347"/>
-        </scene>
     </scenes>
     <resources>
         <image name="Accepted" width="30" height="30"/>
@@ -16307,7 +16299,7 @@ Taken</string>
         <image name="referfriend" width="500" height="380"/>
         <image name="right-arrow (1) 2" width="150" height="150"/>
         <image name="send-message 1" width="150" height="150"/>
-        <image name="star" width="98" height="97"/>
+        <image name="star" width="30" height="28"/>
         <image name="unfav24" width="24" height="24"/>
         <image name="upload_image" width="150" height="150"/>
         <image name="visa" width="512" height="512"/>
@@ -16360,25 +16352,25 @@ Taken</string>
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="separatorColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.12" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.12" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray4Color">
-            <color red="0.81960784313725488" green="0.81960784313725488" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.81960784310000001" green="0.81960784310000001" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.2196078431372549" blue="0.23529411764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.21960784310000001" blue="0.23529411759999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

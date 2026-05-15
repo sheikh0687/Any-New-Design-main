@@ -65,6 +65,7 @@ enum Router: String {
     case get_profile
     case update_profile
     case get_banner_list
+    case get_client_banner_list
     case vehicle_list
     case get_nearest_driver
     case get_user_request
@@ -315,6 +316,8 @@ enum Router: String {
         case .delete_Outlet:
             return Router.oAuthRoute(path: "delete_Outlet?")
             
+        case .get_client_banner_list:
+            return Router.oAuthRoute(path: "get_client_banner_list?")
         }
     }
     
