@@ -122,31 +122,31 @@ class WorkerSigningDetailVC: UIViewController {
 
 extension WorkerSigningDetailVC {
     
-    func WebGetJobCategory() async {
-        showProgressBar()
-        let paramsDict:[String:AnyObject] = [:]
-        
-        print(paramsDict)
-        
-        do {
-            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self)
-            if(swiftyJsonVar["status"].stringValue == "1") {
-                self.arr_AllCat = swiftyJsonVar["result"].arrayValue
-                let firstJobType = self.arr_AllCat[0]
-                self.strJobTypeName = firstJobType["name"].stringValue
-                self.strJobId = firstJobType["id"].stringValue
-                self.btn_JobTypeOt.setTitle(firstJobType["name"].stringValue, for: .normal)
-                print(self.arr_AllCat.count)
-            } else {
-                let message = swiftyJsonVar["result"].string
-                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
-            }
-        } catch {
-            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        }
-        
-        hideProgressBar()
-    }
+//    func WebGetJobCategory() async {
+//        showProgressBar()
+//        let paramsDict:[String:AnyObject] = [:]
+//        
+//        print(paramsDict)
+//        
+//        do {
+//            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self)
+//            if(swiftyJsonVar["status"].stringValue == "1") {
+//                self.arr_AllCat = swiftyJsonVar["result"].arrayValue
+//                let firstJobType = self.arr_AllCat[0]
+//                self.strJobTypeName = firstJobType["name"].stringValue
+//                self.strJobId = firstJobType["id"].stringValue
+//                self.btn_JobTypeOt.setTitle(firstJobType["name"].stringValue, for: .normal)
+//                print(self.arr_AllCat.count)
+//            } else {
+//                let message = swiftyJsonVar["result"].string
+//                GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message!, on: self)
+//            }
+//        } catch {
+//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
+//        }
+//        
+//        hideProgressBar()
+//    }
     
     func WebUpdateWorkerProfile() async {
         showProgressBar()
@@ -180,7 +180,13 @@ extension WorkerSigningDetailVC {
         do {
             let swiftyJsonVar = try await CommunicationManager.uploadImagesAndDataAsync(apiUrl: Router.update_profile_worker.url(), params: (paramsDict as! [String : String]), imageParam: paramImgDict, videoParam: [:], parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
-                Utility.showAlertWithAction(withTitle: "Successfull!", message: "Your account is pending approval and you will receive notifications once you are authorized to book jobs.", delegate: self, parentViewController: self) { issy in
+                USER_DEFAULT.set(swiftyJsonVar["result"]["image"].stringValue, forKey: WORKER_PROFILE)
+                Utility.showAlertWithAction (
+                    withTitle: "Successfull!",
+                    message: "Your account is pending approval and you will receive notifications once you are authorized to book jobs.",
+                    delegate: self,
+                    parentViewController: self
+                ) { issy in
                     Switcher.updateRootVC()
                 }
             } else {

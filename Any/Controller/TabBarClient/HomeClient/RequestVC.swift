@@ -79,12 +79,17 @@ class RequestVC: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.navigationBar.isHidden = true
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.tabBarController?.tabBar.isHidden = false
         Task {
            await WebGetApprovedBooking()
            await GetNotificationCount()
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
     @IBAction func RequestCurrent(_ sender: Any) {
@@ -94,7 +99,7 @@ class RequestVC: UIViewController {
         btn_Current.backgroundColor = UIColor.init(named: "BUTTON_COLOR")
         strStatus = "Accept"
         table_List.isHidden = true
-       Task {
+        Task {
            await WebGetApprovedBooking()
         }
     }
@@ -153,7 +158,8 @@ extension RequestVC {
                 ]
                 
                 NotificationCenter.default.post(name: NSNotification.Name("badgeCount"), object: "On Ride", userInfo: notificationData)
-               Task {
+                
+                Task {
                    await WebGetApprovedBooking()
                 }
             }
@@ -183,6 +189,7 @@ extension RequestVC {
                 } else {
                     view_Count.isHidden = true
                 }
+                
                 self.arr_AllDriver = swiftyJsonVar["result"].arrayValue
                 print(self.arr_AllCat.count)
                 self.table_List.backgroundView = UIView()
@@ -230,43 +237,26 @@ extension RequestVC {
                 
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.change_set_shift_status.url(), parameters: paramsDict, parentViewController: self)
+            
             if(swiftyJsonVar["status"].stringValue == "1") {
                 
-               Task {
+                Task {
                    await self.WebGetApprovedBooking()
                 }
                 
                 let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpRejectVC") as! PopUpRejectVC
+                
                 objVC.str_Desc = "You have rejected this shifts\n\nThe service provider selected has been notified of your rejection"
                 objVC.str_Head = "Shift Rejected"
+                
                 objVC.modalPresentationStyle = .overCurrentContext
                 objVC.modalTransitionStyle = .crossDissolve
-                self.present(objVC, animated: false, completion: nil)
                 
+                self.present(objVC, animated: false, completion: nil)
             }
+            
         } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        }
-        
-        self.hideProgressBar()
-    }
-    
-    func webDeletShift(strSt:String) async {
-        showProgressBar()
-        var paramDict : [String:AnyObject] = [:]
-        paramDict["id"]  =   strSt as AnyObject
-                
-        do {
-            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_my_shifts.url(), parameters: paramDict, parentViewController: self)
-            if(swiftyJsonVar["status"].stringValue == "1") {
-               Task {
-                   await self.WebGetApprovedBooking()
-                }
-            } else {
-                Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
-            }
-        } catch {
-            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
         }
         
         self.hideProgressBar()
@@ -326,7 +316,7 @@ extension RequestVC : UITableViewDataSource {
         } else {
             cell.imgCertificate.image = R.image.placeholder()
         }
-    
+        
         // Handle status
         if strStatus == "Accept" {
             cell.btn_Chat.isHidden = false
@@ -375,7 +365,7 @@ extension RequestVC : UITableViewDataSource {
         let dic = arr_AllDriver[but.tag]
         dicCrent = dic
         Task {
-           await WebRejectBooking(strCard: dic["id"].stringValue)
+            await WebRejectBooking(strCard: dic["id"].stringValue)
         }
     }
     
@@ -396,7 +386,7 @@ extension RequestVC : UITableViewDataSource {
     @objc func clciBookApprove(but: UIButton) {
         let dic = arr_AllDriver[but.tag]
         let paymentType = dic["client_details"]["request_payment_type"].stringValue
-                
+        
         let presentApprovalPopUp: (String) -> Void = { navigateType in
             let objVC = self.storyboard?.instantiateViewController(withIdentifier: "PopUpSimpleVC") as! PopUpSimpleVC
             
@@ -406,8 +396,8 @@ extension RequestVC : UITableViewDataSource {
             objVC.is_Navigate = navigateType
             
             objVC.completion = {
-               Task {
-                   await self.WebGetApprovedBooking()
+                Task {
+                    await self.WebGetApprovedBooking()
                 }
             }
             

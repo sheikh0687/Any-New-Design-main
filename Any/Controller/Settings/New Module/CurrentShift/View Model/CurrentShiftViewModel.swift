@@ -5,7 +5,6 @@
 //  Created by Arbaz  on 15/04/26.
 //
 
-import Foundation
 import SwiftyJSON
 
 class CurrentShiftViewModel: ObservableObject {
@@ -17,7 +16,6 @@ class CurrentShiftViewModel: ObservableObject {
     @Published var errorMessage: String?
  
     // MARK: Fetch Shifts
- 
     @MainActor
     func getShiftList() async {
         isLoading = true
@@ -30,7 +28,7 @@ class CurrentShiftViewModel: ObservableObject {
         print(params)
         
         do {
-            let json = try await CommunicationManager.callPostServiceAsync(
+            let json = try await CommunicationManager.callPostServiceAsync (
                 apiUrl: Router.get_my_set_shift.url(),
                 parameters: params,
                 parentViewController: nil
@@ -46,7 +44,6 @@ class CurrentShiftViewModel: ObservableObject {
     }
  
     // MARK: Fetch Profile (for toggle states)
- 
     @MainActor
     func getProfile() async {
         var params: [String: AnyObject] = [:]
@@ -71,13 +68,14 @@ class CurrentShiftViewModel: ObservableObject {
     }
  
     // MARK: Toggle Close All Bookings
- 
     @MainActor
     func updateBookingStatus(close: Bool) async {
         var params: [String: AnyObject] = [:]
         params["user_id"]        = USER_DEFAULT.value(forKey: USERID) as AnyObject
         params["booking_status"] = (close ? "Close" : "Open") as AnyObject
  
+        print(params)
+        
         do {
             let json = try await CommunicationManager.callPostServiceAsync(
                 apiUrl: Router.update_booking_status_profile.url(),
@@ -124,6 +122,8 @@ class CurrentShiftViewModel: ObservableObject {
         var params: [String: AnyObject] = [:]
         params["id"] = id as AnyObject
  
+        print(params)
+        
         do {
             let json = try await CommunicationManager.callPostServiceAsync(
                 apiUrl: Router.delete_my_shifts.url(),

@@ -79,6 +79,7 @@ class BookingRequestVC: UIViewController {
         self.tableViewShift.register(UINib(nibName: "ShiftCell", bundle: nil), forCellReuseIdentifier: "ShiftCell")
         
         lbl_BusinessName.text = "\(dicClinetDetail["business_name"].stringValue)\n\(dicClinetDetail["business_address"].stringValue)"
+        
         if Router.BASE_IMAGE_URL != dicClinetDetail["business_logo"].stringValue {
             Utility.setImageWithSDWebImage(dicClinetDetail["business_logo"].stringValue, self.businessLogo_Img)
         } else {
@@ -148,7 +149,8 @@ class BookingRequestVC: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.navigationBar.isHidden = false
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
         self.tabBarController?.tabBar.isHidden = true
         
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Booking Request", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")

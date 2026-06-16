@@ -24,6 +24,7 @@ class UpcomingShiftCell: UITableViewCell {
         ShiftTableVw.delegate = self
         ShiftTableVw.dataSource = self
         self.ShiftTableVw.register(UINib(nibName: "SubShiftCell", bundle: nil), forCellReuseIdentifier: "SubShiftCell")
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -104,6 +105,7 @@ extension UpcomingShiftCell: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "RequestByDateVC") as! RequestByDateVC
         objVC.strDate = strDate
+        navigationController?.navigationBar.isHidden = false
         navigationController?.pushViewController(objVC, animated: true)
     }
 }

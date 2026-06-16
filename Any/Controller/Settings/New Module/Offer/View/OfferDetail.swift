@@ -10,7 +10,13 @@ import SwiftUI
 struct OfferDetail: View {
     
     @Environment(\.dismiss) var dismiss
-    var obj: Res_ClientOffer
+    
+    // ✅ Flat properties — works for both Worker and Client
+    var image: String?
+    var title: String?
+    var descriptionText: String?
+    var type: String?
+    var dateTime: String?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -29,7 +35,7 @@ struct OfferDetail: View {
                         
                         // Type and Date
                         HStack {
-                            if let type = obj.type {
+                            if let type = type {
                                 Text(type.uppercased())
                                     .font(.caption)
                                     .fontWeight(.bold)
@@ -42,7 +48,7 @@ struct OfferDetail: View {
                             
                             Spacer()
                             
-                            if let dateTime = obj.date_time {
+                            if let dateTime = dateTime {
                                 Text(dateTime)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
@@ -50,7 +56,7 @@ struct OfferDetail: View {
                         }
                         
                         // Title
-                        Text(obj.title ?? "Offer Detail")
+                        Text(title ?? "Offer Detail")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(Color("BLACK"))
@@ -63,24 +69,11 @@ struct OfferDetail: View {
                                 .font(.headline)
                                 .foregroundColor(Color("BLACK"))
                             
-                            Text(obj.description ?? "No description available.")
+                            Text(descriptionText ?? "No description available.")
                                 .font(.body)
                                 .foregroundColor(.secondary)
                                 .lineSpacing(4)
                         }
-                        
-                        // Shift Details (if applicable)
-//                        if obj.type == "Shift", let shift = obj.shift_details {
-//                            shiftDetailsSection(shift)
-//                        }
-                        
-                        // Client Details
-//                        if let client = obj.client_details {
-//                            clientDetailsSection(client)
-//                        }
-                        
-                        // Action Button
-//                        actionButton
                     }
                     .padding(24)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -89,7 +82,7 @@ struct OfferDetail: View {
                     .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: -5)
                 }
             }
-            .background(Color("BG_COLOR"))
+//            .background(Color("BG_COLOR"))
         }
         .navigationBarHidden(true)
         .background(Color.white.ignoresSafeArea())
@@ -115,7 +108,6 @@ struct OfferDetail: View {
                 .foregroundColor(.black)
                 .frame(maxWidth: .infinity, alignment: .center)
             
-            // Placeholder for symmetry
             Color.clear.frame(width: 40, height: 40)
         }
         .padding(.horizontal)
@@ -125,10 +117,10 @@ struct OfferDetail: View {
     
     private var headerImageSection: some View {
         ZStack {
-            Color.white // Background for the image area
+            Color.white
             
-            AsyncImage(url: URL(string: obj.image ?? "")) { image in
-                image
+            AsyncImage(url: URL(string: image ?? "")) { img in
+                img
                     .resizable()
                     .scaledToFit()
             } placeholder: {
@@ -139,113 +131,29 @@ struct OfferDetail: View {
         .frame(minHeight: 200, maxHeight: 300)
         .background(Color.white)
     }
+}
+
+// MARK: - Convenience Initializers
+
+extension OfferDetail {
     
-//    private func shiftDetailsSection(_ shift: Shift_details) -> some View {
-//        VStack(alignment: .leading, spacing: 12) {
-//            Text("Shift Information")
-//                .font(.headline)
-//                .foregroundColor(Color("BLACK"))
-//            
-//            VStack(spacing: 12) {
-//                detailRow(icon: "calendar", title: "Date", value: shift.date ?? "N/A")
-//                detailRow(icon: "clock", title: "Time", value: "\(shift.start_time ?? "") - \(shift.end_time ?? "")")
-//                detailRow(icon: "dollarsign.circle", title: "Rate", value: "\(shift.currency_symbol ?? "")\(shift.shift_rate ?? "")/hour")
-//                detailRow(icon: "mappin.and.ellipse", title: "Location", value: shift.address ?? "N/A")
-//            }
-//            .padding()
-//            .background(Color("BG_COLOR").opacity(0.3))
-//            .cornerRadius(16)
-//        }
-//        .padding(.top, 10)
-//    }
+    // ✅ Worker — Res_ClientOffer
+    init(obj: Res_ClientOffer) {
+        self.image           = obj.image
+        self.title           = obj.title
+        self.descriptionText = obj.description
+        self.type            = obj.type
+        self.dateTime        = obj.exp_date
+    }
     
-//    private func clientDetailsSection(_ client: Client_details) -> some View {
-//        VStack(alignment: .leading, spacing: 12) {
-//            Text("Business Information")
-//                .font(.headline)
-//                .foregroundColor(Color("BLACK"))
-//            
-//            HStack(spacing: 15) {
-//                AsyncImage(url: URL(string: client.business_logo ?? "")) { image in
-//                    image.resizable().scaledToFill()
-//                } placeholder: {
-//                    Image(systemName: "building.2.fill")
-//                        .foregroundColor(.gray)
-//                }
-//                .frame(width: 50, height: 50)
-//                .clipShape(Circle())
-//                .overlay(Circle().stroke(Color.gray.opacity(0.2), lineWidth: 1))
-//                
-//                VStack(alignment: .leading, spacing: 4) {
-//                    Text(client.business_name ?? "Unknown Business")
-//                        .font(.subheadline)
-//                        .fontWeight(.bold)
-//                    
-//                    Text(client.business_address ?? "No address provided")
-//                        .font(.caption)
-//                        .foregroundColor(.secondary)
-//                        .lineLimit(2)
-//                }
-//            }
-//            .padding()
-//            .frame(maxWidth: .infinity, alignment: .leading)
-//            .background(RoundedRectangle(cornerRadius: 16).stroke(Color.gray.opacity(0.1), lineWidth: 1))
-//        }
-//        .padding(.top, 10)
-//    }
-    
-//    private var actionButton: some View {
-//        Group {
-//            if let link = obj.link, !link.isEmpty {
-//                Button {
-//                    if let url = URL(string: link) {
-//                        UIApplication.shared.open(url)
-//                    }
-//                } label: {
-//                    Text("Learn More")
-//                        .font(.headline)
-//                        .foregroundColor(.white)
-//                        .frame(maxWidth: .infinity)
-//                        .frame(height: 56)
-//                        .background(Color("BUTTON_COLOR"))
-//                        .cornerRadius(16)
-//                        .shadow(color: Color("BUTTON_COLOR").opacity(0.3), radius: 8, x: 0, y: 4)
-//                }
-//            } else if obj.type == "Shift" {
-//                Button {
-//                    // Booking logic placeholder
-//                } label: {
-//                    Text("View Shift Details")
-//                        .font(.headline)
-//                        .foregroundColor(.white)
-//                        .frame(maxWidth: .infinity)
-//                        .frame(height: 56)
-//                        .background(Color("BUTTON_COLOR"))
-//                        .cornerRadius(16)
-//                        .shadow(color: Color("BUTTON_COLOR").opacity(0.3), radius: 8, x: 0, y: 4)
-//                }
-//            }
-//        }
-//        .padding(.top, 20)
-//    }
-    
-//    private func detailRow(icon: String, title: String, value: String) -> some View {
-//        HStack(spacing: 12) {
-//            Image(systemName: icon)
-//                .foregroundColor(Color("BUTTON_COLOR"))
-//                .frame(width: 24)
-//            
-//            VStack(alignment: .leading, spacing: 2) {
-//                Text(title)
-//                    .font(.caption2)
-//                    .foregroundColor(.secondary)
-//                Text(value)
-//                    .font(.system(size: 14, weight: .medium))
-//                    .foregroundColor(Color("BLACK"))
-//            }
-//        }
-//        .frame(maxWidth: .infinity, alignment: .leading)
-//    }
+    // ✅ Client — Res_ClientBannerList
+    init(obj: Res_ClientBannerList) {
+        self.image           = obj.image
+        self.title           = obj.title
+        self.descriptionText = obj.description
+//        self.type            = obj.type
+        self.dateTime        = obj.exp_date
+    }
 }
 
 // MARK: - View Extension for Corners
@@ -260,7 +168,11 @@ struct RoundedCorner: Shape {
     var corners: UIRectCorner = .allCorners
 
     func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
         return Path(path.cgPath)
     }
 }

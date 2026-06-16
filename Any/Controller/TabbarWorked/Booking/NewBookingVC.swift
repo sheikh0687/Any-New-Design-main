@@ -211,7 +211,7 @@ class NewBookingVC: UIViewController,UITextFieldDelegate  {
                 self.arr_FilterList = []
                 self.clientList_TableVw.backgroundView = UIView()
                 self.clientList_TableVw.reloadData()
-                Utility.noDataFound("No Bookings At The Moment", tableViewOt: self.clientList_TableVw, parentViewController: self)
+                Utility.noDataFound("High demand! All shifts for this date are already taken.\nDon’t miss out — pick another available date now.", tableViewOt: self.clientList_TableVw, parentViewController: self)
             }
         } catch {
             Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)

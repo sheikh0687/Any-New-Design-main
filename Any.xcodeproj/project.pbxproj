@@ -79,7 +79,6 @@
 		B75531C62F34753E0044F7C9 /* R.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75531C52F34753E0044F7C9 /* R.generated.swift */; };
 		B755F9522F7D26C9001FD80B /* OfferDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = B755F9512F7D26C9001FD80B /* OfferDetail.swift */; };
 		B75D561C2F8FADE800DA12D0 /* CurrentShiftView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75D561B2F8FADE800DA12D0 /* CurrentShiftView.swift */; };
-		B75D561E2F8FADF600DA12D0 /* CurrentShiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75D561D2F8FADF600DA12D0 /* CurrentShiftViewModel.swift */; };
 		B75D56212F8FAE3100DA12D0 /* CurrentShiftAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = B75D56202F8FAE3100DA12D0 /* CurrentShiftAlert.swift */; };
 		B767107D2F81651C00E20645 /* BannerCursor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B767107C2F81651C00E20645 /* BannerCursor.swift */; };
 		B77C874A2F7CFDAF009F3466 /* ClientOfferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B77C87492F7CFDAF009F3466 /* ClientOfferView.swift */; };
@@ -99,6 +98,7 @@
 		B79722532ED5DD1B00077245 /* SearchLocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B79722522ED5DD1B00077245 /* SearchLocationCell.swift */; };
 		B7A41BA92F7D10E8004E27B3 /* OfferModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A41BA82F7D10E8004E27B3 /* OfferModel.swift */; };
 		B7A41BAC2F7D1133004E27B3 /* ClientOfferViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A41BAB2F7D1133004E27B3 /* ClientOfferViewModel.swift */; };
+		B7B165F02FC5D83600B4ACB7 /* CurrentShiftViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B165EF2FC5D83600B4ACB7 /* CurrentShiftViewModel.swift */; };
 		CF119EC42CAD83450009F114 /* BookingCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF119EC22CAD83450009F114 /* BookingCell.swift */; };
 		CF119EC52CAD83450009F114 /* BookingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF119EC32CAD83450009F114 /* BookingCell.xib */; };
 		CF1FB3D92E9690260096F91B /* UserRatingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1FB3D82E9690260096F91B /* UserRatingVC.swift */; };
@@ -248,7 +248,6 @@
 		B75531C52F34753E0044F7C9 /* R.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = R.generated.swift; sourceTree = "<group>"; };
 		B755F9512F7D26C9001FD80B /* OfferDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferDetail.swift; sourceTree = "<group>"; };
 		B75D561B2F8FADE800DA12D0 /* CurrentShiftView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentShiftView.swift; sourceTree = "<group>"; };
-		B75D561D2F8FADF600DA12D0 /* CurrentShiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CurrentShiftViewModel.swift; path = "Any/Controller/Settings/New Module/CurrentShift/View/CurrentShiftViewModel.swift"; sourceTree = SOURCE_ROOT; };
 		B75D56202F8FAE3100DA12D0 /* CurrentShiftAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentShiftAlert.swift; sourceTree = "<group>"; };
 		B767107C2F81651C00E20645 /* BannerCursor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerCursor.swift; sourceTree = "<group>"; };
 		B77C87492F7CFDAF009F3466 /* ClientOfferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientOfferView.swift; sourceTree = "<group>"; };
@@ -258,6 +257,7 @@
 		B79722522ED5DD1B00077245 /* SearchLocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchLocationCell.swift; sourceTree = "<group>"; };
 		B7A41BA82F7D10E8004E27B3 /* OfferModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfferModel.swift; sourceTree = "<group>"; };
 		B7A41BAB2F7D1133004E27B3 /* ClientOfferViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientOfferViewModel.swift; sourceTree = "<group>"; };
+		B7B165EF2FC5D83600B4ACB7 /* CurrentShiftViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentShiftViewModel.swift; sourceTree = "<group>"; };
 		CC365E38B998F7BAA90E83E1 /* Pods-Any.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Any.release.xcconfig"; path = "Target Support Files/Pods-Any/Pods-Any.release.xcconfig"; sourceTree = "<group>"; };
 		CF119EC22CAD83450009F114 /* BookingCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookingCell.swift; sourceTree = "<group>"; };
 		CF119EC32CAD83450009F114 /* BookingCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BookingCell.xib; sourceTree = "<group>"; };
@@ -716,7 +716,7 @@
 		B75D56192F8FAD9000DA12D0 /* View Model */ = {
 			isa = PBXGroup;
 			children = (
-				B75D561D2F8FADF600DA12D0 /* CurrentShiftViewModel.swift */,
+				B7B165EF2FC5D83600B4ACB7 /* CurrentShiftViewModel.swift */,
 			);
 			path = "View Model";
 			sourceTree = "<group>";
@@ -1237,6 +1237,7 @@
 				047B22802A0BC1D600AC3DA7 /* ViewControllerExt.swift in Sources */,
 				CF2D93402ECB4BE600FCAF20 /* OutletVC.swift in Sources */,
 				CFC4B9842D34F88800452D80 /* SetCustomDateRateVC.swift in Sources */,
+				B7B165F02FC5D83600B4ACB7 /* CurrentShiftViewModel.swift in Sources */,
 				CFFD0D262CB6BEA50035C254 /* ManpowerCell.swift in Sources */,
 				CF4562452E8166D60024743C /* SubShiftCell.swift in Sources */,
 				B79722532ED5DD1B00077245 /* SearchLocationCell.swift in Sources */,
@@ -1246,7 +1247,6 @@
 				041B48042A1F6FD000C2C108 /* BookingDetailVC.swift in Sources */,
 				CF91CCD22E8419E400838F9F /* PopupjobTypeVC.swift in Sources */,
 				047B22E62A0BC1D700AC3DA7 /* LocationManager.swift in Sources */,
-				B75D561E2F8FADF600DA12D0 /* CurrentShiftViewModel.swift in Sources */,
 				CF1FB3DE2E9691870096F91B /* UserRatingCell.swift in Sources */,
 				CFDBE7A02CBFA8420011D338 /* RegistrationSuccessVC.swift in Sources */,
 				047B22E72A0BC1D700AC3DA7 /* DatePickerDialog.swift in Sources */,
@@ -1490,7 +1490,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.8;
+				MARKETING_VERSION = 4.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1538,7 +1538,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.8;
+				MARKETING_VERSION = 4.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rapidzz.AnyApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

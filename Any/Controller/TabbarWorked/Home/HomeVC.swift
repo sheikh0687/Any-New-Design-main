@@ -147,7 +147,8 @@ class HomeVC: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.navigationBar.isHidden = true
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.tabBarController?.tabBar.isHidden = false
         if Utility.isUserLogin() {
            Task {
@@ -163,6 +164,11 @@ class HomeVC: UIViewController {
               await GetNotificationCount()
             }
         }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
     @IBAction func RequestCurrent(_ sender: Any) {
@@ -255,6 +261,7 @@ extension HomeVC {
                    await WebGetApprovedBooking()
                 }
             }
+            
         } catch {
             print(error.localizedDescription)
         }

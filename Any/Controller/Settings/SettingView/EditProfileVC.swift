@@ -418,7 +418,7 @@ extension EditProfileVC {
         } else if (self.text_Mobile.text?.isEmpty)! {
             isValid = false
             errorMessage = "Please Enter Mobile Number"
-        } else if !(GlobalConstant.isValidEmail(text_Mail.text!)){
+        } else if !(GlobalConstant.isValidEmail(text_Mail.text!)) {
             isValid = false
             errorMessage = "Please Enter Valid Email"
             text_Mail.becomeFirstResponder()

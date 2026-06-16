@@ -90,6 +90,7 @@ extension HistoryVC : UITableViewDataSource {
             
         let dic = arr_AllHistory[indexPath.row]
         cell.lbl_DayDate.text = (dic["format_date"].stringValue) + " - " +  ("\(dic["user_details"]["first_name"].stringValue) \(dic["user_details"]["last_name"].stringValue)")
+        
         cell.lbl_CompanyName.text = "\(dic["address"].stringValue)"
         
         let shiftTime = "\(dic["total_working_hr_time"].stringValue) Hour/Rate \(dic["currency_symbol"].stringValue)\(dic["shift_rate"].stringValue) = \(dic["currency_symbol"].stringValue)\(dic["total_amount"].stringValue)"

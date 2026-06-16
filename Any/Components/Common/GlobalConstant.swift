@@ -61,6 +61,7 @@ let PAYMENT_TYPE = "PAYMENT_TYPE"
 let VERIFICATION_CODE = "VERIFICATION_CODE"
 let OPTIONAL_VERIFICATION_CODE = "OPTIONAL_VERIFICATION_CODE"
 let PASSWORD_RESET_CODE = "PASSWORD_RESET_CODE"
+let WORKER_PROFILE = "WORKER_PROFILE"
 
 let DEVISE_TYPE = UIDevice.current.model
 let USER_TYPE = "USER_TYPE"
@@ -77,7 +78,7 @@ let showTaskDetail = "showTaskDetail"
 let IS_IPAD = UIDevice.current.userInterfaceIdiom == .pad
 let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
 var paramJobPostDict: [String : AnyObject] = [:]
-var paramSignupDict: [String : AnyObject] = [:]
+var paramSignupDict: [String : String] = [:]
 var isComeOutlet:Bool = false
 
 class GlobalConstant: NSObject {

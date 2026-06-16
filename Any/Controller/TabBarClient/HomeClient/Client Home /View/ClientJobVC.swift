@@ -78,7 +78,7 @@ class ClientJobVC: UIViewController {
         let customInfoWindow = Bundle.main.loadNibNamed("TopBar", owner: self, options: nil)?[0] as! TopBar
         customInfoWindow.frame = CGRect(x: 0, y: topbarHeight1, width: UIScreen.main.bounds.width , height: 55)
         customInfoWindow.btn_Chat.addTarget(self, action: #selector(goChat), for: .touchUpInside)
-        customInfoWindow.btn_Notification.addTarget(self, action: #selector(GoNotificatio), for: .touchUpInside)
+        customInfoWindow.btn_Notification.addTarget(self, action: #selector(GoNotification), for: .touchUpInside)
         customInfoWindow.btn_Menu.addTarget(self, action: #selector(goProfile), for: .touchUpInside)
         customInfoWindow.attendanceVw.isHidden = true
         self.view.addSubview(customInfoWindow)
@@ -151,7 +151,8 @@ class ClientJobVC: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.navigationBar.isHidden = true
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
         self.tabBarController?.tabBar.isHidden = false
         
         var dcuureDate = arrDateStart[0]
@@ -174,12 +175,17 @@ class ClientJobVC: UIViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+    
     @objc func goChat() {
         let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "ChatConversationVC") as! ChatConversationVC
         self.navigationController?.pushViewController(objVC, animated: true)
     }
     
-    @objc func GoNotificatio() {
+    @objc func GoNotification() {
         let objVC = kStoryboardMain.instantiateViewController(withIdentifier: "NotificationVC") as! NotificationVC
         self.navigationController?.pushViewController(objVC, animated: true)
     }

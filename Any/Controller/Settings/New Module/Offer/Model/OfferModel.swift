@@ -36,6 +36,7 @@ struct Res_ClientOffer : Codable, Hashable {
     let title : String?
     let description : String?
     let type : String?
+    let exp_date: String?
     let date_time : String?
     let shift_details : Shift_details?
     let client_details : Client_details?
@@ -51,6 +52,7 @@ struct Res_ClientOffer : Codable, Hashable {
         case description = "description"
         case type = "type"
         case date_time = "date_time"
+        case exp_date = "exp_date"
         case shift_details = "shift_details"
         case client_details = "client_details"
     }
@@ -66,6 +68,7 @@ struct Res_ClientOffer : Codable, Hashable {
         description = try values.decodeIfPresent(String.self, forKey: .description)
         type = try values.decodeIfPresent(String.self, forKey: .type)
         date_time = try values.decodeIfPresent(String.self, forKey: .date_time)
+        exp_date = try values.decodeIfPresent(String.self, forKey: .exp_date)
         shift_details = try values.decodeIfPresent(Shift_details.self, forKey: .shift_details)
         client_details = try values.decodeIfPresent(Client_details.self, forKey: .client_details)
     }

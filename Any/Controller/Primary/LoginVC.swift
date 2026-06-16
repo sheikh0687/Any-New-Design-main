@@ -58,8 +58,8 @@ class LoginVC: UIViewController {
         
         lbl_TermCondition.isUserInteractionEnabled = true
         lbl_TermCondition.addGestureRecognizer(tapGesture)
-       Task {
-           await WebGetCountryList()
+        Task {
+            await WebGetCountryList()
         }
     }
     
@@ -100,7 +100,7 @@ class LoginVC: UIViewController {
         btn_CheckSignupOt.setTitleColor(.darkGray, for: .normal)
         lbl_LoginVw.isHidden = false
         lbl_SignUpVw.isHidden = true
-        self.btn_SkipOt.isHidden = false
+        self.btn_SkipOt.isHidden = true
     }
     
     @IBAction func eyeShow(_ sender: Any) {
@@ -126,8 +126,8 @@ class LoginVC: UIViewController {
     
     @IBAction func btnLogin(_ sender: UIButton) {
         if isValidInput() {
-           Task {
-               await CheckEmailStatus()
+            Task {
+                await CheckEmailStatus()
             }
         }
     }
@@ -165,8 +165,8 @@ class LoginVC: UIViewController {
     
     @IBAction func btn_Signup(_ sender: UIButton) {
         if isValidSignupInput() {
-           Task {
-               await WebVerifyNumber()
+            Task {
+                await WebVerifyNumber()
             }
         }
     }
@@ -292,7 +292,7 @@ extension LoginVC {
         paramsDict["type"]     =   strType as AnyObject
         
         print(paramsDict)
-                
+        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.logIn.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"] == "1") {
@@ -319,6 +319,8 @@ extension LoginVC {
                 USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: OUTLET_NAME)
                 USER_DEFAULT.set(swiftyJsonVar["result"]["business_logo"].stringValue, forKey: OUTLET_IMAGE)
                 
+                USER_DEFAULT.set(swiftyJsonVar["result"]["image"].stringValue, forKey: WORKER_PROFILE)
+                
                 Switcher.updateRootVC()
             } else {
                 let message = swiftyJsonVar["message"].stringValue
@@ -343,7 +345,7 @@ extension LoginVC {
         paramsDict["mobile_with_code"]     =  strCCode + self.txt_SignupMobile.text! as AnyObject
         
         print(paramsDict)
-                
+        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.verify_number.url(), parameters: paramsDict, parentViewController: self)
             
@@ -374,24 +376,24 @@ extension LoginVC {
     }
     
     func collectSignupData() {
-        paramSignupDict["email"]     =   self.txt_SignupEmail.text! as AnyObject
-        paramSignupDict["first_name"]  =   self.txt_SignupFirstName.text! as AnyObject
-        paramSignupDict["last_name"]  =   self.txt_SignupLastName.text! as AnyObject
-        paramSignupDict["password"]  =   self.txt_SignupPassword.text! as AnyObject
-        paramSignupDict["lat"]   =        kappDelegate.CURRENT_LAT as AnyObject
-        paramSignupDict["lon"]  =        kappDelegate.CURRENT_LON as AnyObject
-        paramSignupDict["register_id"]  =   "" as AnyObject?
-        paramSignupDict["type"]     =   strType as AnyObject
-        paramSignupDict["mobile"]     =   self.txt_SignupMobile.text! as AnyObject
-        paramSignupDict["mobile_witth_country_code"]     =  strCCode + self.txt_SignupMobile.text! as AnyObject
-        paramSignupDict["mobile_with_code"]     =  strCCode + self.txt_SignupMobile.text! as AnyObject
-        paramSignupDict["about_us"]  =   "1" as AnyObject?
-        paramSignupDict["ios_register_id"]  =   USER_DEFAULT.value(forKey: IOS_TOKEN) as AnyObject?
-        paramSignupDict["pay_now_number"] = "" as AnyObject?
-        paramSignupDict["local_bank_number"] = "" as AnyObject
-        paramSignupDict["bank_name"] = "" as AnyObject
-        paramSignupDict["country_name"] = self.strCountryName as AnyObject
-        paramSignupDict["country_id"] = self.strCountryiD as AnyObject
+        paramSignupDict["email"]     =   self.txt_SignupEmail.text!
+        paramSignupDict["first_name"]  =   self.txt_SignupFirstName.text!
+        paramSignupDict["last_name"]  =   self.txt_SignupLastName.text!
+        paramSignupDict["password"]  =   self.txt_SignupPassword.text!
+        paramSignupDict["lat"]   =        kappDelegate.CURRENT_LAT
+        paramSignupDict["lon"]  =        kappDelegate.CURRENT_LON
+        paramSignupDict["register_id"]  =   ""
+        paramSignupDict["type"]     =   strType
+        paramSignupDict["mobile"]     =   self.txt_SignupMobile.text!
+        paramSignupDict["mobile_witth_country_code"]     =  strCCode + self.txt_SignupMobile.text!
+        paramSignupDict["mobile_with_code"]     =  strCCode + self.txt_SignupMobile.text!
+        paramSignupDict["about_us"]  =   "1"
+        paramSignupDict["ios_register_id"]  =   USER_DEFAULT.value(forKey: IOS_TOKEN) as? String
+        paramSignupDict["pay_now_number"] = ""
+        paramSignupDict["local_bank_number"] = ""
+        paramSignupDict["bank_name"] = ""
+        paramSignupDict["country_name"] = self.strCountryName
+        paramSignupDict["country_id"] = self.strCountryiD
         print(paramSignupDict)
     }
 }

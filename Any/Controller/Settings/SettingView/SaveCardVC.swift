@@ -28,7 +28,19 @@ class SaveCardVC: UIViewController {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = false
         self.tabBarController?.tabBar.isHidden = true
-        setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Save Cards", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
+        setNavigationBarItem (
+            LeftTitle: "",
+            LeftImage: "BackArrow",
+            CenterTitle: "Save Cards",
+            CenterImage: "",
+            RightTitle: "",
+            RightImage: "",
+            BackgroundColor: OFFWHITE_COLOR,
+            BackgroundImage: "",
+            TextColor: BLACK_COLOR,
+            TintColor: BLACK_COLOR,
+            Menu: ""
+        )
         Task {
            await GetProfile()
         }

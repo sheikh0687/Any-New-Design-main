@@ -108,6 +108,8 @@ enum Router: String {
     case delete_Outlet
     case add_UpdateOutlet
     
+    case get_set_shift_details_by_job_type
+    
     public func url() -> String {
         switch self {
         case .logIn:
@@ -318,6 +320,9 @@ enum Router: String {
             
         case .get_client_banner_list:
             return Router.oAuthRoute(path: "get_client_banner_list?")
+            
+        case .get_set_shift_details_by_job_type:
+            return Router.oAuthRoute(path: "get_set_shift_details_by_job_type?")
         }
     }
     

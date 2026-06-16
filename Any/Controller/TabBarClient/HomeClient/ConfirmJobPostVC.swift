@@ -45,6 +45,7 @@ extension ConfirmJobPostVC {
     
     func WebGetPreviousWorker() async {
         var paramDict: [String : AnyObject] = [:]
+        
         paramDict["client_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject?
         paramDict["job_type_id"] = strJobiD as AnyObject
         
@@ -70,11 +71,13 @@ extension ConfirmJobPostVC {
     }
     
     func webSubmit() async {
+        showProgressBar()
+        
         paramJobPostDict["previous_worker_id"] = arrayOfPreviousWorker.joined(separator: ",") as AnyObject
         
         print(paramJobPostDict)
 
-        do {
+        do {    
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.set_shift.url(), parameters: paramJobPostDict, parentViewController: self)
             if(swiftyJsonVar["status"] == "1") {
                 let vC = R.storyboard.main.jobConfirmedVC()!

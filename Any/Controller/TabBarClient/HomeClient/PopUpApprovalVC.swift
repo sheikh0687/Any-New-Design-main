@@ -30,13 +30,14 @@ class PopUpApprovalVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.lbl_Aprover.text = ""
-
     }
+    
     override func viewWillAppear(_ animated: Bool) {
        Task {
            await GetProfile()
         }
     }
+    
     @IBAction func back(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
     }
@@ -47,7 +48,6 @@ class PopUpApprovalVC: UIViewController {
         drop.show()
         drop.bottomOffset = CGPoint(x: 0, y: 45)
         drop.selectionAction = { [unowned self] (index: Int, item: String) in
-         
             lbl_Aprover.text = item
             dicApp = arr_AllApprove[index]
         }
@@ -60,31 +60,12 @@ class PopUpApprovalVC: UIViewController {
     }
     
     func GetProfile() async {
-
         var paramsDict:[String:AnyObject] = [:]
         paramsDict["client_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
         paramsDict["status"]  =   "Accept" as AnyObject
         showProgressBar()
 
         print(paramsDict)
-//        CommunicationManager.callPostService(apiUrl: Router.get_OutletAdmin_AuthrisedApprover.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.arr_AllApprove = swiftyJsonVar["result"].arrayValue
-//                    self.dicApp = self.arr_AllApprove[0]
-//                    self.lbl_Aprover.text = "\(dicApp["first_name"].stringValue)  \(dicApp["last_name"].stringValue) (\(dicApp["type"].stringValue))"
-//                } else {
-//                    self.lbl_Aprover.text = ""
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_OutletAdmin_AuthrisedApprover.url(), parameters: paramsDict, parentViewController: self)
@@ -122,29 +103,6 @@ class PopUpApprovalVC: UIViewController {
         paramDict["customer_id"] = customer_Id as AnyObject
         
         print(paramDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.change_set_shift_status.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-//            DispatchQueue.main.async { [self] in
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    if let completion = completion {
-//                        completion()
-//                    }
-//                    if self.is_Navigate == "Monthly" || self.is_Navigate == "CustomerAndCard" {
-//                        self.dismiss(animated: false, completion: nil)
-//                    } else {
-//                        self.dismiss(animated: false, completion: nil)
-//                    }
-//                } else {
-//                    Utility.showAlertMessage(withTitle: EMPTY_STRING, message: swiftyJsonVar["message"].stringValue, delegate: nil,parentViewController: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        }, failureBlock: { (error : Error) in
-//            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-//            self.hideProgressBar()
-//        })
         
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.change_set_shift_status.url(), parameters: paramDict, parentViewController: self)

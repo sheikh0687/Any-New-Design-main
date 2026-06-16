@@ -52,24 +52,7 @@ class AddRatingReviewVC: UIViewController {
         paramsDict["request_id"]  =  strRequestiD as AnyObject
 
         print(paramsDict)
-        
-//        CommunicationManager.callPostService(apiUrl: Router.add_user_rating_review.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    Utility.showAlertWithAction(withTitle: APPNAME, message: "Rating added successfully", delegate: nil, parentViewController: self) { bool in
-//                        self.navigationController?.popViewController(animated: true)
-//                    }
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+                
         do {
             let swiftyJsonVar =  try await CommunicationManager.callPostServiceAsync(apiUrl: Router.add_user_rating_review.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {

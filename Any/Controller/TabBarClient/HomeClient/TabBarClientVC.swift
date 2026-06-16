@@ -57,7 +57,7 @@ class TabBarClientVC: UITabBarController {
                 self.dic_Profile = swiftyJsonVar["result"]
                 self.updateTabBarTitles()
             } else {
-                let message = swiftyJsonVar["result"].string
+//                let message = swiftyJsonVar["result"].string
             }
         } catch {
             GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)

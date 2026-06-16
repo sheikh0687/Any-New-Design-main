@@ -45,23 +45,13 @@ class SetRateVC: UIViewController {
     var checkValues:Bool = true
     
     var drop = DropDown()
+    
     let currencySymbol = USER_DEFAULT.value(forKey: CURRENCY_SYMBOL) as? String ?? ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.weeklyRateCollectionVw.register(UINib(nibName: "WeeklyRateCell", bundle: nil),forCellWithReuseIdentifier: "WeeklyRateCell")
         self.specificDateCollectionVw.register(UINib(nibName: "WeeklyRateCell", bundle: nil),forCellWithReuseIdentifier: "WeeklyRateCell")
-        //        if isComingFrom == "PublishJob" {
-        //            if strJobId != "" {
-        //                self.lbl_JobType.text = strJobTypeName
-        //                self.WebGetWeeklyRate()
-        //            } else {
-        //                
-        //            }
-        //        } else {
-        //            WebGetJobCategory()
-        //        }
-        
         Task {
             await WebGetJobCategory()
         }
@@ -136,7 +126,7 @@ extension SetRateVC {
         let paramsDict:[String:AnyObject] = [:]
         
         print(paramsDict)
-                
+        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_job_type.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -176,7 +166,7 @@ extension SetRateVC {
         paramsDict["job_type_id"] =   strJobId as AnyObject
         
         print(paramsDict)
-                
+        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_client_weekly_rate.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -306,7 +296,7 @@ extension SetRateVC {
         paramsDict["id"]  =  dateiD as AnyObject
         
         print(paramsDict)
-            
+        
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.delete_client_date_rate.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -362,7 +352,6 @@ extension SetRateVC: UICollectionViewDataSource, UICollectionViewDelegateFlowLay
                     cell.lbl_Rate.text = "\(self.currencySymbol)\(rateVal)/h"
                 }
             }
-            
         } else {
             let obj = self.arr_AllSpecificRate[indexPath.row]
             

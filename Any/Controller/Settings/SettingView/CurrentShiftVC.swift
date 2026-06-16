@@ -48,7 +48,6 @@ class CurrentShiftVC: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.navigationController?.navigationBar.isHidden = true
     }
     
     @objc func refreshData() {

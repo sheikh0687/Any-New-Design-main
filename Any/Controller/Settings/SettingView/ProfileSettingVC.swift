@@ -49,7 +49,7 @@ class ProfileSettingVC: UIViewController{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
         self.tabBarController?.tabBar.isHidden = true
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Settings", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
         if Utility.isUserLogin() {
@@ -65,8 +65,7 @@ class ProfileSettingVC: UIViewController{
         self.navigationController?.pushViewController(vC, animated: true)
     }
     
-    @IBAction func btn_History(_ sender: UIButton)
-    {
+    @IBAction func btn_History(_ sender: UIButton) {
         let vC = R.storyboard.main.historyVC()!
         self.navigationController?.pushViewController(vC, animated: true)
     }

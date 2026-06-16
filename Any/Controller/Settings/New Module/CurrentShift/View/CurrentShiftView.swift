@@ -28,7 +28,7 @@ struct CurrentShiftView: View {
  
                 Divider().padding(.leading, 16)
  
-                toggleRow(
+                toggleRow (
                     title: "Auto Approval Shift",
                     isOn: $viewModel.isAutoApproval
                 ) { newVal in
@@ -108,7 +108,7 @@ struct CurrentShiftView: View {
         .background(Color(.systemBackground).ignoresSafeArea())
         .navigationTitle("Current Shifts")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(false)
+        .navigationBarHidden(false)
         .task {
             await viewModel.getShiftList()
             await viewModel.getProfile()
@@ -150,7 +150,6 @@ struct CurrentShiftView: View {
     }
  
     // MARK: - Subviews
- 
     private func toggleRow(title: String, isOn: Binding<Bool>, onChange: @escaping (Bool) -> Void) -> some View {
         HStack {
             Text(title)
@@ -185,7 +184,6 @@ struct CurrentShiftView: View {
     }
  
     // MARK: - Navigation Helpers
- 
     private func navigateTo(_ type: String) {
         guard let topVC = UIApplication.topViewController(),
               let nav = topVC.navigationController else { return }
@@ -206,118 +204,6 @@ struct CurrentShiftView: View {
 }
  
 // MARK: - Shift Cell
- 
-//struct CurrentShiftRow: View {
-// 
-//    let dic: JSON
-//    var onUpdate: () -> Void
-//    var onDelete: () -> Void
-// 
-//    private var displayDay: String {
-//        switch dic["shift_type"].stringValue {
-//        case "Normal":     return dic["day_name"].stringValue
-//        case "SingleDate": return dic["single_date"].stringValue
-//        default:           return "Urgent"
-//        }
-//    }
-// 
-//    var body: some View {
-//        VStack(alignment: .leading, spacing: 0) {
-// 
-//            // MARK: Top Row — Outlet name + time + menu
-//            HStack(alignment: .top) {
-//                VStack(alignment: .leading, spacing: 2) {
-//                    Text("Shift")
-//                        .font(.system(size: 14, weight: .semibold))
-//                        .foregroundColor(.primary)
-// 
-//                    Text("\(dic["start_time"].stringValue) to \(dic["end_time"].stringValue)")
-//                        .font(.system(size: 18, weight: .bold))
-//                        .foregroundColor(.primary)
-//                }
-// 
-//                Spacer()
-// 
-//                // Three dot menu
-//                Menu {
-//                    Button {
-//                        onUpdate()
-//                    } label: {
-//                        Label("Update", systemImage: "pencil")
-//                    }
-// 
-//                    Button(role: .destructive) {
-//                        onDelete()
-//                    } label: {
-//                        Label("Delete", systemImage: "trash")
-//                    }
-//                } label: {
-//                    Image(systemName: "ellipsis")
-//                        .font(.system(size: 18, weight: .semibold))
-//                        .foregroundColor(.primary)
-//                        .frame(width: 36, height: 36)
-//                }
-//            }
-//            .padding(.horizontal, 16)
-//            .padding(.top, 14)
-// 
-//            Divider()
-//                .padding(.horizontal, 16)
-//                .padding(.vertical, 10)
-// 
-//            // MARK: Middle Row — Job Type / Meals / Break
-//            HStack(spacing: 0) {
-//                infoColumn(label: "Job Type", value: dic["job_type"].stringValue)
-// 
-//                Divider().frame(height: 40)
-// 
-//                infoColumn(label: "Meals", value: dic["meals"].stringValue.isEmpty ? "Not Provided" : dic["meals"].stringValue)
-// 
-//                Divider().frame(height: 40)
-// 
-//                infoColumn(label: "Break", value: dic["break_type"].stringValue)
-//            }
-//            .padding(.horizontal, 16)
-// 
-//            Divider()
-//                .padding(.horizontal, 16)
-//                .padding(.vertical, 10)
-// 
-//            // MARK: Bottom Row — Days
-//            Text(displayDay)
-//                .font(.system(size: 13, weight: .semibold))
-//                .foregroundColor(.primary)
-//                .padding(.horizontal, 16)
-//                .padding(.bottom, 14)
-//            
-//            Text(dic["business_name"].stringValue)
-//                .font(.system(size: 13, weight: .medium))
-//                .foregroundColor(.secondary)
-//        }
-//        .frame(maxWidth: .infinity, alignment: .center)
-//        .background(Color(.systemGray6))
-//        .clipShape(RoundedRectangle(cornerRadius: 16))
-//        .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 2)
-//        .overlay (
-//            RoundedRectangle(cornerRadius: 16)
-//                .stroke(Color(.separator), lineWidth: 0.5)
-//        )
-//    }
-// 
-//    private func infoColumn(label: String, value: String) -> some View {
-//        VStack(spacing: 4) {
-//            Text(label)
-//                .font(.system(size: 12))
-//                .foregroundColor(.secondary)
-//            Text(value)
-//                .font(.system(size: 13, weight: .semibold))
-//                .foregroundColor(.primary)
-//                .multilineTextAlignment(.center)
-//        }
-//        .frame(maxWidth: .infinity)
-//    }
-//}
- 
 struct CurrentShiftRow: View {
 
     let dic: JSON
@@ -440,8 +326,8 @@ struct CurrentShiftRow: View {
         .padding(.horizontal, 4)
     }
 }
+
 // MARK: - Preview
- 
 #Preview {
     NavigationStack {
         CurrentShiftView()

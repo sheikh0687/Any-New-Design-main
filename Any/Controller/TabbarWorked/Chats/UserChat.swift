@@ -85,24 +85,7 @@ class UserChat: UIViewController {
         paramDict["sender_type"] = USER_DEFAULT.value(forKey: USER_TYPE) as AnyObject
         
         print(paramDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.insert_chat.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-        //
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.tvMsg.text = ""
-        //                    self.view.endEditing(true)
-        //                    self.wsGetChatAgain()
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //        }, failureBlock: { (error : Error) in
-        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-        //            self.hideProgressBar()
-        //        })
-        
+                
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.insert_chat.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -128,24 +111,7 @@ class UserChat: UIViewController {
         paramDict["type"]  =   "Normal" as AnyObject
         
         print(paramDict)
-        
-        //        CommunicationManager.callPostService(apiUrl: Router.get_chat_detail.url(), parameters: paramDict, parentViewController: self, successBlock: { (responseData, message) in
-        //            DispatchQueue.main.async {
-        //                let swiftyJsonVar = JSON(responseData)
-        //                print(swiftyJsonVar)
-        //                if(swiftyJsonVar["status"].stringValue == "1") {
-        //                    self.arrMsgs  = swiftyJsonVar["result"].arrayValue
-        //                    self.tblView.reloadData()
-        //                    self.scrollToBottom()
-        //                    self.lbl_ChatReason.text = self.strReason
-        //                }
-        //                self.hideProgressBar()
-        //            }
-        //        }, failureBlock: { (error : Error) in
-        //            Utility.showAlertMessage(withTitle: EMPTY_STRING, message: (error.localizedDescription), delegate: nil,parentViewController: self)
-        //            self.hideProgressBar()
-        //        })
-        
+
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_chat_detail.url(), parameters: paramDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {
@@ -177,17 +143,6 @@ extension UserChat: UITableViewDataSource, UITableViewDelegate {
         cell.chatRight.isHidden = true
         
         let dict = arrMsgs[indexPath.row]
-        //        let strDate = dict["date_time"].stringValue
-        
-        //        if strDate != "0000-00-00 00:00:00" {
-        //            let formatter = DateFormatter()
-        //            formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        //            let date = formatter.date(from: strDate)
-        //            formatter.dateFormat = "dd MMM yyyy hh:mm a"
-        //            cell.lblDate.text = formatter.string(from: date ?? Date())
-        //        } else {
-        //            cell.lblDate.text = ""
-        //        }
         
         cell.lblDate.text = dict["date_time"].stringValue
         

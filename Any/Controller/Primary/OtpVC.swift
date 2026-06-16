@@ -80,6 +80,10 @@ extension OtpVC {
                 
                 USER_DEFAULT.set(swiftyJsonVar["result"]["currency_symbol"].stringValue, forKey: CURRENCY_SYMBOL)
                 
+                USER_DEFAULT.set(swiftyJsonVar["result"]["image"].stringValue, forKey: WORKER_PROFILE)
+                
+                USER_DEFAULT.set(swiftyJsonVar["result"]["business_name"].stringValue, forKey: BUSINESS_NAME)
+                
                 if strType == "Worker" {
                     let vC = R.storyboard.main.workerSigningDetailVC()!
                     self.navigationController?.pushViewController(vC, animated: true)

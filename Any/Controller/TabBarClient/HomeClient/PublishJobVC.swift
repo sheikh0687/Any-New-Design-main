@@ -29,50 +29,46 @@ class PublishJobVC: UIViewController {
     
     @IBOutlet weak var dateSelectionVw: UIView!
     @IBOutlet weak var txt_WorkerNote: UITextView!
+    @IBOutlet weak var btn_ToAllWorkerOt: UIButton!
     
-    var strJobTypeName:String = ""
-    var strJobId:String = ""
-    var workerCount:Int = 1
+    var strJobTypeName: String = ""
+    var strJobId: String = ""
+    var workerCount: Int = 1
     
-    var strStartTime:String! = ""
-    var strEndTime:String! = ""
-    var strBreak:String = ""
-    var strSchedule:String = ""
-    var strMeal:String = ""
-    var shiftType:String = ""
-    var strBreakTime:String = ""
+    var strStartTime: String! = ""
+    var strEndTime: String! = ""
+    var strBreak: String = ""
+    var strSchedule: String = ""
+    var strMeal: String = ""
+    var shiftType: String = ""
+    var strBreakTime: String = ""
     
-    var strDaysName:String = ""
-    var strShiftStatus:String = ""
-    var strApplyForAllWorker:String = "No"
+    var strDaysName: String = ""
+    var strShiftStatus: String = ""
+    var strApplyForAllWorker: String = "No"
     var strOutletName: String = ""
     var strOutletiD: String = ""
     
     var arrayWorkerTime: [JSON] = []
-    var arrayStartTime: [String] = []
-    var arrayEndTime: [String] = []
     var fullFetchedShiftArrayFromAPI: [JSON] = []
-//    var arrayOfOutlet: [JSON] = []
     
     var arrayWorkerStartTime: [String] = []
     var arrayWorkerEndTime: [String] = []
-    var arraySingleDate:[String] = []
+    var arraySingleDate: [String] = []
     var arrayOfDays: [String] = []
     
-    var isFrom:String = ""
+    var isFrom: String = ""
     var isOutletSelected: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.worker_TableVw.register(UINib(nibName: "WorkerShiftTimeCell", bundle: nil), forCellReuseIdentifier: "WorkerShiftTimeCell")
         self.collectionDate.register(UINib(nibName: "MultiDateCell", bundle: nil), forCellWithReuseIdentifier: "MultiDateCell")
-        self.arrayWorkerTime.append(JSON(workerCount))
-        print(self.arrayWorkerTime.count)
-        print(USER_DEFAULT.value(forKey: OUTLET_NAME) as? String ?? "")
-        print(USER_DEFAULT.value(forKey: CLIENTID) as? String ?? "")
+        self.arrayWorkerTime.append(JSON(["work_start_time": "", "work_end_time": ""]))
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         if isFrom == "Urgent" {
             self.tabBarController?.tabBar.isHidden = true
             setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Add Urgent Job", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
@@ -90,7 +86,7 @@ class PublishJobVC: UIViewController {
         }
         self.navigationController?.navigationBar.isHidden = false
         Task {
-           await WebGetOutlet()
+            await WebGetOutlet()
         }
         
         if !isOutletSelected {
@@ -124,6 +120,9 @@ class PublishJobVC: UIViewController {
             self.lbl_JobType.text = valJobType
             self.strJobTypeName = valJobType
             self.strJobId = jobiD
+            Task {
+                await self.WebShiftDetailByJobType(jobiD: jobiD)
+            }
         }
         self.navigationController?.pushViewController(vC, animated: true)
     }
@@ -133,28 +132,29 @@ class PublishJobVC: UIViewController {
         vC.headline = "Number of Workers"
         vC.centerTitle = "Manpower"
         vC.cloAllJobTypes = { valWorkerCount, valBlank in
+            guard let newCount = Int(valWorkerCount), newCount > 0 else { return }
+            
             self.lbl_WorkerNum.text = valWorkerCount
-            self.workerCount = Int(valWorkerCount) ?? 0
+            self.workerCount = newCount
             
-            guard let workerCount = Int(valWorkerCount), workerCount > 0 else {
-                print("Invalid string value or count is zero.")
-                return
+            let defaultEntry: JSON = {
+                if let first = self.arrayWorkerTime.first {
+                    return JSON(["work_start_time": first["work_start_time"].stringValue,
+                                 "work_end_time":   first["work_end_time"].stringValue])
+                }
+                return JSON(["work_start_time": "", "work_end_time": ""])
+            }()
+            
+            if newCount > self.arrayWorkerTime.count {
+                let gap = newCount - self.arrayWorkerTime.count
+                for _ in 0..<gap {
+                    self.arrayWorkerTime.append(defaultEntry)
+                }
+            } else if newCount < self.arrayWorkerTime.count {
+                self.arrayWorkerTime = Array(self.arrayWorkerTime.prefix(newCount))
             }
             
-            if workerCount > self.arrayWorkerTime.count {
-                let increaseCol = workerCount - self.arrayWorkerTime.count
-                for _ in 0..<increaseCol {
-                    let obj: [String: String] = ["startTime": "", "endTime": ""]
-                    self.arrayWorkerTime.append(JSON(obj))
-                }
-            } else if workerCount < self.arrayWorkerTime.count {
-                let decreaseCol = self.arrayWorkerTime.count - workerCount
-                for _ in 0..<decreaseCol {
-                    self.arrayWorkerTime.removeLast()
-                }
-            }
-            
-            self.workerShiftVw.isHidden = (workerCount <= 1)
+            self.workerShiftVw.isHidden = (newCount <= 1)
             self.worker_TableHeight.constant = CGFloat(self.arrayWorkerTime.count * 85)
             self.worker_TableVw.reloadData()
         }
@@ -164,22 +164,29 @@ class PublishJobVC: UIViewController {
     @IBAction func btn_Schedule(_ sender: UIButton) {
         if isFrom != "Urgent" {
             let vC = R.storyboard.main.selectAllJobTypesVC()!
-            strSchedule = "Fill"
             vC.headline = "Schedule"
             vC.centerTitle = "Schedule Selection"
             vC.cloAllJobTypes = { valJobType, valBlank in
+                self.strSchedule = "Fill"
                 if valJobType == "Weekly" {
                     self.lbl_SelectSchedule.text = valJobType
                     self.lbl_SelectDay.text = "Select Days"
                     self.lbl_DefaultRate.text = "Default Weekly Rate"
                     self.lbl_Note.isHidden = true
                     self.shiftType = "Normal"
+                    // Reset SingleDate state
+                    self.arraySingleDate = []
+                    self.arrayOfDays = []
+                    self.collectionDate.isHidden = true
+                    self.timeSlot_HeightConstraint.constant = 0
                 } else if valJobType == "Specific Date" {
                     self.lbl_SelectSchedule.text = valJobType
                     self.lbl_SelectDay.text = "Select Date"
                     self.lbl_DefaultRate.text = "Default Date Or Date Rate"
                     self.lbl_Note.isHidden = true
                     self.shiftType = "SingleDate"
+                    // Reset Weekly state
+                    self.strDaysName = ""
                 } else {
                     self.lbl_SelectSchedule.text = "Urgent"
                     self.lbl_SelectDay.text = "Today"
@@ -188,9 +195,13 @@ class PublishJobVC: UIViewController {
                     self.lbl_Note.isHidden = false
                     self.shiftType = "Broadcast"
                     self.strDaysName = Utility.getCurrentDay()
+                    // Reset SingleDate state
+                    self.arraySingleDate = []
+                    self.arrayOfDays = []
+                    self.collectionDate.isHidden = true
+                    self.timeSlot_HeightConstraint.constant = 0
                 }
                 self.dateSelectionVw.isHidden = false
-                self.timeSlot_HeightConstraint.constant = 0
             }
             self.navigationController?.pushViewController(vC, animated: true)
         }
@@ -202,10 +213,10 @@ class PublishJobVC: UIViewController {
             vC.headline = "Days"
             vC.centerTitle = "Choose Working Days"
             vC.isFromUpdate = false
-            vC.cloAllJobTypes = { valDays, valShiftShatus in
+            vC.cloAllJobTypes = { valDays, valShiftStatus in
                 self.lbl_SelectDay.text = valDays
                 self.strDaysName = valDays
-                self.strShiftStatus = valShiftShatus
+                self.strShiftStatus = valShiftStatus
                 self.lbl_Note.isHidden = true
             }
             self.navigationController?.pushViewController(vC, animated: true)
@@ -251,8 +262,6 @@ class PublishJobVC: UIViewController {
             self.lbl_BreakType.text = valBreak
             self.strBreak = valBreak
             self.strBreakTime = valBlank
-            print(valBreak)
-            print(valBlank)
         }
         self.navigationController?.pushViewController(vC, animated: true)
     }
@@ -270,54 +279,31 @@ class PublishJobVC: UIViewController {
     
     @IBAction func btn_ApplyToAllWorker(_ sender: UIButton) {
         if sender.isSelected {
-            // Uncheck
             sender.isSelected = false
             sender.setImage(R.image.uncheck(), for: .normal)
             strApplyForAllWorker = "No"
             
-            // Restore timeSelectionBeans based on worker count
-            //            if let count = strWorkerNumb, count > 0 {
-            if workerCount > arrayWorkerTime.count {
-                let increaseCol = workerCount - arrayWorkerTime.count
-                for _ in 0..<increaseCol {
-                    let bean = TimeSelectionBean()
-                    bean.startTime = ""
-                    bean.endTime = ""
-                    arrayWorkerTime.append(JSON(bean))
-                }
-            } else if workerCount < arrayWorkerTime.count {
-                let decreaseCol = arrayWorkerTime.count - workerCount
-                for _ in 0..<decreaseCol {
-                    arrayWorkerTime.removeLast()
-                }
+            if fullFetchedShiftArrayFromAPI.count == workerCount {
+                arrayWorkerTime = fullFetchedShiftArrayFromAPI
+            } else {
+                let obj: JSON = ["work_start_time": strStartTime ?? "",
+                                 "work_end_time":   strEndTime   ?? ""]
+                arrayWorkerTime = Array(repeating: obj, count: workerCount)
             }
+            workerShiftVw.isHidden = (workerCount <= 1)
         } else {
-            // Check
             sender.isSelected = true
             sender.setImage(#imageLiteral(resourceName: "Checked"), for: .normal)
             strApplyForAllWorker = "Yes"
             
-            // Clear and add only one shift time for all
-            arrayWorkerTime.removeAll()
-            let bean = TimeSelectionBean()
-            bean.startTime = strStartTime
-            bean.endTime = strEndTime
-            arrayWorkerTime.append(JSON(bean))
-            self.arrayStartTime.removeAll()
-            let workerCount = Int(self.workerCount)
-            for _ in 0..<workerCount {
-                self.arrayStartTime.append(strStartTime)
-            }
-            print(self.arrayStartTime)
-            self.arrayEndTime.removeAll()
-            for _ in 0..<workerCount {
-                self.arrayEndTime.append(strEndTime)
-            }
-            print(self.arrayEndTime)
+            let obj: JSON = ["work_start_time": strStartTime ?? "",
+                             "work_end_time":   strEndTime   ?? ""]
+            arrayWorkerTime = [obj]
+            workerShiftVw.isHidden = false
         }
         
-        self.worker_TableHeight.constant = CGFloat(arrayWorkerTime.count * 85)
-        self.worker_TableVw.reloadData()
+        worker_TableHeight.constant = CGFloat(arrayWorkerTime.count * 85)
+        worker_TableVw.reloadData()
     }
     
     @IBAction func btn_PublishJob(_ sender: UIButton) {
@@ -325,52 +311,297 @@ class PublishJobVC: UIViewController {
             let vC = R.storyboard.main.confirmJobPostVC()!
             vC.strJobiD = strJobId
             collectParamJobPost()
-            print(paramJobPostDict)
             self.navigationController?.pushViewController(vC, animated: true)
         }
     }
     
     func isValidInput() -> Bool {
-        print("strApplyForAllWorker: '\(strApplyForAllWorker)'")
-        print("workerCount: \(workerCount)")
-        print("arrayStartTime.count: \(arrayStartTime.count)")
-        print("arrayEndTime.count: \(arrayEndTime.count)")
-        
         var errorMessage: String?
         
         if strJobTypeName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             errorMessage = "Please Select Job Type"
-        } else if strSchedule.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            
+        } else if shiftType.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             errorMessage = "Please Select The Schedule"
+            
         } else if strBreak.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             errorMessage = "Please Select Break Type"
+            
         } else if strMeal.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             errorMessage = "Please Select Meal"
+            
         } else if shiftType == "Normal" && strDaysName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             errorMessage = "Please Select Days"
-        } else if shiftType == "SingleDate" && arraySingleDate.count == 0 {
+            
+        } else if shiftType == "SingleDate" && arraySingleDate.isEmpty {
             errorMessage = "Please Select Date"
+            
         } else if strApplyForAllWorker == "No" {
-            if workerCount > arrayStartTime.count {
-                errorMessage = "Please Select Time"
-            } else if workerCount > arrayEndTime.count {
-                errorMessage = "Please Select Time"
+            for i in 0..<workerCount {
+                if i < arrayWorkerTime.count {
+                    let obj = arrayWorkerTime[i]
+                    let start = obj["work_start_time"].string ?? obj["startTime"].string ?? ""
+                    let end   = obj["work_end_time"].string   ?? obj["endTime"].string   ?? ""
+                    if start.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+                       end.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        errorMessage = "Please Select Time for Worker #\(i + 1)"
+                        break
+                    }
+                } else {
+                    errorMessage = "Please Select Time for Worker #\(i + 1)"
+                    break
+                }
             }
-        } else if strStartTime.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            errorMessage = "Please Select Time"
-        } else if strEndTime.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            errorMessage = "Please Select Time"
+            
+        } else if (strStartTime ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            errorMessage = "Please Select Start Time"
+            
+        } else if (strEndTime ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            errorMessage = "Please Select End Time"
         }
         
         if let message = errorMessage {
-            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: message, on: self)
+            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME,
+                                            andMessage: message, on: self)
             return false
         }
-        
         return true
     }
 }
 
+// MARK: API CALLING
+extension PublishJobVC {
+    
+    func WebGetOutlet() async {
+        showProgressBar()
+        var paramsDict: [String: AnyObject] = [:]
+        paramsDict["client_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(
+                apiUrl: Router.get_Outlet.url(),
+                parameters: paramsDict,
+                parentViewController: self
+            )
+            self.outletView.isHidden = swiftyJsonVar["status"].stringValue != "1"
+        } catch {
+            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME,
+                                            andMessage: error.localizedDescription, on: self)
+        }
+        self.hideProgressBar()
+    }
+    
+    func WebShiftDetailByJobType(jobiD: String) async {
+        showProgressBar()
+        var paramsDict: [String: AnyObject] = [:]
+        paramsDict["user_id"]      = USER_DEFAULT.value(forKey: USERID) as AnyObject
+        paramsDict["job_type_id"]  = jobiD as AnyObject
+        
+        do {
+            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync (
+                apiUrl: Router.get_set_shift_details_by_job_type.url(),
+                parameters: paramsDict,
+                parentViewController: self
+            )
+            
+            if swiftyJsonVar["status"].stringValue == "1" {
+                let resVal = swiftyJsonVar["result"]
+                
+                // MARK: — Labels
+                self.lbl_JobType.text      = resVal["job_type"].stringValue
+                self.lbl_WorkerNum.text    = resVal["worker_count"].stringValue
+                self.lbl_ProvidedMeal.text = resVal["meals"].stringValue
+                self.lbl_BreakType.text    = resVal["break_type"].stringValue
+                self.txt_WorkerNote.text   = resVal["note"].stringValue
+                self.lbl_OutletName.text   = self.strOutletName
+                self.outletView.isHidden   = self.strOutletiD.isEmpty
+                
+                // MARK: — Data fields
+                self.strJobTypeName      = resVal["job_type"].stringValue
+                self.strJobId            = resVal["job_type_id"].stringValue
+                self.strBreak            = resVal["break_type"].stringValue
+                self.strMeal             = resVal["meals"].stringValue
+                self.shiftType           = resVal["shift_type"].stringValue
+                self.workerCount         = Int(resVal["worker_count"].stringValue) ?? 1
+                self.strStartTime        = resVal["start_time"].stringValue
+                self.strEndTime          = resVal["end_time"].stringValue
+                self.strBreakTime        = resVal["break_time"].stringValue
+                self.strApplyForAllWorker = resVal["apply_time_same_for_allworkers"].stringValue
+                self.strSchedule         = "Fill"
+                
+                // MARK: — Shift status
+                if resVal["shiftStatus"].stringValue.isEmpty {
+                    self.strShiftStatus = resVal["shift_brodcast_week_days"].arrayValue
+                        .map { $0["shiftStatus"].stringValue }
+                        .joined(separator: ",")
+                } else {
+                    self.strShiftStatus = resVal["shiftStatus"].stringValue
+                }
+                
+                // MARK: — Schedule type UI + strDaysName
+                // NOTE: strDaysName is set inside each branch, NOT before, to avoid overwrites
+                switch self.shiftType {
+                    
+                case "Normal":
+                    self.strDaysName              = ""
+                    self.lbl_SelectSchedule.text  = "Weekly"
+                    self.lbl_SelectDay.text       = "Select Days"
+                    self.lbl_DefaultRate.text     = "Default Weekly Rate"
+                    self.lbl_Note.isHidden        = true
+                    self.dateSelectionVw.isHidden = false
+                    self.arraySingleDate          = []
+                    self.arrayOfDays              = []
+                    self.collectionDate.isHidden  = true
+                    self.timeSlot_HeightConstraint.constant = 0
+                    
+                case "SingleDate":
+                    self.lbl_SelectSchedule.text  = "Specific Date"
+                    self.lbl_DefaultRate.text     = "Default Date or Date Rate"
+                    self.lbl_Note.isHidden        = true
+                    self.dateSelectionVw.isHidden = false
+                    
+                    // Reset SingleDate state instead of pre-filling
+                    self.arraySingleDate          = []
+                    self.arrayOfDays              = []
+                    self.strDaysName              = ""
+                    self.lbl_SelectDay.text       = "Select Date"
+                    self.collectionDate.isHidden  = true
+                    self.timeSlot_HeightConstraint.constant = 0
+                    
+                default: // Broadcast / Urgent
+                    self.strDaysName              = Utility.getCurrentDay()
+                    self.lbl_SelectSchedule.text  = "Urgent"
+                    self.lbl_SelectDay.text       = "Today"
+                    self.lbl_SelectDay.textColor  = .darkGray
+                    self.lbl_DefaultRate.text     = "Default Urgent Rate"
+                    self.lbl_Note.isHidden        = false
+                    self.dateSelectionVw.isHidden = false
+                    self.arraySingleDate          = []
+                    self.arrayOfDays              = []
+                    self.collectionDate.isHidden  = true
+                    self.timeSlot_HeightConstraint.constant = 0
+                }
+                
+                // MARK: — Worker time array (single source of truth)
+                let multiWorkTime = resVal["shift_multi_work_time"].arrayValue
+                self.fullFetchedShiftArrayFromAPI = multiWorkTime
+                
+                if self.strApplyForAllWorker == "Yes" {
+                    self.btn_ToAllWorkerOt.setImage(#imageLiteral(resourceName: "Checked"), for: .normal)
+                    self.btn_ToAllWorkerOt.isSelected = true
+                    
+                    // One row — same time for all workers
+                    let singleEntry: JSON = [
+                        "work_start_time": multiWorkTime.first?["work_start_time"].stringValue ?? self.strStartTime ?? "",
+                        "work_end_time":   multiWorkTime.first?["work_end_time"].stringValue   ?? self.strEndTime   ?? ""
+                    ]
+                    self.arrayWorkerTime        = [singleEntry]
+                    self.workerShiftVw.isHidden = false
+                    
+                } else {
+                    self.btn_ToAllWorkerOt.setImage(#imageLiteral(resourceName: "RectangleUncheck"), for: .normal)
+                    self.btn_ToAllWorkerOt.isSelected = false
+                    
+                    if multiWorkTime.count > 0 {
+                        self.arrayWorkerTime = multiWorkTime
+                    } else {
+                        let obj: JSON = [
+                            "work_start_time": self.strStartTime ?? "",
+                            "work_end_time":   self.strEndTime   ?? ""
+                        ]
+                        self.arrayWorkerTime = Array(repeating: obj, count: max(self.workerCount, 1))
+                    }
+                    self.workerShiftVw.isHidden = (self.workerCount <= 1)
+                }
+                
+                self.worker_TableHeight.constant = CGFloat(self.arrayWorkerTime.count * 85)
+                self.worker_TableVw.reloadData()
+                
+            } else {
+                // MARK: — Status 0: reset for fresh manual entry
+                self.shiftType                          = ""
+                self.strSchedule                        = ""
+                self.lbl_WorkerNum.text                 = "1"
+                self.workerCount                        = 1
+                self.lbl_ProvidedMeal.text              = "Select Meal"
+                self.strMeal                            = ""
+                self.lbl_BreakType.text                 = "Select Break"
+                self.strBreak                           = ""
+                self.txt_WorkerNote.text                = ""
+                self.strStartTime                       = ""
+                self.strEndTime                         = ""
+                self.strDaysName                        = ""
+                self.arraySingleDate                    = []
+                self.arrayOfDays                        = []
+                self.collectionDate.isHidden            = true
+                self.timeSlot_HeightConstraint.constant = 0
+                self.arrayWorkerTime                    = [JSON(["work_start_time": "", "work_end_time": ""])]
+                self.workerShiftVw.isHidden             = true
+                self.worker_TableHeight.constant        = 85
+                self.worker_TableVw.reloadData()
+            }
+            
+        } catch {
+            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME,
+                                            andMessage: error.localizedDescription, on: self)
+        }
+        self.hideProgressBar()
+    }
+    
+    func collectParamJobPost() {
+        // Derive start/end times from arrayWorkerTime — single source of truth
+        let startTimes: [String]
+        let endTimes: [String]
+        
+        if strApplyForAllWorker == "Yes" {
+            startTimes = Array(repeating: strStartTime ?? "", count: workerCount)
+            endTimes   = Array(repeating: strEndTime   ?? "", count: workerCount)
+        } else {
+            startTimes = arrayWorkerTime.map { obj in
+                obj["work_start_time"].string ?? obj["startTime"].string ?? ""
+            }
+            endTimes = arrayWorkerTime.map { obj in
+                obj["work_end_time"].string ?? obj["endTime"].string ?? ""
+            }
+        }
+        
+        paramJobPostDict["user_id"]                        = USER_DEFAULT.value(forKey: USERID) as AnyObject
+        paramJobPostDict["job_type"]                       = strJobTypeName as AnyObject
+        paramJobPostDict["job_type_id"]                    = strJobId as AnyObject
+        paramJobPostDict["worker_count"]                   = workerCount as AnyObject
+        paramJobPostDict["start_time"]                     = (strStartTime ?? "") as AnyObject
+        paramJobPostDict["end_time"]                       = (strEndTime ?? "") as AnyObject
+        paramJobPostDict["day_name"]                       = strDaysName as AnyObject
+        paramJobPostDict["shiftStatus"]                    = strShiftStatus as AnyObject
+        paramJobPostDict["break_type"]                     = strBreak as AnyObject
+        paramJobPostDict["shift_type"]                     = shiftType as AnyObject
+        paramJobPostDict["meals"]                          = strMeal as AnyObject
+        paramJobPostDict["note"]                           = txt_WorkerNote.text as AnyObject
+        paramJobPostDict["single_date"]                    = arraySingleDate.joined(separator: ",") as AnyObject
+        paramJobPostDict["apply_time_same_for_allworkers"] = strApplyForAllWorker as AnyObject
+        paramJobPostDict["multi_work_start_time"]          = startTimes.joined(separator: ",") as AnyObject
+        paramJobPostDict["multi_work_end_time"]            = endTimes.joined(separator: ",") as AnyObject
+        paramJobPostDict["shift_break_time"]               = strBreakTime as AnyObject
+        paramJobPostDict["shift_break_time_in_min"]        = Utility.convertToMinutes(from: strBreakTime) as AnyObject
+        paramJobPostDict["outlet_id"]                      = strOutletiD as AnyObject
+        paramJobPostDict["business_name"]                  = strOutletName as AnyObject
+        
+        print("=== Job Post Params ===")
+        print("Job Type     : \(strJobTypeName) | ID: \(strJobId)")
+        print("Shift Type   : \(shiftType) | Schedule: \(strSchedule)")
+        print("Workers      : \(workerCount) | Apply Same: \(strApplyForAllWorker)")
+        print("Start Times  : \(startTimes)")
+        print("End Times    : \(endTimes)")
+        print("Days/Dates   : \(strDaysName)")
+        print("Single Dates : \(arraySingleDate)")
+        print("Break        : \(strBreak) | \(strBreakTime)")
+        print("Meal         : \(strMeal)")
+        print("Outlet       : \(strOutletName) | ID: \(strOutletiD)")
+        print("=======================")
+    }
+}
+
+// MARK: TABLE VIEW DELEGATES
 extension PublishJobVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -379,37 +610,37 @@ extension PublishJobVC: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WorkerShiftTimeCell", for: indexPath) as! WorkerShiftTimeCell
+        let obj = self.arrayWorkerTime[indexPath.row]
         
         self.worker_TableHeight.constant = CGFloat(self.arrayWorkerTime.count * 85)
-        cell.lbl_WorkerCount.text = "Worker #\(String(indexPath.row + 1))"
+        cell.lbl_WorkerCount.text = "Worker #\(indexPath.row + 1)"
         
-        if indexPath.row == 0 {
-            let startTime = strStartTime
-            let endTime = strEndTime
-            
-            cell.btn_StartTimeOt.setTitle(startTime!.isEmpty ? "Start Time" : startTime, for: .normal)
-            cell.btn_EndTimeOt.setTitle(endTime!.isEmpty ? "End Time" : endTime, for: .normal)
-        }
+        // Read time from JSON — check both possible key names
+        let startTime: String = obj["work_start_time"].string ?? obj["startTime"].string ?? (strStartTime ?? "")
+        let endTime: String   = obj["work_end_time"].string   ?? obj["endTime"].string   ?? (strEndTime   ?? "")
+        
+        cell.btn_StartTimeOt.setTitle(startTime.isEmpty ? "Start Time" : startTime, for: .normal)
+        cell.btn_EndTimeOt.setTitle(endTime.isEmpty     ? "End Time"   : endTime,   for: .normal)
         
         cell.cloStartTime = { [self] in
             datePickerTapped(strFormat: "HH:mm", mode: .time, type: "Time") { strTime in
                 cell.btn_StartTimeOt.setTitle(strTime, for: .normal)
                 
-                if indexPath.row == 0 {
-                    self.strStartTime = strTime
-                }
                 if self.strApplyForAllWorker == "Yes" {
-                    self.arrayStartTime.removeAll()
-                    for _ in 0..<self.workerCount {
-                        self.arrayStartTime.append(strTime)
-                        self.fullFetchedShiftArrayFromAPI.append(JSON(strTime))
+                    // Same time for all — update every entry
+                    self.strStartTime = strTime
+                    self.arrayWorkerTime = self.arrayWorkerTime.map { _ in
+                        JSON(["work_start_time": strTime,
+                              "work_end_time": self.strEndTime ?? ""])
                     }
                 } else {
-                    self.arrayStartTime.append(strTime)
+                    // Replace only this worker's entry
+                    if indexPath.row == 0 { self.strStartTime = strTime }
+                    var updated = self.arrayWorkerTime[indexPath.row]
+                    updated["work_start_time"] = JSON(strTime)
+                    self.arrayWorkerTime[indexPath.row] = updated
                 }
-                
-                print(self.arrayStartTime)
-                
+                print("✅ arrayWorkerTime after start pick: \(self.arrayWorkerTime)")
             }
         }
         
@@ -417,20 +648,19 @@ extension PublishJobVC: UITableViewDataSource, UITableViewDelegate {
             datePickerTapped(strFormat: "HH:mm", mode: .time, type: "Time") { strTime in
                 cell.btn_EndTimeOt.setTitle(strTime, for: .normal)
                 
-                if indexPath.row == 0 {
-                    self.strEndTime = strTime
-                }
                 if self.strApplyForAllWorker == "Yes" {
-                    self.arrayEndTime.removeAll()
-                    for _ in 0..<self.workerCount {
-                        self.arrayEndTime.append(strTime)
-                        self.fullFetchedShiftArrayFromAPI.append(JSON(strTime))
+                    self.strEndTime = strTime
+                    self.arrayWorkerTime = self.arrayWorkerTime.map { _ in
+                        JSON(["work_start_time": self.strStartTime ?? "",
+                              "work_end_time": strTime])
                     }
                 } else {
-                    self.arrayEndTime.append(strTime)
+                    if indexPath.row == 0 { self.strEndTime = strTime }
+                    var updated = self.arrayWorkerTime[indexPath.row]
+                    updated["work_end_time"] = JSON(strTime)
+                    self.arrayWorkerTime[indexPath.row] = updated
                 }
-                
-                print(self.arrayEndTime)
+                print("✅ arrayWorkerTime after end pick: \(self.arrayWorkerTime)")
             }
         }
         return cell
@@ -441,8 +671,8 @@ extension PublishJobVC: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-extension PublishJobVC: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
-{
+// MARK: COLLECTION VIEW DELEGATES
+extension PublishJobVC: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return arraySingleDate.count
@@ -454,69 +684,19 @@ extension PublishJobVC: UICollectionViewDataSource, UICollectionViewDelegateFlow
         
         cell.cloCancel = {
             self.arraySingleDate.remove(at: indexPath.row)
-            self.arrayOfDays.remove(at: indexPath.row)
-            let numberOfItemsInRow = 2
-            let numberOfRows = (self.arraySingleDate.count + numberOfItemsInRow - 1) / numberOfItemsInRow
-            let cellHeight: CGFloat = 50
-            self.timeSlot_HeightConstraint.constant = CGFloat(numberOfRows) * cellHeight
+            if indexPath.row < self.arrayOfDays.count {
+                self.arrayOfDays.remove(at: indexPath.row)
+            }
+            // Keep strDaysName in sync
+            self.strDaysName = self.arraySingleDate.joined(separator: ",")
+            let numberOfRows = (self.arraySingleDate.count + 1) / 2
+            self.timeSlot_HeightConstraint.constant = CGFloat(numberOfRows) * 50
             self.collectionDate.reloadData()
         }
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.collectionDate.frame.width/2, height: 50)
+        return CGSize(width: self.collectionDate.frame.width / 2, height: 50)
     }
 }
-
-extension PublishJobVC {
-    
-    func WebGetOutlet() async {
-        showProgressBar()
-        var paramsDict:[String:AnyObject] = [:]
-        paramsDict["client_id"] = USER_DEFAULT.value(forKey: USERID) as AnyObject
-        
-        print(paramsDict)
-                
-        do {
-            let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_Outlet.url(), parameters: paramsDict, parentViewController: self)
-            if(swiftyJsonVar["status"].stringValue == "1") {
-                self.outletView.isHidden = false
-            } else {
-                self.outletView.isHidden = true
-            }
-        } catch {
-            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-        }
-        
-        self.hideProgressBar()
-    }
-    
-    func collectParamJobPost() {
-        paramJobPostDict["user_id"]  =   USER_DEFAULT.value(forKey: USERID) as AnyObject
-        paramJobPostDict["job_type"]     =  strJobTypeName  as AnyObject
-        paramJobPostDict["job_type_id"]     =  strJobId  as AnyObject
-        paramJobPostDict["worker_count"]     =  workerCount  as AnyObject
-        paramJobPostDict["start_time"]     =  strStartTime  as AnyObject
-        paramJobPostDict["end_time"]     =  strEndTime  as AnyObject
-        paramJobPostDict["day_name"]     =  strDaysName  as AnyObject
-        paramJobPostDict["shiftStatus"]     =  strShiftStatus  as AnyObject
-        paramJobPostDict["break_type"]     =  strBreak  as AnyObject
-        paramJobPostDict["shift_type"]     =  shiftType  as AnyObject
-        paramJobPostDict["meals"]     =  strMeal  as AnyObject
-        paramJobPostDict["note"]  =   self.txt_WorkerNote.text! as AnyObject
-        paramJobPostDict["single_date"] = arraySingleDate.joined(separator: ",") as AnyObject
-        
-        paramJobPostDict["apply_time_same_for_allworkers"] = strApplyForAllWorker as AnyObject
-        paramJobPostDict["multi_work_start_time"] = self.arrayStartTime.joined(separator: ",") as AnyObject
-        paramJobPostDict["multi_work_end_time"] = self.arrayEndTime.joined(separator: ",") as AnyObject
-        paramJobPostDict["shift_break_time"] = self.strBreakTime as AnyObject
-        paramJobPostDict["shift_break_time_in_min"] = Utility.convertToMinutes(from: strBreakTime) as AnyObject
-        paramJobPostDict["outlet_id"] = strOutletiD as AnyObject
-        paramJobPostDict["business_name"] = strOutletName as AnyObject
-        
-        print(paramJobPostDict)
-    }
-}
-
-//=http://52.220.103.59/Any/webservice/set_shift?&user_id=2117&job_type=F%26B%20Service%20Crew&job_type_id=1&worker_count=2&start_time=&end_time=&day_name=Monday%2CTuesday%2CWednesday%2CThursday%2CFriday%2CSaturday%2CSunday&shiftStatus=Yes%2CYes%2CYes%2CYes%2CYes%2CYes%2CYes&break_type=Unpaid&meals=Not%20Provided&note=Thai%20shift%20to%20test%20new%20break%20time%20module&shift_type=Normal&apply_time_same_for_allworkers=Yes&single_date=&multi_work_start_time=10%3A00%2C&multi_work_end_time=18%3A00%2C&previous_worker_id=&shift_break_time=2%20hours%2C%2030%20mins&shift_break_time_in_min=150

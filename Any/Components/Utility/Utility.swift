@@ -198,31 +198,44 @@ class Utility {
     }
     
     class func noDataFound(_ message: String, tableViewOt: UITableView, parentViewController parentVC: UIViewController) {
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: tableViewOt.bounds.size.width, height: tableViewOt.bounds.size.height))
         
-        _ = (tableViewOt.bounds.size.width/2)
-        let center_y = (tableViewOt.bounds.size.height/2)
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: tableViewOt.bounds.width, height: tableViewOt.bounds.height))
         
-        let label: UILabel = UILabel(frame: CGRect(x: 0, y: center_y - 25, width: tableViewOt.bounds.size.width, height: 20))
-        label.font = label.font.withSize(17.0)
-        label.font = UIFont.boldSystemFont(ofSize: label.font.pointSize)
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 6
+        stackView.alignment = .center
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let label: UILabel = UILabel()
+        label.font = UIFont.boldSystemFont(ofSize: 17.0)
         label.text = message
-        //        label.textColor = parentVC.hexStringToUIColor(hex: "#5A5C63")
-        label.textColor = UIColor(red: CGFloat(90)/255, green: CGFloat(92)/255, blue: CGFloat(99)/255, alpha :1)
-        label.textAlignment = NSTextAlignment.center
+        label.textColor = UIColor(red: 90/255, green: 92/255, blue: 99/255, alpha: 1)
+        label.textAlignment = .center
         label.numberOfLines = 0
+        label.translatesAutoresizingMaskIntoConstraints = false
         
-        let label2: UILabel = UILabel(frame: CGRect(x: 0, y: center_y, width: tableViewOt.bounds.size.width, height: 20))
-        label2.font = label.font.withSize(13.0)
-        label2.text = "No data available to show"
+        let label2: UILabel = UILabel()
+        label2.font = UIFont.systemFont(ofSize: 13.0)
+        label2.text = ""
         label2.textColor = parentVC.hexStringToUIColor(hex: "#95979B")
-        label2.textAlignment = NSTextAlignment.center
+        label2.textAlignment = .center
         label2.numberOfLines = 0
+        label2.translatesAutoresizingMaskIntoConstraints = false
         
-        //   view.addSubview(imageView)
-        view.addSubview(label)
-        //  view.addSubview(label2)
-        tableViewOt.backgroundView = view
+        stackView.addArrangedSubview(label)
+        stackView.addArrangedSubview(label2)
+        
+        containerView.addSubview(stackView)
+        
+        NSLayoutConstraint.activate([
+            stackView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            stackView.leadingAnchor.constraint(greaterThanOrEqualTo: containerView.leadingAnchor, constant: 24),
+            stackView.trailingAnchor.constraint(lessThanOrEqualTo: containerView.trailingAnchor, constant: -24)
+        ])
+        
+        tableViewOt.backgroundView = containerView
     }
     
     class func noDataFoundColl(_ message: String, tableViewOt: UICollectionView, parentViewController parentVC: UIViewController) {

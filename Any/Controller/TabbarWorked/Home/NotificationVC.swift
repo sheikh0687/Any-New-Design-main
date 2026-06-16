@@ -19,16 +19,14 @@ class NotificationVC: UIViewController {
     @IBOutlet weak var table_News: UITableView!
     var arr_AllCat:[JSON] = []
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
        
-        self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
         
         setNavigationBarItem(LeftTitle: "", LeftImage: "BackArrow", CenterTitle: "Notification", CenterImage: "", RightTitle: "", RightImage: "", BackgroundColor: OFFWHITE_COLOR, BackgroundImage: "", TextColor: BLACK_COLOR, TintColor: BLACK_COLOR, Menu: "")
 
@@ -54,29 +52,7 @@ class NotificationVC: UIViewController {
         paramsDict["type"]  =  "USER" as AnyObject
 
         print(paramsDict)
-//        CommunicationManager.callPostService(apiUrl: Router.get_notification_list.url(), parameters: paramsDict, parentViewController: self, successBlock: { (responseData, message) in
-//            
-//            DispatchQueue.main.async {
-//                let swiftyJsonVar = JSON(responseData)
-//                print(swiftyJsonVar)
-//                if(swiftyJsonVar["status"].stringValue == "1") {
-//                    self.arr_AllCat = swiftyJsonVar["result"].arrayValue
-//                    print(self.arr_AllCat.count)
-//                    self.table_News.backgroundView = UIView()
-//                    self.table_News.reloadData()
-//                } else {
-//                    self.arr_AllCat = []
-//                    self.table_News.backgroundView = UIView()
-//                    self.table_News.reloadData()
-//                    Utility.noDataFound("No Notifications At The Moment", tableViewOt: self.table_News, parentViewController: self)
-//                }
-//                self.hideProgressBar()
-//            }
-//        },failureBlock: { (error : Error) in
-//            self.hideProgressBar()
-//            GlobalConstant.showAlertMessage(withOkButtonAndTitle: APPNAME, andMessage: (error.localizedDescription), on: self)
-//        })
-        
+
         do {
             let swiftyJsonVar = try await CommunicationManager.callPostServiceAsync(apiUrl: Router.get_notification_list.url(), parameters: paramsDict, parentViewController: self)
             if(swiftyJsonVar["status"].stringValue == "1") {

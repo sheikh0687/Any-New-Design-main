@@ -35,7 +35,7 @@ class ForgotPasswordVC: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.navigationController?.navigationBar.isHidden = true
+        super.viewWillDisappear(animated)
     }
     
     @IBAction func tapedCountrCode(_ sender: Any) {
